@@ -1,0 +1,5 @@
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Prop\bin\Prop.dll.config
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Prop\bin\Prop.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Prop\bin\Prop.pdb
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Prop\obj\Debug\Prop.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Prop\obj\Debug\Prop.pdb

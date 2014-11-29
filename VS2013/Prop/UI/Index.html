@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="stylesheets/screen.css" rel="stylesheet" />
+    <script src="scripts/prop/base.js"></script>
+    <script src="scripts/prop/loader.js"></script>
+</head>
+<body class="owf">
+    <!-- fit screen dom -->
+    <div id="main" class="main ab w_f h_f owf dblue"> 
+    </div>
+    <!-- menu -->
+    <div class="menu ab w_a h_a b00 r00 ">
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" /> 
+    </div>
+    <!-- popup content -->
+    <div class="ab l04 t04 r04 b00 hdn"></div>
+    <!-- initializer -->
+    <script>
+        prop.loader.get('3d/babylonjs', function (d) { document.getElementById('main').innerHTML += d; });
+    </script>
+    <!-- developer tools
+         can remove in release version
+         contents : status
+    -->
+    <div id="status" class="ab t01 l01 h06 op05 blue "></div>
+</body>
+</html>

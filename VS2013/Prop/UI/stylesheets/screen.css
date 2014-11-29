@@ -1,0 +1,648 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+.ab {
+  position: absolute;
+}
+
+@media (min-width: 1024px) and (max-width: 6144px) {
+  .t00 {
+    top: 0px;
+  }
+
+  .t01 {
+    top: 32px;
+  }
+
+  .t02 {
+    top: 64px;
+  }
+
+  .t03 {
+    top: 96px;
+  }
+
+  .t04 {
+    top: 128px;
+  }
+
+  .t05 {
+    top: 160px;
+  }
+
+  .t06 {
+    top: 192px;
+  }
+
+  .t07 {
+    top: 224px;
+  }
+
+  .t08 {
+    top: 256px;
+  }
+
+  .t09 {
+    top: 288px;
+  }
+
+  .t10 {
+    top: 320px;
+  }
+
+  .t11 {
+    top: 352px;
+  }
+
+  .t12 {
+    top: 384px;
+  }
+
+  .t_a {
+    top: auto;
+  }
+
+  .t_f {
+    top: 100%;
+  }
+
+  .t005 {
+    top: 16px;
+  }
+
+  .t015 {
+    top: 48px;
+  }
+
+  .t025 {
+    top: 80px;
+  }
+
+  .l00 {
+    left: 0px;
+  }
+
+  .l01 {
+    left: 32px;
+  }
+
+  .l02 {
+    left: 64px;
+  }
+
+  .l03 {
+    left: 96px;
+  }
+
+  .l04 {
+    left: 128px;
+  }
+
+  .l05 {
+    left: 160px;
+  }
+
+  .l06 {
+    left: 192px;
+  }
+
+  .l07 {
+    left: 224px;
+  }
+
+  .l08 {
+    left: 256px;
+  }
+
+  .l09 {
+    left: 288px;
+  }
+
+  .l10 {
+    left: 320px;
+  }
+
+  .l11 {
+    left: 352px;
+  }
+
+  .l12 {
+    left: 384px;
+  }
+
+  .l_a {
+    left: auto;
+  }
+
+  .l_f {
+    left: 100%;
+  }
+
+  .l005 {
+    left: 16px;
+  }
+
+  .l015 {
+    left: 48px;
+  }
+
+  .l025 {
+    left: 80px;
+  }
+
+  .b00 {
+    bottom: 0px;
+  }
+
+  .b01 {
+    bottom: 32px;
+  }
+
+  .b02 {
+    bottom: 64px;
+  }
+
+  .b03 {
+    bottom: 96px;
+  }
+
+  .b04 {
+    bottom: 128px;
+  }
+
+  .b05 {
+    bottom: 160px;
+  }
+
+  .b06 {
+    bottom: 192px;
+  }
+
+  .b07 {
+    bottom: 224px;
+  }
+
+  .b08 {
+    bottom: 256px;
+  }
+
+  .b09 {
+    bottom: 288px;
+  }
+
+  .b10 {
+    bottom: 320px;
+  }
+
+  .b11 {
+    bottom: 352px;
+  }
+
+  .b12 {
+    bottom: 384px;
+  }
+
+  .b_a {
+    bottom: auto;
+  }
+
+  .b_f {
+    bottom: 100%;
+  }
+
+  .b005 {
+    bottom: 16px;
+  }
+
+  .b015 {
+    bottom: 48px;
+  }
+
+  .b025 {
+    bottom: 80px;
+  }
+
+  .r00 {
+    right: 0px;
+  }
+
+  .r01 {
+    right: 32px;
+  }
+
+  .r02 {
+    right: 64px;
+  }
+
+  .r03 {
+    right: 96px;
+  }
+
+  .r04 {
+    right: 128px;
+  }
+
+  .r05 {
+    right: 160px;
+  }
+
+  .r06 {
+    right: 192px;
+  }
+
+  .r07 {
+    right: 224px;
+  }
+
+  .r08 {
+    right: 256px;
+  }
+
+  .r09 {
+    right: 288px;
+  }
+
+  .r10 {
+    right: 320px;
+  }
+
+  .r11 {
+    right: 352px;
+  }
+
+  .r12 {
+    right: 384px;
+  }
+
+  .r_a {
+    right: auto;
+  }
+
+  .r_f {
+    right: 100%;
+  }
+
+  .r005 {
+    right: 16px;
+  }
+
+  .r015 {
+    right: 48px;
+  }
+
+  .r025 {
+    right: 80px;
+  }
+
+  .w00 {
+    width: 0px;
+  }
+
+  .w01 {
+    width: 32px;
+  }
+
+  .w02 {
+    width: 64px;
+  }
+
+  .w03 {
+    width: 96px;
+  }
+
+  .w04 {
+    width: 128px;
+  }
+
+  .w05 {
+    width: 160px;
+  }
+
+  .w06 {
+    width: 192px;
+  }
+
+  .w07 {
+    width: 224px;
+  }
+
+  .w08 {
+    width: 256px;
+  }
+
+  .w09 {
+    width: 288px;
+  }
+
+  .w10 {
+    width: 320px;
+  }
+
+  .w11 {
+    width: 352px;
+  }
+
+  .w12 {
+    width: 384px;
+  }
+
+  .w_a {
+    width: auto;
+  }
+
+  .w_f {
+    width: 100%;
+  }
+
+  .w005 {
+    width: 16px;
+  }
+
+  .w015 {
+    width: 48px;
+  }
+
+  .w025 {
+    width: 80px;
+  }
+
+  .h00 {
+    height: 0px;
+  }
+
+  .h01 {
+    height: 32px;
+  }
+
+  .h02 {
+    height: 64px;
+  }
+
+  .h03 {
+    height: 96px;
+  }
+
+  .h04 {
+    height: 128px;
+  }
+
+  .h05 {
+    height: 160px;
+  }
+
+  .h06 {
+    height: 192px;
+  }
+
+  .h07 {
+    height: 224px;
+  }
+
+  .h08 {
+    height: 256px;
+  }
+
+  .h09 {
+    height: 288px;
+  }
+
+  .h10 {
+    height: 320px;
+  }
+
+  .h11 {
+    height: 352px;
+  }
+
+  .h12 {
+    height: 384px;
+  }
+
+  .h_a {
+    height: auto;
+  }
+
+  .h_f {
+    height: 100%;
+  }
+
+  .h005 {
+    height: 16px;
+  }
+
+  .h015 {
+    height: 48px;
+  }
+
+  .h025 {
+    height: 80px;
+  }
+
+  .pl8 {
+    padding-left: 4px;
+  }
+
+  .pl4 {
+    padding-left: 8px;
+  }
+
+  .pl2 {
+    padding-left: 16px;
+  }
+
+  .pr8 {
+    padding-right: 4px;
+  }
+
+  .pr4 {
+    padding-right: 8px;
+  }
+
+  .pr2 {
+    padding-right: 16px;
+  }
+
+  .pt8 {
+    padding-top: 4px;
+  }
+
+  .pt4 {
+    padding-top: 8px;
+  }
+
+  .pt2 {
+    padding-top: 16px;
+  }
+
+  .pb8 {
+    padding-bottom: 4px;
+  }
+
+  .pb4 {
+    padding-bottom: 8px;
+  }
+
+  .pb2 {
+    padding-bottom: 16px;
+  }
+
+  .ml8 {
+    margin-left: 4px;
+  }
+
+  .ml4 {
+    margin-left: 8px;
+  }
+
+  .ml2 {
+    margin-left: 16px;
+  }
+
+  .ml08 {
+    margin-left: 256px;
+  }
+
+  .mr8 {
+    margin-right: 4px;
+  }
+
+  .mr4 {
+    margin-right: 8px;
+  }
+
+  .mr2 {
+    margin-right: 16px;
+  }
+
+  .mr08 {
+    margin-right: 256px;
+  }
+
+  .mt8 {
+    margin-top: 4px;
+  }
+
+  .mt4 {
+    margin-top: 8px;
+  }
+
+  .mt2 {
+    margin-top: 16px;
+  }
+
+  .mt08 {
+    margin-top: 256px;
+  }
+
+  .mb8 {
+    margin-bottom: 4px;
+  }
+
+  .mb4 {
+    margin-bottom: 8px;
+  }
+
+  .mb2 {
+    margin-bottom: 16px;
+  }
+
+  .mb08 {
+    margin-bottom: 256px;
+  }
+}
+/* default size : ultra mode + x2 | monitor and apple and tv */
+.op00 {
+  opacity: 0.0;
+}
+
+.op01 {
+  opacity: 0.1;
+}
+
+.op02 {
+  opacity: 0.2;
+}
+
+.op03 {
+  opacity: 0.3;
+}
+
+.op04 {
+  opacity: 0.4;
+}
+
+.op05 {
+  opacity: 0.5;
+}
+
+.op06 {
+  opacity: 0.6;
+}
+
+.op07 {
+  opacity: 0.7;
+}
+
+.op08 {
+  opacity: 0.8;
+}
+
+.op09 {
+  opacity: 0.9;
+}
+
+.op10 {
+  opacity: 1.0;
+}
+
+.blue {
+  background-color: #0094ff;
+}
+
+.hblue:hover {
+  background-color: #0094ff;
+}
+
+.dblue {
+  background-color: #003956;
+}
+
+.hdblue:hover {
+  background-color: #003956;
+}
+
+.sblue {
+  background-color: #270045;
+}
+
+.hsblue:hover {
+  background-color: #270045;
+}
+
+.dark {
+  background-color: #000;
+}
+
+.hdark:hover {
+  background-color: #000;
+}
+
+.owf {
+  overflow: hidden;
+}
+
+.hdn {
+  display: none;
+}
+
+body, html, *, input, select, img {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI Light';
+  color: #808080;
+}
+
+hr {
+  opacity: 0.3;
+}
