@@ -1,0 +1,67 @@
+
+$name: 'fadein';
+
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.animated.hinge {
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+}
+
+$ts: 5s;
+$mode: linear;
+
+@mixin set_animate {
+    $p: $name;
+    $p2: $ts;
+    animation: $p $p2 $mode;
+    -webkit-animation: $p $p2 $mode;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@mixin anim_mix {
+}
+
+
+
+@mixin def_animate {
+    $p0: $name;
+
+    @-webkit-keyframes #{$p0} {
+        @include anim_mix;
+    }
+
+    @keyframes #{$p0} {
+        @include anim_mix;
+    }
+
+    .#{$p0} {
+        -webkit-animation-name: $p0;
+        animation-name: $p0;
+    }
+}
+
+
+
+@mixin anim_mix {
+    0% {
+        opacity: 0.0;
+    }
+
+    100% {
+        opacity: 1.0;
+    }
+}
+
+$name:  fadeIn;
+@include def_animate; 
+
+.fadeIn {
+    @include set_animate;
+}

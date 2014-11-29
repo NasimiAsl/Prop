@@ -62,7 +62,7 @@ var rad = 180. / PI;
 //  ver 1.0.01.003
 function dim(v, u) {
     return sqrt(pow(u.x - v.x) + pow(u.y - v.y) + pow(u.z - v.z));
-} 
+}
 function nrm(v) {
     var x = v.x, y = v.y, z = v.z;
     var n = sqrt(x * x + y * y + z * z);
@@ -74,13 +74,13 @@ function nrm(v) {
     v.z *= invN;
 
     return v;
-} 
+}
 function sub(v, u) {
     return { x: u.x - v.x, y: u.y - v.y, z: u.z - v.z };
-} 
+}
 function dot(v, u) {
     return { x: u.x * v.x, y: u.y * v.y, z: u.z * v.z };
-} 
+}
 function cross(v, u) {
 
     var vx = v.x, vy = v.y, vz = v.z, x = u.x, y = u.y, z = u.z;
@@ -91,13 +91,13 @@ function cross(v, u) {
     target.z = ((x * vy) - (y * vx));
 
     return target;
-} 
+}
 function not(v) {
     return { x: -1 * v.x, y: -1 * v.y, z: -1 * v.z };
-} 
+}
 function add(v, u) {
     return { x: u.x + v.x, y: u.y + v.y, z: u.z + v.z };
-} 
+}
 function rotate_xy(pr1, pr2, alpha) {
     pp2 = { x: pr2.x - pr1.x, y: pr2.y - pr1.y };
 
@@ -416,8 +416,10 @@ var prop = {
         perlin3d: function (x, y, z) { return noise.perlin2(x, y, z); },
 
     }, //  ver 1.0.01.002
-
+    $3d: {// ver 1.0.01.004
+        geos: [],
+        shaders: {}, // ver 1.0.01.005
+    }, 
 };
 
- 
- 
+

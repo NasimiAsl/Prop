@@ -125,14 +125,17 @@
     <Content Include="images\shapes\menu.svg" />
     <Content Include="images\shapes\panel.svg" />
     <Content Include="Index.html" />
+    <Content Include="scripts\prop\3d\BabylonJs.js" />
+    <Content Include="scripts\prop\3d\default_scene.js" />
+    <Content Include="scripts\prop\3d\engines\babylon.js" />
     <Content Include="scripts\prop\3d\Initializer.js" />
+    <Content Include="scripts\prop\3d\Shaders.js" />
     <Content Include="scripts\prop\base.js" />
     <Content Include="scripts\prop\loader.js" />
     <Content Include="scripts\velocity.js" />
     <Content Include="scripts\velocity.min.js" />
     <Content Include="scripts\velocity.ui.js" />
     <Content Include="scripts\velocity.ui.min.js" />
-    <Content Include="stylesheets\general\positions.css" />
     <Content Include="stylesheets\screen.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -143,7 +146,9 @@
     </Content>
     <Content Include="Views\Web.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="sass\general\_animations.scss" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>

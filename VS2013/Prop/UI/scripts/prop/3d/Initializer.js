@@ -1,4 +1,4 @@
-﻿if (!$3d)
+﻿if (!prop.$3d)
     throw 'Implement Error :look at the Interface.js or read documentation.';
 
 var camera, scene, renderer;
@@ -116,7 +116,7 @@ function renderInitialize() {
 
     };
 }
-$3d.init = renderInitialize();
+prop.$3d.init = renderInitialize();
 pointerLockElement = function () {
     return document.getElementById('pointerLockElement');
 

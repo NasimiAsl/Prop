@@ -6,21 +6,85 @@
     <link href="stylesheets/screen.css" rel="stylesheet" />
     <script src="scripts/prop/base.js"></script>
     <script src="scripts/prop/loader.js"></script>
+
+    <!--3d-->
+    <script src="/scripts/prop/3d/Initializer.js"></script> 
+    <script src="/scripts/prop/3d/engines/babylon.js"></script>
+    <script src="/scripts/prop/3d/BabylonJs.js"></script>
+
+    <!-- material and shaders -->
+    <script src="/scripts/prop/3d/Shaders.js"></script>
 </head>
 <body class="owf">
     <!-- fit screen dom -->
-    <div id="main" class="main ab w_f h_f owf dblue"> 
+    <div id="main" class="main ab w_f h_f owf dblue">
     </div>
     <!-- menu -->
     <div class="menu ab w_a h_a b00 r00 ">
         <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
-        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" /> 
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" />
     </div>
     <!-- popup content -->
     <div class="ab l04 t04 r04 b00 hdn"></div>
     <!-- initializer -->
     <script>
-        prop.loader.get('3d/babylonjs', function (d) { document.getElementById('main').innerHTML += d; });
+
+        perRender = function () {
+           
+            prop.$3d.geos[0].rotation.x += 0.04;
+            prop.$3d.geos[0].rotation.y += 0.062;
+            prop.$3d.geos[0].rotation.z += 0.0032;
+            prop.$3d.geos[1].rotation.x += 0.04;
+            prop.$3d.geos[1].rotation.y += 0.062;
+            prop.$3d.geos[1].rotation.z += 0.0032;
+
+            prop.$3d.geos[2].rotation.x += 0.014;
+            prop.$3d.geos[2].rotation.y -= 0.022;
+            prop.$3d.geos[2].rotation.z += 0.032;
+
+
+        }
+
+        prop.loader.get('3d/babylonjs', function (d) {
+            document.getElementById('main').innerHTML += d;
+
+            prop.$3d.init.viewport(document.getElementById('container'));
+
+            prop.$3d.init.scene();
+
+            prop.$3d.init.camera();
+
+            prop.$3d.init.light();
+
+            // init scene
+            prop.loader.get('3d/default_scene', function (d) {
+                
+            });
+
+            prop.$3d.geos.push(new BABYLON.Mesh.CreateTorus('dd', 15.0, 0.9, 100., scene));
+            prop.$3d.geos[0].material = new BABYLON.StandardMaterial('dd', scene);
+
+            prop.$3d.geos.push(new BABYLON.Mesh.CreateTorus('dd', 14.0, 0.6, 100., scene));
+            prop.$3d.geos[1].material = new BABYLON.StandardMaterial('dd', scene);
+            prop.$3d.geos[1].material.diffuseColor = new BABYLON.Color3(150, 100, 0);
+
+
+            prop.$3d.geos.push(new BABYLON.Mesh.CreateTorus('dd', 13.0, 0.4, 100., scene));
+            prop.$3d.geos[2].material = new BABYLON.StandardMaterial('dd', scene);
+            prop.$3d.geos[2].material.emissiveColor = new BABYLON.Color3(0, 0, 0);
+
+            prop.$3d.geos.push(new BABYLON.Mesh.CreateSphere('dd',100, 11.0, scene));
+            prop.$3d.geos[3].material = prop.$3d.shaders.phong.base({
+
+            });
+
+            refreshViewport = function () {
+                prop.$3d.init.refreshViewport();
+            }
+
+            prop.$3d.init.animate(); 
+
+        });
     </script>
     <!-- developer tools
          can remove in release version
