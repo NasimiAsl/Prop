@@ -59,6 +59,54 @@ var E = Math.E;
 var deg = PI / 180.;
 var rad = 180. / PI;
 
+//  ver 1.0.01.003
+function dim(v, u) {
+    return sqrt(pow(u.x - v.x) + pow(u.y - v.y) + pow(u.z - v.z));
+} 
+function nrm(v) {
+    var x = v.x, y = v.y, z = v.z;
+    var n = sqrt(x * x + y * y + z * z);
+
+
+    var invN = 1 / n;
+    v.x *= invN;
+    v.y *= invN;
+    v.z *= invN;
+
+    return v;
+} 
+function sub(v, u) {
+    return { x: u.x - v.x, y: u.y - v.y, z: u.z - v.z };
+} 
+function dot(v, u) {
+    return { x: u.x * v.x, y: u.y * v.y, z: u.z * v.z };
+} 
+function cross(v, u) {
+
+    var vx = v.x, vy = v.y, vz = v.z, x = u.x, y = u.y, z = u.z;
+    var target = { x: 0, y: 0, z: 0 };
+
+    target.x = ((y * vz) - (z * vy));
+    target.y = ((z * vx) - (x * vz));
+    target.z = ((x * vy) - (y * vx));
+
+    return target;
+} 
+function not(v) {
+    return { x: -1 * v.x, y: -1 * v.y, z: -1 * v.z };
+} 
+function add(v, u) {
+    return { x: u.x + v.x, y: u.y + v.y, z: u.z + v.z };
+} 
+function rotate_xy(pr1, pr2, alpha) {
+    pp2 = { x: pr2.x - pr1.x, y: pr2.y - pr1.y };
+
+    return {
+        x: pr1.x + pp2.x * cos(alpha) - pp2.y * sin(alpha),
+        y: pr1.y + pp2.x * sin(alpha) + pp2.y * cos(alpha)
+    };
+}
+
 // nooise
 
 (function (global) {
@@ -368,4 +416,8 @@ var prop = {
         perlin3d: function (x, y, z) { return noise.perlin2(x, y, z); },
 
     }, //  ver 1.0.01.002
+
 };
+
+ 
+ 
