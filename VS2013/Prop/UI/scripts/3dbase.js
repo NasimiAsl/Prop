@@ -1,0 +1,109 @@
+﻿
+
+var $3d = function (op) {
+    this.engine = def(op.engine, this.engine);
+}
+
+$3d.iLight = function (op) {
+};
+
+$3d.iLight.prototype = {
+    diffuse: 0x909090,
+    ground: 0x131313,
+    specular: 0x000000,
+    dir: { x: 0, y: 1, z: 0 }
+};
+
+$3d.iRenderer = function (op) {
+}
+
+$3d.iRenderer.prototype = {
+    container: null,
+    quality: 1
+};
+
+$3d.iCamera = function (op) {
+}
+
+$3d.iCamera.prototype = {
+    position: { x: 0, y: 0, z: -150 },
+    rotation: { x: 0, y: 0, z: 0 },
+    up: { x: 0, y: 1, z: 0 },
+    near: 0.0,
+    far: 500000.0,
+    fov: 0.5,
+    orthographic: false
+};
+
+$3d.iEngine = function (op) {
+    op = def(op, {});
+    op.canvas = def(op.canvas, null);
+
+    this.instance = {
+        scene: {},
+        cameras: { main: {} },
+        lights: { hemi: {}, dir: {} },
+        renderer: {},
+        canvas: null,
+        qualityMode: 1
+    },
+
+    this.instance.canvas = op.canvas;
+}
+
+$3d.iEngine.prototype = {
+    scene: { clearColor: 0x000000 },
+    cameras: { main: new $3d.iCamera() },
+    lights: { hemi: new $3d.iLight(), dir: new $3d.iLight() },
+    renderer: new $3d.iRenderer(),
+    postProcess: { /*!!! under construction*/ },
+    instance: {},
+    // delegates
+    onCreateScene: function (o) { throw 'non implementation scene.'; },
+    onCreateCamera: function (o) { throw 'non implementation Camera.'; },
+    onCreateLights: function (o) { throw 'non implementation Lights.'; },
+    onCreateRenderer: function (o) { throw 'non implementation Renderer.'; },
+    onCreatePostProcess: function (o) { },
+    onInitScene: function (l1) { },
+    onStartAnimation: function (o) {
+        this.onFrame();
+    },
+    render: function () {
+        this.instance.renderer.render(this.instance.scene, this.instance.cameras.main);
+    },
+    onFrame: function () {
+        requestAnimationFrame(this.onFrame);
+        this.onRequestFrame(o);
+        this.render();
+    },
+    onRequestFrame: function (o) { },
+    start: function (o) {
+        this.onCreateRenderer(o);
+        this.onCreateScene(o);
+        this.onCreateCamera(o);
+        this.onCreateLights(o);
+
+        this.onInitScene(this);
+
+        this.onStartAnimation(o);
+    }
+};
+
+$3d.iGeometry = function (op) {
+}
+$3d.iGeometry.prototype = {
+    faces: {},
+    positions: {},
+    normals: {},
+    uvs: {},
+
+    onRequestMesh: function (op) { },
+    onNormalize: function (op) { }
+}
+
+$3d.prototype = {
+    material: {},
+    geometry: {},
+    engine: new $3d.iEngine(),
+    controller: {}
+};

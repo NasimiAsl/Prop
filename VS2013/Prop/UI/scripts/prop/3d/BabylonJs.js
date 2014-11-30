@@ -3,7 +3,7 @@ var qualityMode = 1, canvas, meshes = [];
 
 initViewport = function (container, quality) {
 
-    if (!quality) quality = 7;
+    if (!quality) quality = 1;
 
     canvas = document.getElementById("renderCanvas");
     // canvas.style.backgroundColor = "#000000";
@@ -11,18 +11,16 @@ initViewport = function (container, quality) {
     qualityMode = quality;
     var q_state = " ... ";
     if (quality && (quality != 1 && quality < 22)) {
-
-
+         
         var ps = 1.7778;// 16 × 9 
         var W = document.body.offsetWidth;
-        //alert(W);
+         
         try {
 
             if (controls) {
                 ps = controls.width / controls.height;
                 W = controls.width;
-            }
-
+            } 
 
         } catch (e) { }
 

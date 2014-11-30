@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="stylesheets/screen.css" rel="stylesheet" />
+    <script src="scripts/prop/base.js"></script>
+    <script src="scripts/prop/loader.js"></script>
+
+    <!--3d-->
+    <script src="/scripts/prop/3d/Initializer.js"></script>
+    <script src="/scripts/prop/3d/engines/babylon.js"></script>
+    <script src="/scripts/prop/3d/BabylonJs.js"></script>
+
+    <!-- material and shaders -->
+    <script src="/scripts/prop/3d/Shaders.js"></script>
+</head>
+<body class="owf">
+    <!-- fit screen dom -->
+    <div id="main" class="main ab w_f h_f owf dblue">
+    </div>
+    <!-- menu -->
+    <div class="menu ab w_a h_a b00 r00 ">
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" />
+    </div>
+    <!-- popup content -->
+    <div class="ab l04 t04 r04 b00 hdn"></div>
+    <!-- initializer -->
+    <script>
+
+        perRender = function () { 
+        }
+
+        prop.loader.get('3d/babylonjs', function (d) {
+            document.getElementById('main').innerHTML += d;
+
+            prop.$3d.init.viewport(document.getElementById('container'));
+
+            prop.$3d.init.scene();
+
+            prop.$3d.init.camera();
+
+            prop.$3d.init.light();
+
+            // init scene
+            prop.loader.get('3d/default_scene', function (d) {
+                alert(1);
+
+            }, { postfix: '.js' });
+
+            //prop.$3d.geos.push(new BABYLON.Mesh.CreateTorus('dd', 15.0, 0.9, 100., scene));
+            //prop.$3d.geos[0].material = new BABYLON.StandardMaterial('dd', scene);
+
+            //prop.$3d.geos.push(new BABYLON.Mesh.CreateTorus('dd', 14.0, 0.6, 100., scene));
+            //prop.$3d.geos[1].material = new BABYLON.StandardMaterial('dd', scene);
+            //prop.$3d.geos[1].material.diffuseColor = new BABYLON.Color3(150, 100, 0);
+
+
+            //prop.$3d.geos.push(new BABYLON.Mesh.CreateTorus('dd', 13.0, 0.4, 100., scene));
+            //prop.$3d.geos[2].material = new BABYLON.StandardMaterial('dd', scene);
+            //prop.$3d.geos[2].material.emissiveColor = new BABYLON.Color3(0, 0, 0);
+
+            //prop.$3d.geos.push(new BABYLON.Mesh.CreateSphere('dd',100, 11.0, scene));
+            //prop.$3d.geos[3].material = prop.$3d.shaders.phong.base({
+
+            //});
+
+            refreshViewport = function () {
+                prop.$3d.init.refreshViewport();
+            }
+
+            prop.$3d.init.animate();
+
+        });
+    </script>
+    <!-- developer tools
+         can remove in release version
+         contents : status
+    -->
+    <div id="status" class="ab t01 l01 h06 op05 blue "></div>
+</body>
+</html>

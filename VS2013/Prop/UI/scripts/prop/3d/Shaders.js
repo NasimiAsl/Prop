@@ -47,6 +47,18 @@ var cs = function (p1, p2, p3, p4) {
         a: _cs(co.a),
     }
 }
+
+var cs256 = function (p1, p2, p3, p4) {
+    var co = c(p1, p2, p3, p4);
+
+    return {
+        r: _cs(co.r*256.),
+        g: _cs(co.g*256.),
+        b: _cs(co.b*256.),
+        a: _cs(co.a),
+    }
+}
+
 var Color = function (color) {
 
     if (arguments.length === 3) {
