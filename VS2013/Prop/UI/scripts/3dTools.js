@@ -160,6 +160,59 @@
 
         return exgeo;
     },
+
+    svg: {
+        getpoints: function (op) {
+
+            if (!def(op.path)) throw "not found any path";
+
+            op.push = def(op.push, function (result, point) {
+                result.push(point);
+            });
+
+            op.step = def(op.step, 0.5);
+
+            var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", op.path);
+
+            var len = path.getTotalLength();
+            var plen = 0.0
+            var s = path.getPointAtLength(0);
+
+
+            var p = s;
+            var c = path.getPointAtLength(op.step);
+            plen += op.step;
+
+            var result = [];
+            op.push(result, s);
+
+            for (var i = op.step * 2; i < len; i += op.step) {
+
+                var n = path.getPointAtLength(i);
+                plen += op.step;
+
+                var m1 = ((c.y - p.y) != 0 ? (c.x - p.x) / (c.y - p.y) : 'nan');
+                var m2 = ((n.y - c.y) != 0 ? (n.x - c.x) / (n.y - c.y) : 'nan');
+
+                if (m1 != m2) {
+                    if (i == op.step * 2)
+                        op.push(result, c);
+
+                    if (plen > def(op.min, 10.)) {
+                        op.push(result, n); plen =  0.0;
+                    }
+
+                }
+
+                p = c;
+                c = n;
+            }
+            op.push(result, path.getPointAtLength(len));
+
+            return result;
+        }
+    }
 }
 
 
@@ -174,3 +227,104 @@ $3d.sampleGeo = function (op) {
 
     return new $3d.geometryInstance($3d.tools.geometryBase(op, builder));
 }
+
+
+$3d.tools.wall = function (op) {
+    // pre : { p1,p2 }
+
+    op.d = def(op.d, 1.0);
+    op.h = def(op.h, 5.0);
+
+
+    var builder = function (p, geo) {
+
+
+        ag = function (a, b) {
+            return { x: (a.x + b.x) / 2.0, y: (a.y + b.y) / 2.0, z: (a.z + b.z) / 2.0 };
+        }
+
+        rt = function (a, b, c, u) {
+            if (!u) u = 1.0;
+            nn = nrm({ x: (a.z - b.z), y: 0.0, z: (a.x - b.x) });
+            return { x: c.x + nn.x * op.d * u, y: c.y, z: c.z - nn.z * op.d * u };
+        }
+
+
+        nxu = rt(p.n, p.n1, p.n);
+        nxd = rt(p.n, p.n1, p.n, -1.0);
+
+
+
+        if (p.n_1 != null && p.n_1 != undefined) {
+
+            npu = rt(p.n_1, p.n, p.n);
+            npd = rt(p.n_1, p.n, p.n, -1.0);
+
+            nxu = ag(nxu, npu);
+            nxd = ag(nxd, npd);
+        }
+        if (op.t) { nxu.y += op.t.y; nxd.y += op.t.y; }
+
+
+        nhu = { x: nxu.x, y: nxu.y + op.h, z: nxu.z };
+        nhd = { x: nxd.x, y: nxd.y + op.h, z: nxd.z };
+
+
+
+
+        if (op.front && op.front(p)) $3d.tools.face(geo, nxu, nxd, nhu, nhd, {});
+        if (op.back && op.back(p))
+            $3d.tools.face(geo, nxu, nxd, nhu, nhd, { flip: 1.0 });
+
+
+        if (op.start && (p.i == 0)) {
+            $3d.tools.face(geo, nxu, nxd, nhu, nhd, { flip: 1.0 });
+        }
+
+        if (op.end && (p.i == op.path.length - 2)) {
+            $3d.tools.face(geo, nxu, nxd, nhu, nhd, {});
+        }
+
+        if (op.smooth) {
+            var x = $3d.tools.push(geo, nxu, nxd, nhu, nhd);
+            nxu = x[0];
+            nxd = x[1];
+            nhu = x[2];
+            nhd = x[3];
+        }
+
+        if (p.fold && op.lr != null && op.lr != undefined && op.lr(p)) {
+
+            if (op.right) $3d.tools.face(geo, p.fold[1], nxd, p.fold[3], nhd, { flip: 1.0 });
+            if (op.left) $3d.tools.face(geo, nxu, p.fold[0], nhu, p.fold[2], { flip: 1.0 });
+
+            if (op.top) $3d.tools.face(geo, p.fold[2], p.fold[3], nhu, nhd, { flip: 1.0 });
+            if (op.bottom) $3d.tools.face(geo, nxu, nxd, p.fold[0], p.fold[1], { flip: 1.0 });
+        }
+
+        if (p.fs == null || p.fs == undefined)
+            p.fs = [nxu, nxd, nhu, nhd];
+
+        p.i++;
+
+        if (op.path.length > p.i + 1)
+            builder({ i: p.i, fold: [nxu, nxd, nhu, nhd], fs: p.fs, n_1: op.path[p.i - 1], n: op.path[p.i], n1: op.path[p.i + 1], bu: p.bu }, geo);
+        else if (op.closed && op.lr != null && op.lr != undefined && op.lr(p)) {
+
+            if (op.right) $3d.tools.face(geo, p.fs[1], nxd, p.fs[3], nhd, { flip: 0.0 });
+            if (op.left) $3d.tools.face(geo, nxu, p.fs[0], nhu, p.fs[2], { flip: 0.0 });
+
+            if (op.top) $3d.tools.face(geo, p.fs[2], p.fs[3], nhu, nhd, { flip: 0.0 });
+            if (op.bottom) $3d.tools.face(geo, nxu, nxd, p.fs[0], p.fs[1], { flip: 0.0 });
+        }
+    };
+
+    var geo = $3d.tools.geometryBase({ i: 0, n_1: (op.closed ? op.path[op.path.length - 1] : null), n: op.path[0], n1: op.path[1], bu: builder }, builder, op.exgeo);
+
+    if (op.buildGeo) {
+        return geo;
+    }
+
+    return new $3d.geometryInstance(geo);
+}
+

@@ -67,6 +67,7 @@ function nrm(v) {
     var x = v.x, y = v.y, z = v.z;
     var n = sqrt(x * x + y * y + z * z);
 
+    if (n == 0) return { x: 0.1, y: 0.1, z: 0.1 };
 
     var invN = 1 / n;
     v.x *= invN;

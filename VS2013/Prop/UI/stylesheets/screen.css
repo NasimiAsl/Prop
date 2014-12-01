@@ -674,8 +674,8 @@
 }
 
 .fadeIn {
-  animation: fadeIn 5s linear;
-  -webkit-animation: fadeIn 5s linear;
+  animation: fadeIn 2s linear;
+  -webkit-animation: fadeIn 2s linear;
   -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 }
