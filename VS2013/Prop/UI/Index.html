@@ -22,7 +22,7 @@
     <!-- fit screen dom -->
     <div id="main" class="main ab w_f h_f owf dblue">
     </div>
-    <canvas id='renderCanvas2' class="ab w06 h06 l02 t02 sblue"></canvas> 
+    <canvas id='renderCanvas2' class="ab w06 h06 l02 t02 sblue"></canvas>
     <!-- menu -->
     <div class="menu ab w_a h_a b00 r00 ">
         <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
@@ -56,15 +56,12 @@
 
             };
 
-            eng1.engine.onInitScene  = function () {
+            eng1.engine.onInitScene = function () {
 
-                addGeo(-30.0, 50, 0.1 , eng1,b);
-                addGeo(-15.0, 20, 0.1 ,  eng1,b);
-                addGeo(0.0, 5, 0.1 ,  eng1,b);
-                addGeo(15.0, 5, 0.5 ,  eng1,b);
-                addGeo(30.0, 2.5, 2.5,  eng1,b);
-                 
-            } 
+                addGeo(30.0, 2.5, 2.5, eng1, b);
+                addGeo2(15.0, eng1, b);
+
+            }
 
             eng1.engine.start();
 
@@ -77,7 +74,7 @@
                 var ca = [];
                 addGeo(15.0, 5, 2.5, eng2, ca);
                 ca[ca.length - 1].rotation.x += 90 * deg;
-                ca[ca.length - 1].material.diffuseColor = new BABYLON.Color3(255,0,0);
+                ca[ca.length - 1].material.diffuseColor = new BABYLON.Color3(255, 0, 0);
             }
             eng2.engine.start();
 
@@ -85,12 +82,12 @@
 
 
 
-        function addGeo(z2,min ,st , eng ,b ) {
+        function addGeo(z2, min, st, eng, b) {
 
-            var m = "M 14.142136,181.31218 12.121831,14.131932 160.61425,13.121779 c 0,0 20.70813,32.829958 -8.08122,31.314729 C 123.74369,42.921279 67.175144,10.091321 59.599,25.748686 52.022856,41.40605 64.144687,78.781694 47.47717,70.195398 30.809653,61.609101 28.284271,69.185245 33.84011,85.347686 c 5.555839,16.162444 4.04061,9.091373 4.04061,34.850264 0,25.75889 28.789348,46.46702 23.233509,12.12183 C 55.55839,97.974593 32.829958,77.266466 49.497475,81.812152 66.164992,86.357839 77.27667,86.357839 71.215754,70.700474 65.154839,55.04311 52.527932,30.294372 75.256365,40.900974 c 22.728432,10.606602 58.083775,12.626907 62.629455,27.779195 4.54569,15.152288 6.56599,40.406101 -11.61675,27.274119 -18.18275,-13.131983 -19.69798,-33.840111 -25.75889,-25.75889 -6.060917,8.08122 13.63706,23.233508 2.52538,30.304572 -11.111678,7.07107 -9.59645,-8.586292 -20.708128,-0.505072 -11.111678,8.081222 -16.16244,12.626902 -1.010152,21.718282 15.152288,9.09137 29.7995,19.69797 46.46702,6.06091 16.66751,-13.63706 34.85026,-11.11168 26.26396,-36.365489 -8.58629,-25.253813 -13.63706,-44.951788 5.05077,-27.779195 18.68782,17.172594 47.47717,35.355339 38.38579,52.022854 -9.09137,16.66752 9.09138,69.19545 -16.16244,42.93149 -25.25381,-26.26397 -23.73858,-40.40611 -32.32488,-19.69798 -8.5863,20.70813 -3.53553,60.10408 -23.73858,38.3858 -20.20306,-21.71828 -22.22336,-26.76904 -40.911182,-40.91118 -18.687823,-14.14214 -14.142136,-25.75889 -6.565992,7.57614 7.576144,33.33504 -63.63961,37.37565 -63.63961,37.37565 z";
+            var m = "M 14.142136,181.31218 12.121831,14.131932 160.61425,13.121779 C 25.862499,77.969213 262.37025,156.93826 14.142136,181.31218 z";
 
-            var pts = $3d.tools.svg.getpoints({ min:min , step:st , path: m,   push: function (r, n) { r.push({ x: n.x-100., y: z2, z: n.y-100. }); } });
-             
+            var pts = $3d.tools.svg.getpoints({ min: min, step: st, path: m, push: function (r, n) { r.push({ x: n.x - 100., y: z2, z: n.y - 100. }); } });
+
             b.push($3d.tools.wall({
                 path: pts,
                 left: function (p) { return true; },
@@ -100,7 +97,7 @@
                 lr: function (p) { return true; },
                 closed: true,
             }).toMesh(eng));
-            
+
             b[b.length - 1].scaling.x *= 0.3;
             b[b.length - 1].scaling.y *= 0.3;
             b[b.length - 1].scaling.z *= 0.3;
@@ -109,6 +106,46 @@
             b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng.engine.instance.scene);
 
         }
+        function addGeo2(z2, eng, b) {
+
+            var m = "M 14.142136,181.31218 12.121831,14.131932 160.61425,13.121779 C 25.862499,77.969213 262.37025,156.93826 14.142136,181.31218 z";
+
+            var pts = $3d.tools.svg.getPointes_ex({ path: m, push: function (r, n) { r.push({ x: n.x - 100., y: z2, z: n.y - 100. }); } });
+
+            pts[0].push({ x: 0.5, y: 0.5, z: 0.5 });
+
+            var b1 = $3d.tools.svg.extrudeShape_ex({
+                path: m, push: function (r, n) {r.push({ x: n.x - 100., y: n.z, z: n.y - 100. });}
+            }).toMesh(eng1);
+
+            b.push(b1);
+            b[b.length - 1].scaling.x *= 0.3;
+            b[b.length - 1].scaling.y *= 0.3;
+            b[b.length - 1].scaling.z *= 0.3;
+
+            b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng.engine.instance.scene);
+
+
+            b.push($3d.tools.wall({
+                path: pts[0],
+                left: function (p) { return true; },
+                right: function (p) { return true; },
+                top: function (p) { return true; },
+                bottom: function (p) { return true; },
+                lr: function (p) { return true; },
+                closed: true,
+            }).toMesh(eng));
+
+            b[b.length - 1].scaling.x *= 0.3;
+            b[b.length - 1].scaling.y *= 0.3;
+            b[b.length - 1].scaling.z *= 0.3;
+
+
+            b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng.engine.instance.scene);
+
+            b[b.length - 1].material.diffuseColor = new BABYLON.Color3(255, 255, 0);
+        }
+
     </script>
     <!-- developer tools
          can remove in release version

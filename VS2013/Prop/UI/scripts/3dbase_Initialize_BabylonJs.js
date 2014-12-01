@@ -3,7 +3,7 @@ function createBabylonJsEngine() {
     id++;
     var babylon = new $3d.iEngine();
     babylon.id = id;
-    babylon.scene = { clearColor: [0.,0.,0.,0.5] };
+    babylon.scene = { clearColor: [0., 0., 0., 0.5] };
     babylon.cameras = { main: new $3d.iCamera() };
     babylon.lights = { hemi: new $3d.iLight(), dir: new $3d.iLight() };
     babylon.renderer = new $3d.iRenderer();
@@ -120,7 +120,12 @@ function buildBabylonMesh(op) {
 
     var mesh = new BABYLON.Mesh('def', op.scene);
 
-    BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices, geo.normals);
+    geo.normals = def(geo.normals, [])
+    try {
+        BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices,  geo.normals );
+    } catch (e) {
+        alert(e);
+    }
 
     geo.applyToMesh(mesh, false);
 
