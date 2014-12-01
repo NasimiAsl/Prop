@@ -3,7 +3,7 @@ function createBabylonJsEngine() {
     id++;
     var babylon = new $3d.iEngine();
     babylon.id = id;
-    babylon.scene = { clearColor: 0x0d4a6f };
+    babylon.scene = { clearColor: [0.,0.,0.,0.5] };
     babylon.cameras = { main: new $3d.iCamera() };
     babylon.lights = { hemi: new $3d.iLight(), dir: new $3d.iLight() };
     babylon.renderer = new $3d.iRenderer();
@@ -84,6 +84,7 @@ function createBabylonJsEngine() {
     babylon.onStartAnimation = function () {
         var th = this;
         this.instance.renderer.runRenderLoop(function () {
+
             babylon.onRequestFrame();
             th.instance.scene.render();
         });
@@ -112,18 +113,27 @@ function fromBabylonGeometry(op, ref) {
     return ref;
 }
 
-function buildBabylonMesh(scene, geo) {
+// {geo,scene}
+function buildBabylonMesh(op) {
 
-    geo = toBabylonGeometry(geo);
+    var geo = toBabylonGeometry(op.geo);
 
-    var mesh = new BABYLON.Mesh('def', scene); 
+    var mesh = new BABYLON.Mesh('def', op.scene);
 
-    BABYLON.VertexData.ComputeNormals(geo.positions, geo.faces, geo.normals); 
+    BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices, geo.normals);
 
     geo.applyToMesh(mesh, false);
 
     return mesh;
 }
- 
+
+function createBabylonJsGeometry() {
+    var babylon = new $3d.iGeometry();
+    babylon.onRequestMesh = function (op) {
+        return buildBabylonMesh(op);
+    };
+    return babylon;
+}
+
 
 

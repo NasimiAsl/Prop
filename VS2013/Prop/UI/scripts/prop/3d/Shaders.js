@@ -21,6 +21,15 @@ prop.$3d.color = function (p1, p2, p3, p4) {
 
         return c;
     }
+    else if (p1.length >= 3) {
+        c.r = p1[0] * 1.0;
+        c.g = p1[1] * 1.0;
+        c.b = p1[2] * 1.0;
+        c.a = def(p1[3], 1.0) * 1.0;
+
+        return c;
+
+    }
     else {
         c.r = (p1 == null || p1 == undefined) ? 0 * 1.0 : p1 * 1.0;
         c.g = (p2 == null || p2 == undefined) ? 0 * 1.0 : p2 * 1.0;
@@ -52,9 +61,9 @@ var cs256 = function (p1, p2, p3, p4) {
     var co = c(p1, p2, p3, p4);
 
     return {
-        r: _cs(co.r*256.),
-        g: _cs(co.g*256.),
-        b: _cs(co.b*256.),
+        r: _cs(co.r * 256.),
+        g: _cs(co.g * 256.),
+        b: _cs(co.b * 256.),
         a: _cs(co.a),
     }
 }
@@ -782,7 +791,7 @@ prop.$3d.shaders = {
             var g = def(op.shadow, 1.0);
             var g2 = def(op.shadowPower, 1.0);
             var f = def(op.fresnel, 1.0);
-            var alpha = (a != 1.0 ? true : false); 
+            var alpha = (a != 1.0 ? true : false);
 
             return prop.$3d.shaders.shader({
                 alpha: alpha,
@@ -812,8 +821,8 @@ prop.$3d.shaders = {
                     'if(fresnelTerm-0.4 < 0.0 )fresnelTerm = 0.4;                                                    ',
                     'if(fresnelTerm-0.4 > 1.0 )fresnelTerm = 1.4;                                                    ',
                     'fresnelTerm =  (fresnelTerm*fresnelTerm*' + _cs(f) + ' );                                       ',
-                    'if(ndl <=0.0) result1 = vec4(color * (ndl*' + _cs(g) + '+' + _cs(g2) + ')+ (map)  + vec3(specComp/' + _cs(sp) + '+(fresnelTerm - 0.4)/(' + _cs(sp) + '+3.0)), ' +  _c.a + '+(specComp/' + _cs(sp) + ')+ (fresnelTerm-0.4)/(' + _cs(sp) + '+3.0));             ',
-                    'else result1 = vec4(color * (ndl*' + _cs(g) + '+' + _cs(g2) + ') + (map) + vec3(specComp/' + _cs(sp) + '+(fresnelTerm - 0.4)/(' + _cs(sp) + '+3.0)), ' +  _c.a + '+(specComp/' + _cs(sp) + ')+ (fresnelTerm-0.4)/(' + _cs(sp) + '+3.0));             ',
+                    'if(ndl <=0.0) result1 = vec4(color * (ndl*' + _cs(g) + '+' + _cs(g2) + ')+ (map)  + vec3(specComp/' + _cs(sp) + '+(fresnelTerm - 0.4)/(' + _cs(sp) + '+3.0)), ' + _c.a + '+(specComp/' + _cs(sp) + ')+ (fresnelTerm-0.4)/(' + _cs(sp) + '+3.0));             ',
+                    'else result1 = vec4(color * (ndl*' + _cs(g) + '+' + _cs(g2) + ') + (map) + vec3(specComp/' + _cs(sp) + '+(fresnelTerm - 0.4)/(' + _cs(sp) + '+3.0)), ' + _c.a + '+(specComp/' + _cs(sp) + ')+ (fresnelTerm-0.4)/(' + _cs(sp) + '+3.0));             ',
 
                 ].join('\n') + (op.shader.frg ? op.shader.frg : "")
             });
@@ -861,7 +870,7 @@ prop.$3d.shaders = {
             };
 
             return prop.$3d.shaders.phong.base(op);
-        } 
+        }
     }
 }
 

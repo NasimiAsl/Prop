@@ -2,6 +2,8 @@
 
 var $3d = function (op) {
     this.engine = def(op.engine, this.engine);
+    this.geometry = def(op.geometry, this.geometry);
+
 }
 
 $3d.iLight = function (op) {
@@ -52,7 +54,7 @@ $3d.iEngine = function (op) {
 }
 
 $3d.iEngine.prototype = {
-    scene: { clearColor: 0x000000 },
+    scene: { clearColor: 0x00000099 },
     cameras: { main: new $3d.iCamera() },
     lights: { hemi: new $3d.iLight(), dir: new $3d.iLight() },
     renderer: new $3d.iRenderer(),
@@ -85,6 +87,7 @@ $3d.iEngine.prototype = {
 
         this.onInitScene(this);
 
+        this.onCreatePostProcess(o);
         this.onStartAnimation(o);
     }
 };
@@ -92,18 +95,30 @@ $3d.iEngine.prototype = {
 $3d.iGeometry = function (op) {
 }
 $3d.iGeometry.prototype = {
-    faces: {},
-    positions: {},
-    normals: {},
-    uvs: {},
-
     onRequestMesh: function (op) { },
     onNormalize: function (op) { }
 }
 
+$3d.geometryInstance = function (op) { 
+    this.faces = op.faces;
+    this.positions = op.positions;
+    this.normals = op.normals;
+    this.uvs = op.uvs;
+}
+
+$3d.geometryInstance.prototype = {
+    faces: {},
+    positions: {},
+    normals: {},
+    uvs: {},
+    toMesh: function (eng) {
+        return eng.geometry.onRequestMesh({ scene: eng.engine.instance.scene, geo: this });
+    }
+}
+
 $3d.prototype = {
     material: {},
-    geometry: {},
+    geometry: new $3d.iGeometry(),
     engine: new $3d.iEngine(),
     controller: {}
 };

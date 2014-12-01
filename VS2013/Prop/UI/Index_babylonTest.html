@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="stylesheets/screen.css" rel="stylesheet" />
+    <script src="scripts/prop/base.js"></script>
+    <script src="scripts/prop/loader.js"></script>
+
+    <!--3d-->
+    <script src="/scripts/3dbase.js"></script>
+
+    <script src="/scripts/prop/3d/engines/babylon.js"></script>
+    <script src="/scripts/prop/3d/engines/three.js"></script>
+
+    <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
+
+    <script src="scripts/prop/3d/Shaders.js"></script>
+</head>
+<body class="owf">
+    <!-- fit screen dom -->
+    <div id="main" class="main ab w_f h_f owf dblue">
+    </div>
+    <!-- menu -->
+    <div class="menu ab w_a h_a b00 r00 ">
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" />
+    </div>
+    <!-- popup content -->
+    <div class="ab l04 t04 r04 b00 hdn"></div>
+    <!-- initializer -->
+    <script>
+        var eng1, eng2,b,b2;
+
+        prop.loader.get('3d/babylonjs', function (d) {
+            document.getElementById('main').innerHTML += d;
+
+             eng1 = new $3d({ engine: createBabylonJsEngine() });
+             eng1.engine.instance.canvas = document.getElementById('renderCanvas'); 
+             eng1.engine.onInitScene = function (l) {
+                 b2 = new BABYLON.Mesh.CreateBox('dsd', 20, l.instance.scene);
+                 b2.material = new BABYLON.StandardMaterial('dd', l.instance.scene);
+                 b2.material.ambientColor = new BABYLON.Color3(100., 100, 30); 
+                  
+             }
+             eng1.engine.onRequestFrame = function () {
+                 b2.rotation.x += 0.02;
+                 b2.rotation.y += 0.02;
+
+                 if (def(b)) {
+
+                     b.rotation.z += 0.02;
+                     b.rotation.y += 0.02;
+
+                 }
+
+             };
+              eng1.engine.start();  
+            
+           
+        });
+    </script>
+    <!-- developer tools
+         can remove in release version
+         contents : status
+    -->
+    <div id="status" class="ab t01 l01 h06 op05 blue "></div>
+</body>
+</html>

@@ -9,8 +9,12 @@
 
     <!--3d-->
     <script src="/scripts/3dbase.js"></script>
+
     <script src="/scripts/prop/3d/engines/babylon.js"></script>
+    <script src="/scripts/prop/3d/engines/three.js"></script>
+
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
+    <script src="/scripts/3dTools.js"></script>
 
     <script src="scripts/prop/3d/Shaders.js"></script>
 </head>
@@ -21,37 +25,64 @@
     <!-- menu -->
     <div class="menu ab w_a h_a b00 r00 ">
         <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
-        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" />
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" onclick="addGeo()" />
     </div>
     <!-- popup content -->
     <div class="ab l04 t04 r04 b00 hdn"></div>
     <!-- initializer -->
     <script>
-        var eng1, eng2,b,b2;
+        var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
 
         prop.loader.get('3d/babylonjs', function (d) {
             document.getElementById('main').innerHTML += d;
 
-             eng1 = new $3d({ engine: createBabylonJsEngine() });
-             eng1.engine.instance.canvas = document.getElementById('renderCanvas'); 
-             eng1.engine.onInitScene = function (l) {
-                 b2 = new BABYLON.Mesh.CreateBox('dsd', 20, l.instance.scene);
-                 b2.material = new BABYLON.StandardMaterial('dd', l.instance.scene);
-                 b2.material.ambientColor = new BABYLON.Color3(100., 0, 0);
+            eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry() });
 
-                 var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, l.instance.renderer, true);
-                 l.instance.cameras.main.attachPostProcess(postProcess);
-             }
-             eng1.engine.onRequestFrame = function () {
-                 b2.rotation.x += 0.02;
-                 b2.rotation.y += 0.02;
+            eng1.engine.instance.canvas = document.getElementById('renderCanvas');
 
-             }
-             eng1.engine.start();
-             
-            
-           
+            eng1.engine.onRequestFrame = function () {
+                if (def(b)) {
+                    for (var i = 0; i < b.length; i++) {
+                        b[i].rotation.x = ix - i*i/ 170.0;
+                        b[i].rotation.y = iy - i*i/ 190.0;
+                        b[i].rotation.z = iz - i*i/ 180.0;
+                    }
+
+                    ix += 0.041;
+                    iy += 0.06;
+                    iz += 0.013;
+                }
+
+            };
+            eng1.engine.start();
+
+
+            addtime();
+
         });
+        var k = 5.;
+
+        function addtime() {
+            addGeo();
+            if (k < 20.)
+                setTimeout(function () { addtime(); }, 200);
+        }
+
+
+        function addGeo() {
+            k += 0.1;
+            b.push($3d.sampleGeo({
+                p1: { x: -0.3, y: -0.3, z: k },
+                p2: { x: 0.3, y: -0.3, z: k },
+                p3: { x: -0.3, y: 0.3, z: k },
+                p4: { x: 0.3, y: 0.3, z: k }
+            }).toMesh(eng1));
+
+            b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng1.engine.instance.scene);
+            b[b.length - 1].material.diffuseColor = new BABYLON.Color3(255, 255, 255);
+            b[b.length - 1].material.alpha = 1.0 - (k / 15);
+            if (k > 10) b[b.length - 1].material.alpha *= 0.6;
+        }
     </script>
     <!-- developer tools
          can remove in release version
