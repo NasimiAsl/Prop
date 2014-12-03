@@ -628,6 +628,14 @@
   background-color: #000;
 }
 
+.white {
+  background-color: #fff;
+}
+
+.hwhite:hover {
+  background-color: #fff;
+}
+
 .owf {
   overflow: hidden;
 }

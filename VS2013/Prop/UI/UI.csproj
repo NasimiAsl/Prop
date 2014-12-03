@@ -131,6 +131,7 @@
     <Content Include="scripts\3dbase_Initialize_ThreeJs.js" />
     <Content Include="scripts\3dbase_Initialize_BabylonJs.js" />
     <Content Include="scripts\3dTools.js" />
+    <Content Include="scripts\Melyon\scene.js" />
     <Content Include="scripts\prop\3d\BabylonJs.js" />
     <Content Include="scripts\prop\3d\default_scene.js" />
     <Content Include="scripts\prop\3d\engines\babylon.js" />

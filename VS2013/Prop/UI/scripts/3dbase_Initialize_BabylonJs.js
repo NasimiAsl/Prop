@@ -121,11 +121,30 @@ function buildBabylonMesh(op) {
     var mesh = new BABYLON.Mesh('def', op.scene);
 
     geo.normals = def(geo.normals, [])
-    try {
-        BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices,  geo.normals );
-    } catch (e) {
-        alert(e);
-    }
+     try {
+         BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices, geo.normals);
+     } catch (e) {
+
+        for (index = 0; index < geo.indices.length  ; index += 3) {
+
+            try {
+                var a = { x: geo.positions[geo.indices[index]], y: geo.positions[geo.indices[index] + 1], z: geo.positions[geo.indices[index] + 2] };
+                var b = { x: geo.positions[geo.indices[index + 1]], y: geo.positions[geo.indices[index + 1] + 1], z: geo.positions[geo.indices[index + 1] + 2] };
+                var c = { x: geo.positions[geo.indices[index + 2]], y: geo.positions[geo.indices[index + 2] + 1], z: geo.positions[geo.indices[index + 2] + 2] };
+
+                var n = new vec3(a, b).pageNormal(a, b, c).normal();
+
+                geo.normals[index] = n.d.x;
+                geo.normals[index + 1] = n.d.y;
+                geo.normals[index + 2] = n.d.z;
+            }
+            catch (e) {
+                geo.normals[index] = 0;
+                geo.normals[index + 1] = 1;
+                geo.normals[index + 2] = 0;
+            }
+        }
+     }
 
     geo.applyToMesh(mesh, false);
 

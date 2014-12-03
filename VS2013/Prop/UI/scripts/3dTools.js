@@ -267,25 +267,24 @@
 
                 var poss = [];
 
-                for (var i = 0; i < shape3d.vertices.length; i++) {
+                for (var i = 0; i < shape3d.vertices.length / 2.0 ; i++) {
                     var np = [];
-                        op.push(np, shape3d.vertices[i]);
+                    op.push(np, shape3d.vertices[i], i);
+                    poss.push(np[np.length - 1].x);
+                    poss.push(np[np.length - 1].y);
+                    poss.push(np[np.length - 1].z);
 
-                        poss.push(np[np.length - 1].x);
-                        poss.push(np[np.length - 1].y);
-                        poss.push(np[np.length - 1].z);
-                    
+
                 }
 
                 var fc = [];
 
-                for (var i = 0; i < shape3d.faces.length; i++) {
-                    if (shape3d.faces[i].a < poss.length)
+                for (var i = 0; i < shape3d.faces.length / 2.0 - 2; i++) {
+                    if (shape3d.faces[i].a < poss.length && shape3d.faces[i].b < poss.length && shape3d.faces[i].c < poss.length) {
                         fc.push(shape3d.faces[i].a);
-                    if (shape3d.faces[i].b < poss.length)
                         fc.push(shape3d.faces[i].b);
-                    if (shape3d.faces[i].c < poss.length)
                         fc.push(shape3d.faces[i].c);
+                    }
                 }
 
                 geo = new $3d.geometryInstance({ faces: fc, positions: poss });
@@ -295,49 +294,6 @@
 
         },
 
-        extrudeShapes_ex: function (scene, svgObject, opms) {
-            var j, len1;
-            var path, simpleShapes, simpleShape, shape3d;
-
-            path = $d3g.transformSVGPath(svgObject);
-
-            simpleShapes = path.toShapes(true);
-            len1 = simpleShapes.length;
-            var meshes = new Array();
-            for (j = 0; j < len1; ++j) {
-                simpleShape = simpleShapes[j];
-                shape3d = simpleShape.extrude({
-                    amount: opms[j].h,
-                    bevelEnabled: false
-                });
-
-                shape3d.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-
-                if (opms[j].op) {
-
-                    if (opms[j].op.rx) { shape3d.applyMatrix(new THREE.Matrix4().makeRotationX(opms[j].op.rx)); }
-                    if (opms[j].op.ry) { shape3d.applyMatrix(new THREE.Matrix4().makeRotationY(opms[j].op.ry)); }
-                    if (opms[j].op.rz) { shape3d.applyMatrix(new THREE.Matrix4().makeRotationZ(opms[j].op.rz)); }
-                    if (opms[j].op.s) { shape3d.applyMatrix(new THREE.Matrix4().scale(opms[j].op.s)); }
-                    if (opms[j].op.t) { shape3d.applyMatrix(new THREE.Matrix4().makeTranslation(opms[j].op.t.x, opms[j].op.t.y, opms[j].op.t.z)); }
-
-                }
-                shape3d.computeFaceNormals();
-                assignUVs(shape3d);
-
-                var mesh = new THREE.Mesh(shape3d, opms[j].m);
-                mesh.position.y = opms[j].ps.y;
-                mesh.position.x -= 500 - opms[j].ps.x;
-                mesh.position.z -= 500 - opms[j].ps.z;
-
-
-                scene.add(mesh);
-
-                meshes.push(mesh);
-            }
-
-            return meshes;
-        },
     }
 }
 
@@ -354,8 +310,23 @@ $3d.sampleGeo = function (op) {
     return new $3d.geometryInstance($3d.tools.geometryBase(op, builder));
 }
 
+// path :points array ,d:wall deep ,h:height 
 $3d.tools.wall = function (op) {
     // pre : { p1,p2 }
+
+    op = def(op, {
+        d: 2,
+        h: 2,
+        path: [{ x: 10, y: 0, z: 10 }, { x: -10, y: 0, z: 10 }, { x: -10, y: 0, z: -10 }, { x: 10, y: 0, z: -10 }],
+        left: function (p) { return true; },
+        right: function (p) { return true; },
+        top: function (p) { return true; },
+        bottom: function (p) { return true; },
+        lr: function (p) { return true; },
+        closed: true,
+    });
+
+    op.path.push({ x: 0.1, y: 0.1, z: 0.1 });
 
     op.d = def(op.d, 1.0);
     op.h = def(op.h, 5.0);
@@ -452,6 +423,82 @@ $3d.tools.wall = function (op) {
 
     return new $3d.geometryInstance(geo);
 }
+
+//{ paths  }
+$3d.tools.surface = function (op) {
+
+    op = def(op, {});
+
+    if (def(op.paths) && op.paths.length < 2) throw 'surface need paths.at least 2 path needed ';
+
+    var process = function (pts1, pts2) {
+
+        var n = pts1.length;
+        var m = pts2.length;
+        var r = max(n, m);
+
+        var fy = function (i, n) {
+            var f = function (ix) { return ceil((ix + 1) * (n / r)) - 1; }
+            var f2 = function (ix) { return ceil(ix * (n / r)); }
+
+            var fn = f(n);
+            if (fn <= n) return f2(i);
+            else f(i);
+        }
+        var p = { p1: [], p2: [] };
+        for (var i = 1; i <= r; i++) {
+            p.p1.push(fy(i, n) - 1);
+            p.p2.push(fy(i, m) - 1);
+        }
+
+        return p;
+    }
+    var push = function (p, g) {
+        var inds = [];
+        for (var i = 0; i < p.length; i++) {
+            inds.push($3d.tools.push1(g, p[i]));
+        }
+        return inds;
+    };
+    var curlevel = 0;
+    var builder = function (re, geo) {
+
+        if (re.curlevel > op.paths.length - 2) return;
+
+        var helper = process(op.paths[re.curlevel], op.paths[re.curlevel + 1]);
+
+        // push
+        var i1 = [], i2 = [];
+        if (re.curlevel == 0) i1 = push(op.paths[re.curlevel], geo);
+        else i1 = re.preIndexs;
+        i2 = push(op.paths[++re.curlevel], geo);
+
+        // faces 
+
+        for (var i = 0; i < helper.p1.length - 1; i++) {
+
+            if (helper.p1[i] != helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
+                if (def(op.flip, false)) $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
+                else $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
+            }
+            else if (helper.p1[i] != helper.p1[i + 1] && helper.p2[i] == helper.p2[i + 1]) {
+                if (def(op.flip, false)) $3d.tools.face3(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], {});
+                else $3d.tools.face3(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], { flip: 1 });
+            }
+            else if (helper.p1[i] == helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
+                if (def(op.flip, false)) $3d.tools.face3(geo, i1[helper.p1[i]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
+                else $3d.tools.face3(geo, i1[helper.p1[i]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
+            }
+        }
+
+        re.preIndexs = i2;
+
+        builder(re, geo);
+    };
+
+    return new $3d.geometryInstance($3d.tools.geometryBase({ curlevel: 0 }, builder));
+}
+
 
 // extension
 

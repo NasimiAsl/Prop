@@ -47,6 +47,8 @@ var max = Math.max;
 var min = Math.min;
 var random = Math.random;
 
+// 
+
 function rd(min, max) {
     return (random()) * (max - min) + min;
 }
@@ -58,6 +60,8 @@ var E = Math.E;
 
 var deg = PI / 180.;
 var rad = 180. / PI;
+
+
 
 //  ver 1.0.01.003
 function dim(v, u) {
@@ -83,7 +87,6 @@ function dot(v, u) {
     return { x: u.x * v.x, y: u.y * v.y, z: u.z * v.z };
 }
 function cross(v, u) {
-
     var vx = v.x, vy = v.y, vz = v.z, x = u.x, y = u.y, z = u.z;
     var target = { x: 0, y: 0, z: 0 };
 
@@ -107,6 +110,50 @@ function rotate_xy(pr1, pr2, alpha) {
         y: pr1.y + pp2.x * sin(alpha) + pp2.y * cos(alpha)
     };
 }
+
+
+//{ p:point,d:direction }
+var vec3 = function (p1, p2, isDir) {
+    if (!def(p2) && !def(isDir)) {
+        this.p = { x: 0, y: 0, z: 0 };
+        this.d = p1;
+    }
+    if (isDir) {
+        this.p = p1;
+        this.d = p2;
+    } else {
+        this.p = p1;
+        this.d = sub(p2, p1);
+    }
+}
+
+vec3.prototype = {
+    p: { x: 0, y: 0, z: 0 },
+    d: { x: 0, y: 1, z: 0 },
+    // mode1 : [this, p1:vector]    mode2 : [p1:vector , p2:vector]  mode3 :[p1:point,p2:point,:p3point]
+    pageNormal: function (p1, p2, p3) {
+        if (!def(p2) && !def(p3)) {
+            return new vec3(this.p, cross(this.d, p1.d), true);
+        }
+
+        if (!def(p3)) {
+            return new vec3(p1.p, cross(p1.d, p2.d), true);
+        }
+
+        var v1 = new vec3(p1, p2);
+        var v2 = new vec3(p1, p3);
+
+        return new vec3(v1.p, cross(v1.d, v2.d),true);
+
+    },
+    normal: function () {
+        return new vec3(this.p, nrm(this.d), true);
+    }
+};
+
+
+
+
 
 // nooise
 
@@ -420,7 +467,7 @@ var prop = {
     $3d: {// ver 1.0.01.004
         geos: [],
         shaders: {}, // ver 1.0.01.005
-    }, 
+    },
 };
 
 

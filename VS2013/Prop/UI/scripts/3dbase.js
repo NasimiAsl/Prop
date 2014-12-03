@@ -28,7 +28,7 @@ $3d.iCamera = function (op) {
 }
 
 $3d.iCamera.prototype = {
-    position: { x: 0, y: 0, z: -150 },
+    position: { x: 0, y: 20, z: -150 },
     rotation: { x: 0, y: 0, z: 0 },
     up: { x: 0, y: 1, z: 0 },
     near: 0.0,
@@ -95,8 +95,7 @@ $3d.iEngine.prototype = {
 $3d.iGeometry = function (op) {
 }
 $3d.iGeometry.prototype = {
-    onRequestMesh: function (op) { },
-    onNormalize: function (op) { }
+    onRequestMesh: function (op) { }  
 }
 
 $3d.geometryInstance = function (op) { 
@@ -114,6 +113,13 @@ $3d.geometryInstance.prototype = {
     toMesh: function (eng) {
         return eng.geometry.onRequestMesh({ scene: eng.engine.instance.scene, geo: this });
     }
+}
+
+$3d.iController = function (op) {
+}
+
+$3d.iController.prototype = {
+    onRayCaster: function (op) { }, 
 }
 
 $3d.prototype = {

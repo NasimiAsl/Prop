@@ -21101,36 +21101,39 @@ var BABYLON;
            
             var facesNormals = [];
             for (index = 0; index < indices.length / 3; index++) {
-                var i1 = indices[index * 3];
-                var i2 = indices[index * 3 + 1];
-                var i3 = indices[index * 3 + 2];
+                try {
+                    var i1 = indices[index * 3];
+                    var i2 = indices[index * 3 + 1];
+                    var i3 = indices[index * 3 + 2];
 
-                var p1 = positionVectors[i1];
-                var p2 = positionVectors[i2];
-                var p3 = positionVectors[i3];
+                    var p1 = positionVectors[i1];
+                    var p2 = positionVectors[i2];
+                    var p3 = positionVectors[i3];
 
-                var p1p2 = p1.subtract(p2);
-                var p3p2 = p3.subtract(p2);
+                    var p1p2 = p1.subtract(p2);
+                    var p3p2 = p3.subtract(p2);
 
-                facesNormals[index] = BABYLON.Vector3.Normalize(BABYLON.Vector3.Cross(p1p2, p3p2));
-                facesOfVertices[i1].push(index);
-                facesOfVertices[i2].push(index);
-                facesOfVertices[i3].push(index);
+                    facesNormals[index] = BABYLON.Vector3.Normalize(BABYLON.Vector3.Cross(p1p2, p3p2));
+                    facesOfVertices[i1].push(index);
+                    facesOfVertices[i2].push(index);
+                    facesOfVertices[i3].push(index);
+                } catch (e) { }
             }
 
             for (index = 0; index < positionVectors.length; index++) {
-                var faces = facesOfVertices[index];
+                try{var faces = facesOfVertices[index];
 
-                var normal = BABYLON.Vector3.Zero();
-                for (var faceIndex = 0; faceIndex < faces.length; faceIndex++) {
-                    normal.addInPlace(facesNormals[faces[faceIndex]]);
-                }
+                    var normal = BABYLON.Vector3.Zero();
+                    for (var faceIndex = 0; faceIndex < faces.length; faceIndex++) {
+                        normal.addInPlace(facesNormals[faces[faceIndex]]);
+                    }
 
-                normal = BABYLON.Vector3.Normalize(normal.scale(1.0 / faces.length));
+                    normal = BABYLON.Vector3.Normalize(normal.scale(1.0 / faces.length));
 
-                normals[index * 3] = normal.x;
-                normals[index * 3 + 1] = normal.y;
-                normals[index * 3 + 2] = normal.z;
+                    normals[index * 3] = normal.x;
+                    normals[index * 3 + 1] = normal.y;
+                    normals[index * 3 + 2] = normal.z;
+                }catch(e){}
             }
         };
         return VertexData;
