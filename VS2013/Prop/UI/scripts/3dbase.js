@@ -53,8 +53,10 @@ $3d.iEngine = function (op) {
     this.instance.canvas = op.canvas;
 }
 
+
+
 $3d.iEngine.prototype = {
-    scene: { clearColor: 0x00000099 },
+    scene: { clearColor: 0x00000000 },
     cameras: { main: new $3d.iCamera() },
     lights: { hemi: new $3d.iLight(), dir: new $3d.iLight() },
     renderer: new $3d.iRenderer(),
@@ -95,10 +97,10 @@ $3d.iEngine.prototype = {
 $3d.iGeometry = function (op) {
 }
 $3d.iGeometry.prototype = {
-    onRequestMesh: function (op) { }  
+    onRequestMesh: function (op) { }
 }
 
-$3d.geometryInstance = function (op) { 
+$3d.geometryInstance = function (op) {
     this.faces = op.faces;
     this.positions = op.positions;
     this.normals = op.normals;
@@ -119,8 +121,25 @@ $3d.iController = function (op) {
 }
 
 $3d.iController.prototype = {
-    onRayCaster: function (op) { }, 
+    onRayCaster: function (op) { },
 }
+
+$3d.iMaterial = function (op) {
+}
+
+$3d.iMaterial.prototype = {
+    standard: {},
+    shader: {},
+    onCreateStandardMaterial: function (op) { },
+    onCreateShader: function (op) { },
+    build: function () {
+        if (this.shader)
+            return this.onCreateShader();
+        else
+            return this.onCreateStandardMaterial();
+    }
+};
+
 
 $3d.prototype = {
     material: {},

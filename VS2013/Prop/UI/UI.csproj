@@ -131,11 +131,13 @@
     <Content Include="scripts\3dbase_Initialize_ThreeJs.js" />
     <Content Include="scripts\3dbase_Initialize_BabylonJs.js" />
     <Content Include="scripts\3dTools.js" />
+    <Content Include="scripts\Jquery.js" />
     <Content Include="scripts\Melyon\scene.js" />
     <Content Include="scripts\prop\3d\BabylonJs.js" />
     <Content Include="scripts\prop\3d\default_scene.js" />
     <Content Include="scripts\prop\3d\engines\babylon.js" />
     <Content Include="scripts\prop\3d\engines\three.js" />
+    <Content Include="scripts\prop\3d\Events.js" />
     <Content Include="scripts\prop\3d\Initializer.js" />
     <Content Include="scripts\prop\3d\Shaders.js" />
     <Content Include="scripts\prop\base.js" />

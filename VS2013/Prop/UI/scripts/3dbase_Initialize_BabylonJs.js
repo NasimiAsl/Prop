@@ -3,7 +3,7 @@ function createBabylonJsEngine() {
     id++;
     var babylon = new $3d.iEngine();
     babylon.id = id;
-    babylon.scene = { clearColor: [0., 0., 0., 0.5] };
+    babylon.scene = { clearColor: [0., 0., 0., 0.0] };
     babylon.cameras = { main: new $3d.iCamera() };
     babylon.lights = { hemi: new $3d.iLight(), dir: new $3d.iLight() };
     babylon.renderer = new $3d.iRenderer();
@@ -20,7 +20,10 @@ function createBabylonJsEngine() {
     babylon.onCreateCamera = function (o) {
         // !!  build orthographic camera
         var pos = babylon.cameras.main.position;
-        babylon.instance.cameras.main = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);
+       // babylon.instance.cameras.main = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);
+        babylon.instance.cameras.main = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), babylon.instance.scene);;
+        babylon.instance.scene.activeCamera.attachControl(babylon.instance.canvas);
+
         babylon.instance.cameras.main.lowerRadiusLimit = 10;
         babylon.instance.cameras.main.minZ = babylon.cameras.main.near;
         babylon.instance.cameras.main.maxZ = babylon.cameras.main.far;

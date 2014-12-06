@@ -184,6 +184,13 @@
             var plen = 0.0
             var s = path.getPointAtLength(0);
 
+            op.density = def(op.density, [1]);
+
+            function getDencityMapStep(index) {
+                var ps = floor(op.density.length * (index / len));
+
+                return op.step / op.density[ps];
+            }
 
             var p = s;
             var c = path.getPointAtLength(op.step);
@@ -192,7 +199,7 @@
             var result = [];
             op.push(result, s);
 
-            for (var i = op.step * 2; i < len; i += op.step) {
+            for (var i = op.step * 2; i < len; i += getDencityMapStep(i)) {
 
                 var n = path.getPointAtLength(i);
                 plen += op.step;
@@ -200,7 +207,7 @@
                 var m1 = ((c.y - p.y) != 0 ? (c.x - p.x) / (c.y - p.y) : 'nan');
                 var m2 = ((n.y - c.y) != 0 ? (n.x - c.x) / (n.y - c.y) : 'nan');
 
-                if (m1 != m2) {
+                if (m1 != m2 || def(op.inLine,true)) {
                     if (i == op.step * 2)
                         op.push(result, c);
 
