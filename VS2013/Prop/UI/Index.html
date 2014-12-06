@@ -45,71 +45,81 @@
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
 
             eng1.engine.onRequestFrame = function () {
-                b[0].rotation.y += 0.5 * deg;
-                b[0].rotation.x += 0.4 * deg;
-                b[0].rotation.z += 0.2 * deg;
-                b[1].rotation.y += 0.5 * deg;
-                b[1].rotation.x += 0.4 * deg;
-                b[1].rotation.z += 0.2 * deg;
-                b[2].rotation.y += 0.5 * deg;
-                b[2].rotation.x += 0.4 * deg;
-                b[2].rotation.z += 0.2 * deg;
 
+                for (var i = 0; i < b.length; i++) {
+                    b[i].rotation.y += 0.5 * deg;
+                    b[i].rotation.x += 0.4 * deg;
+                    b[i].rotation.z += 0.2 * deg;
+                }
             };
+
+            function addGeo(paths, color, flip, w) {
+                b1 = $3d.tools.surface({
+                    paths: paths,
+                    flip: flip
+                });
+
+                b.push(b1.toMesh(eng1));
+
+                var vc = cs(color);
+
+                b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng1.engine.instance.scene);
+                b[b.length - 1].material.diffuseColor = new BABYLON.Color3(vc.r, vc.g, vc.b);
+                if (def(w)) {
+                    b[b.length - 1].material.wireframe = true;
+                    b[b.length - 1].material.alpha = 0.1;
+                    b[b.length - 1].material.needAlphaBlending = function () { return true; }
+                    b[b.length - 1].material.needAlphaTesting = function () { return true; }
+
+
+                }
+            }
 
             eng1.engine.onInitScene = function () {
 
-                b1 = $3d.tools.surface({
-                    paths: [
-                        [{ x: -2, y: 0, z: 3 }, { x: -1, y: 0, z: 3 }, { x: 0, y: 0, z: 3 }, { x: 1, y: 0, z: 3 }, { x: 2, y: 0, z: 3 }],
-                        [{ x: -5, y: 2, z: 0 }, { x: -4, y: 2, z: 0 }, { x: -3, y: 1, z: 0 }, { x: -2, y: 0, z: 0 }, { x: -1, y: 1, z: 0 }, { x: 0, y: 2, z: 0 }, { x: 1, y: 1, z: 0 }, { x: 2, y: 0, z: 0 }, { x: 3, y: 1, z: 0 }, ],
-                        [{ x: -5, y: 0, z: -3 }, { x: -2, y: 0, z: -3 }, { x: 2, y: 0, z: -3 }, ]
-                    ]
-                });
 
-                b.push(b1.toMesh(eng1));
-                b[b.length - 1].scaling.x *= 5.;
-                b[b.length - 1].scaling.y *= 5.;
-                b[b.length - 1].scaling.z *= 5.;
+                var paths = [
 
-                b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng1.engine.instance.scene);
+                     $3d.tools.svg.getPoints({
+                         pointLength: 30,
+                         push: function (r, n, i) { r.push({ x: n.x - 100, y: 0, z: n.y - 100 }); },
+                         path: 'm 68.571429,-12.142857 c 0,0 12.857143,31.428571 -7.857143,42.857143 C 40,42.142857 46.428571,41.428571 24.285714,67.857143 2.1428571,94.285714 0,98.571428 -20.714286,96.428571 -41.428571,94.285714 -41.428571,94.285714 -41.428571,94.285714'
+                     }),
 
-                b1 = $3d.tools.surface({
-                    paths: [
-                        [{ x: -2, y: 0, z: 3 }, { x: -1, y: 0, z: 3 }, { x: 0, y: 0, z: 3 }, { x: 1, y: 0, z: 3 }, { x: 2, y: 0, z: 3 }],
-                        [{ x: -5, y: 2, z: 0 }, { x: -4, y: 2, z: 0 }, { x: -3, y: 1, z: 0 }, { x: -2, y: 0, z: 0 }, { x: -1, y: 1, z: 0 }, { x: 0, y: 2, z: 0 }, { x: 1, y: 1, z: 0 }, { x: 2, y: 0, z: 0 }, { x: 3, y: 1, z: 0 }, ],
-                        [{ x: -5, y: 0, z: -3 }, { x: -2, y: 0, z: -3 }, { x: 2, y: 0, z: -3 }, ]
-                    ],
-                    flip: true
-                });
+                         $3d.tools.svg.getPoints({
+                             pointLength: 30,
+                             push: function (r, n, i) { r.push({ x: n.x - 100, y: 10, z: n.y - 100 }); },
+                             path: 'M 89.999996,-12.142858 C 142.88234,-35.600877 73.465127,55.828573 65,90 28.571505,97.648722 -58.328167,167.97038 -36.428572,110'
+                         }), 
+                         $3d.tools.svg.getPoints({
+                             pointLength: 60,
+                             push: function (r, n, i) { r.push({ x: n.x - 100, y: 32, z: n.y - 100 }); },
+                             path: 'm 77.857143,-33.571429 c 0,0 37.142857,-30 57.142857,-15.714286 C 155,-35 194.28571,-5.7142859 166.42857,21.428571 138.57143,48.571428 115.71429,35 115,61.428571 114.28571,87.857143 140,140.71429 65.714286,142.14286 -8.5714286,143.57143 18.571429,196.42857 -27.857143,190 -74.285714,183.57143 -95,177.85714 -83.571429,152.85714 c 11.428572,-25 22.142858,-53.571426 22.142858,-53.571426'
+                         }),
+                         $3d.tools.svg.getPoints({
+                             pointLength: 90,
+                             push: function (r, n, i) { r.push({ x: n.x - 100, y: 70, z: n.y - 100 }); },
+                             path: 'M 54.285714,-50.714286 C 54.285714,-50.714286 37.142857,-125 70,-110 c 32.85714,15 48.57143,-5.71429 87.14286,-17.14286 38.57143,-11.42857 59.28571,-10 52.85714,46.428574 -6.42857,56.428571 85.71429,104.285714 31.42857,129.285714 -54.28571,25 -83.57143,15.714286 -77.14286,48.571429 C 170.71429,130 233.57143,210 157.85714,200.71429 c -75.714283,-9.28572 -99.285711,15 -152.85714,55 -53.571429,40 -122.14286,25.71428 -129.28571,-14.28572 -7.14286,-40 -65.71429,-68.57143 -28.57143,-92.85714 37.14285,-24.28572 37.85714,-42.85714 38.57143,-72.857144 0.71428,-30 34.999996,-35 34.999996,-35'
+                         }),
 
-                b.push(b1.toMesh(eng1));
-                b[b.length - 1].scaling.x *= 5.;
-                b[b.length - 1].scaling.y *= 5.;
-                b[b.length - 1].scaling.z *= 5.;
+                         
+                         
+                    //  [{ x: 100, y: 0, z: 100 }],
+                   //,
 
-                b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng1.engine.instance.scene);
+                ];
 
-                b1 = $3d.tools.surface({
-                    paths: [
-                        [{ x: -2, y: 0, z: 3 }, { x: -1, y: 0, z: 3 }, { x: 0, y: 0, z: 3 }, { x: 1, y: 0, z: 3 }, { x: 2, y: 0, z: 3 }],
-                        [{ x: -5, y: 2, z: 0 }, { x: -4, y: 2, z: 0 }, { x: -3, y: 1, z: 0 }, { x: -2, y: 0, z: 0 }, { x: -1, y: 1, z: 0 }, { x: 0, y: 2, z: 0 }, { x: 1, y: 1, z: 0 }, { x: 2, y: 0, z: 0 }, { x: 3, y: 1, z: 0 }, ],
-                        [{ x: -5, y: 0, z: -3 }, { x: -2, y: 0, z: -3 }, { x: 2, y: 0, z: -3 }, ]
-                    ],
-                    flip: true
-                });
+                addGeo(paths, 0xff0000, true);
+                addGeo(paths, 0xff5500, false);
+                addGeo(paths, 0xffffff, true, true);
 
-                b.push(b1.toMesh(eng1));
-                b[b.length - 1].scaling.x *= 5.;
-                b[b.length - 1].scaling.y *= 5.;
-                b[b.length - 1].scaling.z *= 5.;
+                var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
 
-                b[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng1.engine.instance.scene);
-                b[b.length - 1].material.diffuseColor = new BABYLON.Color3(255, 0, 0);
-                b[b.length - 1].material.wireframe = true;
+                eng1.engine.instance.cameras.main.attachPostProcess(postProcess);
             }
 
             eng1.engine.start();
+
 
         });
     </script>

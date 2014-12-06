@@ -162,7 +162,7 @@
     },
 
     svg: {
-        getpoints: function (op) {
+        getPoints: function (op) {
 
             if (!def(op.path)) throw "not found any path";
 
@@ -176,6 +176,11 @@
             path.setAttribute("d", op.path);
 
             var len = path.getTotalLength();
+
+            if (def(op.pointLength)) {
+                op.min = len / op.pointLength;
+            }
+
             var plen = 0.0
             var s = path.getPointAtLength(0);
 
@@ -210,9 +215,15 @@
             }
             op.push(result, path.getPointAtLength(len));
 
-            return result;
+            var sr = [];
+
+            for (var i = def(op.start, 0) ; i < result.length - def(op.end, 0) ; i++) {
+                sr.push(result[i]);
+            }
+
+            return sr;
         },
-        getPointes_ex: function (op) {
+        getPoints_ex: function (op) {
             if (!def(op.path)) throw "not found any path";
 
             op.push = def(op.push, function (result, point) {
@@ -239,11 +250,18 @@
                 results[j] = new Array();
                 h = 0;
                 for (i = 0; i < shape3d.vertices.length / 2  ; i++) {
-                    op.push(results[j], { x: shape3d.vertices[i].x, y: shape3d.vertices[i].y });
+                    op.push(results[j], { x: shape3d.vertices[i].x, y: shape3d.vertices[i].y }, i);
                 }
             }
 
-            return results;
+            var sr = [];
+
+            for (var i = def(op.start, 0) ; i < result[0].length - def(op.end, 0) ; i++) {
+                sr.push(result[0][i]);
+            }
+
+            return sr;
+
         },
         extrudeShape_ex: function (op) {
             if (!def(op.path)) throw "not found any path";

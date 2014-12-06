@@ -28,7 +28,7 @@ $3d.iCamera = function (op) {
 }
 
 $3d.iCamera.prototype = {
-    position: { x: 0, y: 20, z: -150 },
+    position: { x: 0, y: 20, z: -1350 },
     rotation: { x: 0, y: 0, z: 0 },
     up: { x: 0, y: 1, z: 0 },
     near: 0.0,
