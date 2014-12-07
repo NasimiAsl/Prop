@@ -89,7 +89,7 @@ var melyon = {
             path: "m -21.213203,2.5151773 c 0,0 48.992398,13.6370597 53.538085,34.8502627 4.545686,21.213204 -1.010153,77.27667 3.030457,100.51018 4.04061,23.23351 20.708127,42.93148 41.921331,43.94163 21.213203,1.01016 49.49747,13.13199 50.00255,34.85027 0.50508,21.71828 0,21.2132 0,21.2132",
             inline: false,
             pointLength: 200.,
-            position: { x: 0, y: -0, z: 0 },
+            position: { x: 0, y: 1.5, z: 0 },
         },
         around: {
             mountion: [               
@@ -157,7 +157,7 @@ var melyon = {
         function addWall(path, scale, color, flip, w) {
             var b1 = $3d.tools.wall({
                 d: 3.6,
-                h: 2,
+                h: 0.3,
                 path: path,
                 flip: flip,
                 left: function (p) { return true; },
@@ -211,7 +211,7 @@ var melyon = {
 
         addGeo(paths, melyon.pattern.beachScale, 0x999999, false);
         //addGeo(paths, melyon.pattern.beachScale, 0xff5500, false);
-        //addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
+        addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
 
 
 
@@ -238,7 +238,7 @@ var melyon = {
 
         addGeo(paths, melyon.pattern.beachScale, 0x990000, true);
         //addGeo(paths, melyon.pattern.beachScale, 0xff5500, false);
-        //addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
+         addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
 
         //
 
@@ -261,12 +261,9 @@ var melyon = {
             }));
         }
 
-
-
        //addGeo(paths, melyon.pattern.beachScale, 0x999999, false);
          addGeo(paths, melyon.pattern.beachScale/8. , 0x112222, true);
-        // addGeo(paths, melyon.pattern.beachScale/3. , 0xffffff, true, true);
-
+         addGeo(paths, melyon.pattern.beachScale/8. , 0xffffff, true, true);
 
 
         ob = melyon.pattern.appShop_plan;
@@ -291,7 +288,7 @@ var melyon = {
 
         addGeo(paths, melyon.pattern.beachScale, 0x990000, true);
         //addGeo(paths, melyon.pattern.beachScale, 0xff5500, false);
-        //addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
+        addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
 
         ob = melyon.pattern.road;
         var points = (def(ob.points) ? ob.points : $3d.tools.svg.getPoints({

@@ -16,9 +16,11 @@
 
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
-    <script src="/scripts/3dMaterial.js"></script>
 
-    <script src="/scripts/Melyon/scene.js"></script> 
+
+    <script src="/scripts/Melyon/scene.js"></script>
+
+    <script src="scripts/prop/3d/Shaders.js"></script>
 
     <script src="scripts/prop/3d/Events.js"></script>
 </head>
@@ -58,14 +60,36 @@
 
                 var ms = $3d.tools.surface({
                     paths: [
-                        [vec(-100, 50, -100), vec(100, 50, -100)], 
-                        [vec(-100, 50, 100), vec(100, 50, 100)], 
+                        [vec(-100, 50, -100), vec(100, 50, -100)],
+                        [vec(-100, 0, 0), vec(100, 0, 0)],
+                        [vec(-100, 50, 100), vec(100, 50, 100)],
+                        [vec(-100, 150, 200), vec(100, 20, 200)],
+                        [vec(-100, 250, 300), vec(100, 10, 300)], 
                     ]
                 });
 
-                ms.toMesh($3d.mat.shaderSample(eng1), eng1);
+                ms.toMesh({ diffuse: 0xff0000, specularPower: 0.032, map: { diffuse: { path: 'lights.png' } } }, eng1);
 
-                 
+                var f = function (i) {
+                    i *= 3.;
+                    return vec(ms.positions[i], ms.positions[i + 1], ms.positions[i + 2]);
+                }
+
+                for (var i = 0; i < ms.faces.length; i += 3) {
+                    var a = f(ms.faces[i]);
+                    var b = f(ms.faces[i + 1]);
+                    var c = f(ms.faces[i + 2]);
+                
+                    var center = new face3(a, b, c).getCenter();
+                
+                    var p = new BABYLON.Mesh.CreateBox('dd', 1, eng1.get().scene);
+                    p.scaling.z *= 200;
+                    p.position = new BABYLON.Vector3(center.x, center.y, center.z);
+                    var vv = new face3(a, b, c).normal();
+                    var vc = add(center, vv);
+                    p.rotationQuaternion = lookAt(vc, center);
+                   
+                }
             }
 
             eng1.start();

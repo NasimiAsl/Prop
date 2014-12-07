@@ -111,6 +111,9 @@ function rotate_xy(pr1, pr2, alpha) {
     };
 }
 
+function vec(x, y, z) {
+    return { x: def(x, 0), y: def(y, 0), z: def(z, 0) };
+}
 
 //{ p:point,d:direction }
 var vec3 = function (p1, p2, isDir) {
@@ -143,7 +146,7 @@ vec3.prototype = {
         var v1 = new vec3(p1, p2);
         var v2 = new vec3(p1, p3);
 
-        return new vec3(v1.p, cross(v1.d, v2.d),true);
+        return new vec3(v1.p, cross(v1.d, v2.d), true);
 
     },
     normal: function () {
@@ -152,6 +155,294 @@ vec3.prototype = {
 };
 
 
+var face3 = function (p1, p2, p3) {
+    this.p1 = p1;
+    this.p2 = p2;
+    this.p3 = p3;
+}
+face3.prototype = {
+    p1: {}, p2: {}, p3: {},
+    getCenter: function () {
+        var v = add(add(this.p1, this.p2), this.p3);
+        return vec(v.x / 3., v.y / 3., v.z / 3.);
+    },
+    normal: function () {
+
+        var v1 = new vec3(this.p1, this.p2);
+        var v2 = new vec3(this.p1, this.p3);
+
+        var n = new vec3(v1.p, cross(v1.d, v2.d), true).normal();
+
+       
+        return vec(n.d.x, n.d.y, n.d.z);
+    }
+};
+
+var qt = (function () {
+    function qt(x, y, z, w) {
+        if (typeof x === "undefined") { x = 0; }
+        if (typeof y === "undefined") { y = 0; }
+        if (typeof z === "undefined") { z = 0; }
+        if (typeof w === "undefined") { w = 1; }
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+    }
+    qt.prototype.toString = function () {
+        return "{X: " + this.x + " Y:" + this.y + " Z:" + this.z + " W:" + this.w + "}";
+    };
+
+    qt.prototype.asArray = function () {
+        return [this.x, this.y, this.z, this.w];
+    };
+
+    qt.prototype.equals = function (otherQuaternion) {
+        return otherQuaternion && this.x === otherQuaternion.x && this.y === otherQuaternion.y && this.z === otherQuaternion.z && this.w === otherQuaternion.w;
+    };
+
+    qt.prototype.clone = function () {
+        return new qt(this.x, this.y, this.z, this.w);
+    };
+
+    qt.prototype.copyFrom = function (other) {
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
+        this.w = other.w;
+    };
+
+    qt.prototype.add = function (other) {
+        return new qt(this.x + other.x, this.y + other.y, this.z + other.z, this.w + other.w);
+    };
+
+    qt.prototype.subtract = function (other) {
+        return new qt(this.x - other.x, this.y - other.y, this.z - other.z, this.w - other.w);
+    };
+
+    qt.prototype.scale = function (value) {
+        return new qt(this.x * value, this.y * value, this.z * value, this.w * value);
+    };
+
+    qt.prototype.multiply = function (q1) {
+        var result = new qt(0, 0, 0, 1.0);
+
+        this.multiplyToRef(q1, result);
+
+        return result;
+    };
+
+    qt.prototype.multiplyToRef = function (q1, result) {
+        result.x = this.x * q1.w + this.y * q1.z - this.z * q1.y + this.w * q1.x;
+        result.y = -this.x * q1.z + this.y * q1.w + this.z * q1.x + this.w * q1.y;
+        result.z = this.x * q1.y - this.y * q1.x + this.z * q1.w + this.w * q1.z;
+        result.w = -this.x * q1.x - this.y * q1.y - this.z * q1.z + this.w * q1.w;
+    };
+
+    qt.prototype.length = function () {
+        return Math.sqrt((this.x * this.x) + (this.y * this.y) + (this.z * this.z) + (this.w * this.w));
+    };
+
+    qt.prototype.normalize = function () {
+        var length = 1.0 / this.length();
+        this.x *= length;
+        this.y *= length;
+        this.z *= length;
+        this.w *= length;
+    };
+
+    qt.prototype.toEulerAngles = function () {
+        var qx = this.x;
+        var qy = this.y;
+        var qz = this.z;
+        var qw = this.w;
+
+        var sqx = qx * qx;
+        var sqy = qy * qy;
+        var sqz = qz * qz;
+
+        var yaw = Math.atan2(2.0 * (qy * qw - qx * qz), 1.0 - 2.0 * (sqy + sqz));
+        var pitch = Math.asin(2.0 * (qx * qy + qz * qw));
+        var roll = Math.atan2(2.0 * (qx * qw - qy * qz), 1.0 - 2.0 * (sqx + sqz));
+
+        var gimbaLockTest = qx * qy + qz * qw;
+        if (gimbaLockTest > 0.499) {
+            yaw = 2.0 * Math.atan2(qx, qw);
+            roll = 0;
+        } else if (gimbaLockTest < -0.499) {
+            yaw = -2.0 * Math.atan2(qx, qw);
+            roll = 0;
+        }
+
+        return new Vector3(pitch, yaw, roll);
+    };
+
+    qt.prototype.toRotationMatrix = function (result) {
+        var xx = this.x * this.x;
+        var yy = this.y * this.y;
+        var zz = this.z * this.z;
+        var xy = this.x * this.y;
+        var zw = this.z * this.w;
+        var zx = this.z * this.x;
+        var yw = this.y * this.w;
+        var yz = this.y * this.z;
+        var xw = this.x * this.w;
+
+        result.m[0] = 1.0 - (2.0 * (yy + zz));
+        result.m[1] = 2.0 * (xy + zw);
+        result.m[2] = 2.0 * (zx - yw);
+        result.m[3] = 0;
+        result.m[4] = 2.0 * (xy - zw);
+        result.m[5] = 1.0 - (2.0 * (zz + xx));
+        result.m[6] = 2.0 * (yz + xw);
+        result.m[7] = 0;
+        result.m[8] = 2.0 * (zx + yw);
+        result.m[9] = 2.0 * (yz - xw);
+        result.m[10] = 1.0 - (2.0 * (yy + xx));
+        result.m[11] = 0;
+        result.m[12] = 0;
+        result.m[13] = 0;
+        result.m[14] = 0;
+        result.m[15] = 1.0;
+    };
+
+    qt.prototype.fromRotationMatrix = function (matrix) {
+        var data = matrix.m;
+        var m11 = data[0], m12 = data[4], m13 = data[8];
+        var m21 = data[1], m22 = data[5], m23 = data[9];
+        var m31 = data[2], m32 = data[6], m33 = data[10];
+        var trace = m11 + m22 + m33;
+        var s;
+
+        if (trace > 0) {
+            s = 0.5 / Math.sqrt(trace + 1.0);
+
+            this.w = 0.25 / s;
+            this.x = (m32 - m23) * s;
+            this.y = (m13 - m31) * s;
+            this.z = (m21 - m12) * s;
+
+            return;
+        }
+
+        if (m11 > m22 && m11 > m33) {
+            s = 2.0 * Math.sqrt(1.0 + m11 - m22 - m33);
+
+            this.w = (m32 - m23) / s;
+            this.x = 0.25 * s;
+            this.y = (m12 + m21) / s;
+            this.z = (m13 + m31) / s;
+
+            return;
+        }
+
+        if (m22 > m33) {
+            s = 2.0 * Math.sqrt(1.0 + m22 - m11 - m33);
+
+            this.w = (m13 - m31) / s;
+            this.x = (m12 + m21) / s;
+            this.y = 0.25 * s;
+            this.z = (m23 + m32) / s;
+
+            return;
+        }
+
+        s = 2.0 * Math.sqrt(1.0 + m33 - m11 - m22);
+
+        this.w = (m21 - m12) / s;
+        this.x = (m13 + m31) / s;
+        this.y = (m23 + m32) / s;
+        this.z = 0.25 * s;
+    };
+
+
+    qt.RotationAxis = function (axis, angle) {
+        var result = new qt();
+        var sin = Math.sin(angle / 2);
+
+        result.w = Math.cos(angle / 2);
+        result.x = axis.x * sin;
+        result.y = axis.y * sin;
+        result.z = axis.z * sin;
+
+        return result;
+    };
+
+    qt.FromArray = function (array, offset) {
+        if (!offset) {
+            offset = 0;
+        }
+
+        return new qt(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
+    };
+
+    qt.RotationYawPitchRoll = function (yaw, pitch, roll) {
+        var result = new qt();
+
+        qt.RotationYawPitchRollToRef(yaw, pitch, roll, result);
+
+        return result;
+    };
+
+    qt.RotationYawPitchRollToRef = function (yaw, pitch, roll, result) {
+        var halfRoll = roll * 0.5;
+        var halfPitch = pitch * 0.5;
+        var halfYaw = yaw * 0.5;
+
+        var sinRoll = Math.sin(halfRoll);
+        var cosRoll = Math.cos(halfRoll);
+        var sinPitch = Math.sin(halfPitch);
+        var cosPitch = Math.cos(halfPitch);
+        var sinYaw = Math.sin(halfYaw);
+        var cosYaw = Math.cos(halfYaw);
+
+        result.x = (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll);
+        result.y = (sinYaw * cosPitch * cosRoll) - (cosYaw * sinPitch * sinRoll);
+        result.z = (cosYaw * cosPitch * sinRoll) - (sinYaw * sinPitch * cosRoll);
+        result.w = (cosYaw * cosPitch * cosRoll) + (sinYaw * sinPitch * sinRoll);
+    };
+
+    qt.Slerp = function (left, right, amount) {
+        var num2;
+        var num3;
+        var num = amount;
+        var num4 = (((left.x * right.x) + (left.y * right.y)) + (left.z * right.z)) + (left.w * right.w);
+        var flag = false;
+
+        if (num4 < 0) {
+            flag = true;
+            num4 = -num4;
+        }
+
+        if (num4 > 0.999999) {
+            num3 = 1 - num;
+            num2 = flag ? -num : num;
+        } else {
+            var num5 = Math.acos(num4);
+            var num6 = (1.0 / Math.sin(num5));
+            num3 = (Math.sin((1.0 - num) * num5)) * num6;
+            num2 = flag ? ((-Math.sin(num * num5)) * num6) : ((Math.sin(num * num5)) * num6);
+        }
+
+        return new qt((num3 * left.x) + (num2 * right.x), (num3 * left.y) + (num2 * right.y), (num3 * left.z) + (num2 * right.z), (num3 * left.w) + (num2 * right.w));
+    };
+    return qt;
+})();
+lookAt = function (targetPoint, position, yawCor, pitchCor, rollCor) {
+     
+
+    yawCor = yawCor || 0;
+    pitchCor = pitchCor || 0;
+    rollCor = rollCor || 0;
+
+    var dv = sub( targetPoint ,position);
+    var yaw = -Math.atan2(dv.z, dv.x) - Math.PI / 2;
+    var len = Math.sqrt(dv.x * dv.x + dv.z * dv.z);
+    var pitch = Math.atan2(dv.y, len);
+    return qt.RotationYawPitchRoll(yaw + yawCor, pitch + pitchCor, rollCor);
+};
+ 
+ 
 
 
 

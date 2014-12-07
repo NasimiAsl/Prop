@@ -142,7 +142,7 @@
         return [op.p1Ind, op.p2Ind, op.p3Ind, op.p4Ind];
     },
 
-    geometryBase: function (firstp, builder, exgeo) {
+    geometryBase: function (firstp, builder, exgeo, custom) {
         var geo = {
             faces: [],
             vertices: [],
@@ -157,6 +157,11 @@
         if (builder) {
             builder(firstp, exgeo);
         }
+
+        if (custom) {
+            exgeo = custom(exgeo);
+        }
+
 
         return exgeo;
     },
@@ -207,7 +212,7 @@
                 var m1 = ((c.y - p.y) != 0 ? (c.x - p.x) / (c.y - p.y) : 'nan');
                 var m2 = ((n.y - c.y) != 0 ? (n.x - c.x) / (n.y - c.y) : 'nan');
 
-                if (m1 != m2 || def(op.inLine,true)) {
+                if (m1 != m2 || def(op.inLine, true)) {
                     if (i == op.step * 2)
                         op.push(result, c);
 
@@ -332,7 +337,7 @@ $3d.sampleGeo = function (op) {
         $3d.tools.face(geo, pre.p1, pre.p2, pre.p3, pre.p4, { flip: 1 });
     };
 
-    return new $3d.geometryInstance($3d.tools.geometryBase(op, builder));
+    return new $3d.geometryInstance($3d.tools.geometryBase(op, builder, op.custom));
 }
 
 // path :points array ,d:wall deep ,h:height 
@@ -440,7 +445,7 @@ $3d.tools.wall = function (op) {
         }
     };
 
-    var geo = $3d.tools.geometryBase({ i: 0, n_1: (op.closed ? op.path[op.path.length - 1] : null), n: op.path[0], n1: op.path[1], bu: builder }, builder, op.exgeo);
+    var geo = $3d.tools.geometryBase({ i: 0, n_1: (op.closed ? op.path[op.path.length - 1] : null), n: op.path[0], n1: op.path[1], bu: builder }, builder, op.exgeo, op.custom);
 
     if (op.buildGeo) {
         return geo;
@@ -521,7 +526,13 @@ $3d.tools.surface = function (op) {
         builder(re, geo);
     };
 
-    return new $3d.geometryInstance($3d.tools.geometryBase({ curlevel: 0 }, builder));
+    var geo = $3d.tools.geometryBase({ curlevel: 0 }, builder, op.exgeo, op.custom);
+
+    if (op.buildGeo) {
+        return geo;
+    }
+
+    return new $3d.geometryInstance(geo);
 }
 
 

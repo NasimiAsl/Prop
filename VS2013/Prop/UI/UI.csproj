@@ -124,12 +124,15 @@
     <Content Include="Global.asax" />
     <Content Include="images\shapes\menu.svg" />
     <Content Include="images\shapes\panel.svg" />
+    <Content Include="Index_faceNormal.html" />
+    <Content Include="Index-scene.html" />
     <Content Include="Index_babylonTest.html" />
     <Content Include="Index.html" />
     <Content Include="Index_oldEngin.html" />
     <Content Include="scripts\3dbase.js" />
     <Content Include="scripts\3dbase_Initialize_ThreeJs.js" />
     <Content Include="scripts\3dbase_Initialize_BabylonJs.js" />
+    <Content Include="scripts\3dMaterial.js" />
     <Content Include="scripts\3dTools.js" />
     <Content Include="scripts\Jquery.js" />
     <Content Include="scripts\Melyon\scene.js" />
@@ -171,6 +174,9 @@
     <Content Include="sass\general\_material.scss" />
     <Content Include="sass\general\_positions.scss" />
     <Content Include="sass\screen.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="images\textures\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

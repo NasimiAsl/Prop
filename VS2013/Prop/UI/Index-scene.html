@@ -16,9 +16,11 @@
 
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
-    <script src="/scripts/3dMaterial.js"></script>
 
-    <script src="/scripts/Melyon/scene.js"></script> 
+
+    <script src="/scripts/Melyon/scene.js"></script>
+
+    <script src="scripts/prop/3d/Shaders.js"></script>
 
     <script src="scripts/prop/3d/Events.js"></script>
 </head>
@@ -37,38 +39,36 @@
     <!-- initializer -->
     <script>
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
-
+       
         prop.loader.get('3d/babylonjs', function (d) {
             document.getElementById('main').innerHTML += d;
 
-            eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
+            eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry() });
 
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
 
             eng1.engine.onRequestFrame = function () {
 
                 for (var i = 0; i < b.length; i++) {
-                    //b[i].rotation.y += 0.5 * deg;
-                    //b[i].rotation.x += 0.4 * deg;
-                    //b[i].rotation.z += 0.2 * deg;
+                   //b[i].rotation.y += 0.5 * deg;
+                   //b[i].rotation.x += 0.4 * deg;
+                   //b[i].rotation.z += 0.2 * deg;
                 }
             };
+ 
 
             eng1.engine.onInitScene = function () {
 
-                var ms = $3d.tools.surface({
-                    paths: [
-                        [vec(-100, 50, -100), vec(100, 50, -100)], 
-                        [vec(-100, 50, 100), vec(100, 50, 100)], 
-                    ]
-                });
+                melyon.initBeach(eng1, b);
 
-                ms.toMesh($3d.mat.shaderSample(eng1), eng1);
+                //var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
+                //var postProcess2 = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
 
-                 
+                //eng1.engine.instance.cameras.main.attachPostProcess(postProcess);
+                //eng1.engine.instance.cameras.main.attachPostProcess(postProcess2);
             }
 
-            eng1.start();
+            eng1.engine.start();
 
 
         });

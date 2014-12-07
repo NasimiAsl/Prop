@@ -20,7 +20,7 @@ function createBabylonJsEngine() {
     babylon.onCreateCamera = function (o) {
         // !!  build orthographic camera
         var pos = babylon.cameras.main.position;
-       // babylon.instance.cameras.main = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);
+        // babylon.instance.cameras.main = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);
         babylon.instance.cameras.main = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), babylon.instance.scene);;
         babylon.instance.scene.activeCamera.attachControl(babylon.instance.canvas);
 
@@ -124,30 +124,30 @@ function buildBabylonMesh(op) {
     var mesh = new BABYLON.Mesh('def', op.scene);
 
     geo.normals = def(geo.normals, [])
-     try {
-         BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices, geo.normals);
-     } catch (e) {
+    try {
+        BABYLON.VertexData.ComputeNormals(geo.positions, geo.indices, geo.normals);
+    } catch (e) {
 
-        for (index = 0; index < geo.indices.length  ; index += 3) {
+        //for (index = 0; index < geo.indices.length  ; index += 3) {
 
-            try {
-                var a = { x: geo.positions[geo.indices[index]], y: geo.positions[geo.indices[index] + 1], z: geo.positions[geo.indices[index] + 2] };
-                var b = { x: geo.positions[geo.indices[index + 1]], y: geo.positions[geo.indices[index + 1] + 1], z: geo.positions[geo.indices[index + 1] + 2] };
-                var c = { x: geo.positions[geo.indices[index + 2]], y: geo.positions[geo.indices[index + 2] + 1], z: geo.positions[geo.indices[index + 2] + 2] };
+        //    try {
+        //        var a = { x: geo.positions[geo.indices[index]], y: geo.positions[geo.indices[index] + 1], z: geo.positions[geo.indices[index] + 2] };
+        //        var b = { x: geo.positions[geo.indices[index + 1]], y: geo.positions[geo.indices[index + 1] + 1], z: geo.positions[geo.indices[index + 1] + 2] };
+        //        var c = { x: geo.positions[geo.indices[index + 2]], y: geo.positions[geo.indices[index + 2] + 1], z: geo.positions[geo.indices[index + 2] + 2] };
 
-                var n = new vec3(a, b).pageNormal(a, b, c).normal();
+        //        var n = new vec3(a, b).pageNormal(a, b, c).normal();
 
-                geo.normals[index] = n.d.x;
-                geo.normals[index + 1] = n.d.y;
-                geo.normals[index + 2] = n.d.z;
-            }
-            catch (e) {
-                geo.normals[index] = 0;
-                geo.normals[index + 1] = 1;
-                geo.normals[index + 2] = 0;
-            }
-        }
-     }
+        //        geo.normals[index] = n.d.x;
+        //        geo.normals[index + 1] = n.d.y;
+        //        geo.normals[index + 2] = n.d.z;
+        //    }
+        //    catch (e) {
+        //        geo.normals[index] = 0;
+        //        geo.normals[index + 1] = 1;
+        //        geo.normals[index + 2] = 0;
+        //    }
+        //}
+    }
 
     geo.applyToMesh(mesh, false);
 
@@ -162,5 +162,125 @@ function createBabylonJsGeometry() {
     return babylon;
 }
 
+function defTexture(op, im) {
+    var defTextureDefaultPath = '/images/textures/';
+    var tx = new BABYLON.Texture(defTextureDefaultPath + im.path, op.scene);
+    return tx;
+}
+// { vفط:vertex,frg:fragment,helper,u:uniform,map:{path:'sample.jpg',} , alpha , back}
+function defShader(op, im) {
+
+    // Compile
+    shaderMaterial = new BABYLON.ShaderMaterial("shader", op.scene, {
+        vertexElement:  im.shader.vtx,
+        fragmentElement: im.shader.frg,
+    }, im.shader.u);
+
+    defTextureDefaultPath = '/images/textures/';
+    function defTexture(txop, name) {
+
+        if (!txop) return;
+
+        txop.name = name;
+
+        var tx;
+
+        if (txop.path)
+            tx = new BABYLON.Texture(defTextureDefaultPath + txop.path, op.engine.scene);
+        if (txop.w) {
+            tx.wrapU = txop.w;
+            tx.wrapV = txop.w;
+        }
+
+        txop.hasAlpha = true;
+
+        shaderMaterial.setTexture(txop.name, tx);
+
+        if (txop.r || (txop.rx && txop.ry)) {
+            if (txop.r) {
+                txop.rx = txop.r;
+                txop.ry = txop.r;
+            }
+
+            shaderMaterial.setVector2(txop.name + "_r", new BABYLON.Vector2(txop.rx, txop.ry));
+        }
+
+    }
+
+    //defTexture(im.map, "tx1");
+    //defTexture(im.reflect, "tx2");
+    //defTexture(im.opacity, "tx3");
+    //defTexture(im.bump, "tx4");
+    //defTexture(im.light, "tx5");
 
 
+    if (!im.alpha) {
+        shaderMaterial.needAlphaBlending = function () { return false; };
+    }
+    else {
+        shaderMaterial.needAlphaBlending = function () { return true; };
+    };
+    if (!im.back) im.back = false;
+
+
+    shaderMaterial.needAlphaTesting = function () { return true; };
+
+    shaderMaterial.setFloat("time", 0);
+    shaderMaterial.setVector3("camera", BABYLON.Vector3.Zero());
+    shaderMaterial.setVector3("p1", BABYLON.Vector3.Zero());
+    shaderMaterial.setVector3("p2", BABYLON.Vector3.Zero());
+    shaderMaterial.setVector3("p3", BABYLON.Vector3.Zero());
+    shaderMaterial.setVector2("mouse", BABYLON.Vector2.Zero());
+
+    shaderMaterial.backFaceCulling = !im.back;
+
+
+    shaderMaterial.onCompiled = function () {
+    }
+    shaderMaterial.onError = function (sender, errors) {
+    };
+    return shaderMaterial;
+}
+
+function createBabylonJsMaterial() {
+    var im = new $3d.iMaterial();
+
+    im.onCreateTexture = function (op,im) {
+        return defTexture(op, im);
+    };
+    im.onCreateStandardMaterial = function (op, im) {
+        var mat = new BABYLON.StandardMaterial('dfwd', op.scene);
+
+        var ccolor = function (ci) {
+            var cc = cs(ci);
+            var color = new BABYLON.Color3(cc.r, cc.g, cc.b);
+            return color;
+        }
+        if (def(im.standard.alpha)) mat.alpha = im.standard.alpha;
+        if (def(im.standard.ambient)) mat.ambientColor = ccolor(im.standard.ambient);
+        if (def(im.map.ambient)) mat.ambientTexture = im.onCreateTexture(op,im.map.ambient);
+        if (def(im.standard.diffuse)) mat.diffuseColor = ccolor(im.standard.diffuse);
+        if (def(im.map.diffuse)) mat.diffuseTexture = im.onCreateTexture(op, im.map.diffuse);
+        if (def(im.standard.emissive)) mat.emissiveColor = ccolor(im.standard.emissive);
+        if (def(im.map.emissive)) mat.emissiveTexture = im.onCreateTexture(op, im.map.emissive);
+        if (def(im.standard.specular)) mat.specularColor = ccolor(im.standard.specular);
+        if (def(im.standard.specularPower)) mat.specularPower =  1/(im.standard.specularPower+0.0000001);
+        if (def(im.map.specular)) mat.specularTexture = im.onCreateTexture(op, im.map.specular);
+        if (def(im.standard.wireframe)) mat.wireframe = ccolor(im.standard.wireframe);
+        if (def(im.standard.back)) mat.backFaceCulling = ccolor(im.standard.back);
+
+        if (def(im.map.reflect)) mat.reflectionTexture = im.onCreateTexture(op, im.map.reflect);
+        if (def(im.map.bump)) mat.bumpTexture = im.onCreateTexture(op, im.map.bump);
+
+        return mat;
+    };
+    im.onCreateShader = function (op,im) {
+        return defShader(op, im)
+    };
+    im.onSetUniformsData = function (d) {
+
+    };
+
+    return im;
+}
+ 
