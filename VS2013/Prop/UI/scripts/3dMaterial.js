@@ -1,301 +1,215 @@
 ﻿var shdrIndex = 0;
+
+function _cs(i) {
+    if (i.toString().indexOf('.') == -1) return i + ".";
+    return i.toString();
+}
+
+var sh_global = function () {
+    return [
+        "precision highp float;",
+
+        "uniform mat4 worldViewProjection;",
+        "uniform mat4 worldView;          ",
+        "uniform mat4 world; ",
+    ].join('\n');
+};
+var sh_uniform = function () {
+    return [
+        "uniform vec3 camera;",
+        "uniform vec3 p1;    ",
+        "uniform vec3 p2;    ",
+        "uniform vec3 p3;    ",
+        "uniform vec2 mouse; ",
+        "uniform float time; ",
+        "",
+
+
+    ].join('\n');
+};
+var sh_varing = function () {
+    return [
+        "varying vec3 pos;  ",
+        "varying vec3 vpos; ",
+        "varying vec3 _pos;  ",
+        "varying vec3 _vpos; ",
+        "varying vec3 pr;   ",
+        "varying vec3 nrm;  ",
+        "varying vec3 _nrm;  ",
+        "varying vec2 u;    ",
+        "varying mat4 wvp;  ",
+    ].join('\n');
+};
+var sh_tools = function () {
+    return [
+        "vec3 random3(vec3 c) {   float j = 4096.0*sin(dot(c,vec3(17.0, 59.4, 15.0)));   vec3 r;   r.z = fract(512.0*j); j *= .125;  r.x = fract(512.0*j); j *= .125; r.y = fract(512.0*j);  return r-0.5;  } ",
+        "float rand(vec2 co){   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453); } ",
+        "const float F3 =  0.3333333;const float G3 =  0.1666667;",
+        "float simplex3d(vec3 p) {   vec3 s = floor(p + dot(p, vec3(F3)));   vec3 x = p - s + dot(s, vec3(G3));  vec3 e = step(vec3(0.0), x - x.yzx);  vec3 i1 = e*(1.0 - e.zxy);  vec3 i2 = 1.0 - e.zxy*(1.0 - e);   vec3 x1 = x - i1 + G3;   vec3 x2 = x - i2 + 2.0*G3;   vec3 x3 = x - 1.0 + 3.0*G3;   vec4 w, d;    w.x = dot(x, x);   w.y = dot(x1, x1);  w.z = dot(x2, x2);  w.w = dot(x3, x3);   w = max(0.6 - w, 0.0);   d.x = dot(random3(s), x);   d.y = dot(random3(s + i1), x1);   d.z = dot(random3(s + i2), x2);  d.w = dot(random3(s + 1.0), x3);  w *= w;   w *= w;  d *= w;   return dot(d, vec4(52.0));     }  ",
+        "float noise(vec3 m) {  return   0.5333333*simplex3d(m)   +0.2666667*simplex3d(2.0*m) +0.1333333*simplex3d(4.0*m) +0.0666667*simplex3d(8.0*m);   } ",
+        "float dim(vec3 p1 , vec3 p2){   return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y)+(p2.z-p1.z)*(p2.z-p1.z)); }",
+        ""
+    ].join('\n');
+};
+var sh_main_vertex = function (content) {
+    return [
+        "attribute vec3 position; ",
+        "attribute vec3 normal;   ",
+        "attribute vec2 uv;       ",
+        "void main(void) { ",
+        "   vec4 result; result = vec4(position.x,position.y,position.z,1.0) ;",
+         "   pos = vec3(position.x,position.y,position.z);",
+         "   nrm = vec3(normal.x,normal.y,normal.z);",
+        content,
+        "   ",
+         "   gl_Position = worldViewProjection * vec4( result );",
+         "    vpos  = vec3(result.x,result.y,result.z);",
+         "    _pos = vec3(world * vec4(position, 1.0));",
+         "    _vpos = vec3(world * vec4(vpos, 1.0));",
+         "    _nrm = normalize(vec3(world * vec4(nrm, 0.0)));", 
+        "}"
+    ].join('\n');
+};
+var sh_main_fragment = function (content) {
+    return [
+        "void main(void) { ",
+        "   vec4 result; result = vec4(1.,0.,0.,0.);", 
+        "   ",
+        content,
+        "   ",
+        "   gl_FragColor = vec4( result );",
+        "}"
+    ].join('\n');
+};
+// [{r:result,e:efficacy} , .. ]
+var sh_multi = function (contents,scaled) {
+    var pre = "", ps = ["", "", "", ""], psh = 0.0;
+    for (var i = 0; i < contents.length; i++) {
+        
+        pre += " vec4 result" + i + ";result"+i+" = vec4(0.,0.,0.,0.); float rp" + i + " = " + _cs(contents[i].e) + "; \n";
+        pre += contents[i].r + "\n";
+        pre += " result" + i + " = result; \n";
+
+        ps[0] +=(i==0 ?"":" + ")+"result" + i + ".x*rp" + i ;
+        ps[1] +=(i==0 ?"":" + ")+"result" + i + ".y*rp" + i ;
+        ps[2] +=(i==0 ?"":" + ")+"result" + i + ".z*rp" + i ;
+        ps[3] +=(i==0 ?"":" + ")+"result" + i + ".w*rp" + i ;
+
+        psh += contents[i].e;
+    }
+
+    if (def(scaled, false)) {
+        ps[0] = "(" + ps[0] + ")/" + _cs(psh);
+        ps[1] = "(" + ps[1] + ")/" + _cs(psh);
+        ps[2] = "(" + ps[2] + ")/" + _cs(psh);
+        ps[3] = "(" + ps[3] + ")/" + _cs(psh);
+    }
+
+    pre += "result = vec4(" + ps[0] + "," + ps[1] + "," + ps[2] + "," + ps[3] + ");";
+
+    return pre;
+};
+var sh_range = function (op) {
+
+    op = def(op, {});
+
+    op.pos = def(op.pos, "_pos");
+    op.point = def(op.point, "camera");
+    op.start = def(op.start, 50.1);
+    op.end = def(op.end, 75.1);
+    op.mat1 = def(op.mat1, "result = vec4(1.0,0.,0.,1.);");
+    op.mat2 = def(op.mat2, "result = vec4(0.0,0.,1.,1.);");
+
+
+    return [
+         "float s_r_dim = dim(" + op.pos + "," + op.point + ");",
+         "if(s_r_dim > " + _cs(op.end) + "){",
+             op.mat2,
+         "}",
+         "else { ",
+            op.mat1,
+         "   vec4 mat1; mat1  = result;",
+         "   if(s_r_dim > " + _cs(op.start) + "){ ",
+              op.mat2,
+         "       vec4 mati2;mati2 = result;",
+         "       float s_r_cp  = (s_r_dim - (" + _cs(op.start) + "))/(" + _cs(op.end) + "-" + _cs(op.start) + ");",
+         "       float s_r_c  = 1.0 - s_r_cp;",
+         "       result = vec4(mat1.x*s_r_c+mati2.x*s_r_cp,mat1.y*s_r_c+mati2.y*s_r_cp,mat1.z*s_r_c+mati2.z*s_r_cp,mat1.w*s_r_c+mati2.w*s_r_cp);",
+         "   }",
+         "   else { result = mat1; }",
+         "}"
+    ].join('\n');
+};
+var sh_frensel = function (op) {
+
+    op = def(op, {});
+    op.color = def(op.color, 0xffffff);
+    op.e = def(op.e, 0.6);
+
+    var co = recolor(op.color);
+
+
+    return [ 
+        "vec3 color = vec3(" + _cs(co.r) + ", " + _cs(co.g) + ", " + _cs(co.b) + ");",
+        "vec3 viewDirectionW = normalize(camera - pos);", 
+        "float fresnelTerm = dot(viewDirectionW, nrm);",
+        def(op.clamp,true) ? "fresnelTerm = clamp(1.0 - fresnelTerm, 0., 1.);" : "",
+        'fresnelTerm *= ' + _cs(op.e) + ";",
+        def(op.custom,''),
+        def(op.alpha, true) ? 'float afren = fresnelTerm; ' : 'float afren = 1.0;',
+        "result = vec4(color * fresnelTerm, afren);"
+    ].join('\n');
+};
+var sh_phonge = function (op) {
+    op = def(op, {});
+    op.light = def(op.light, {x:300,y:300,z:300}) ; // | p1 , p2 , p3
+    op.colori = def(op.color, 0xffffff);
+    op.colorPower = def(op.colorPower, 1.0);
+    op.colorMin = def(op.colorMin, 0.0);
+    var c_c = recolor(op.colori);
+    op.back = def(op.back, 0x000123);
+    op.backPower = def(op.backPower, 1.0);
+    op.backMin = def(op.backMin, 0.0);
+
+    var b_c = recolor(op.back);
+    //op.colorMap = def(op.color, 0xffffff);
+    // op.backMap = def(op.back, 0x000000);
+    op.reduce = def(op.reduce, false);
+
+    if (def(op.light.x)) {
+        op.light = " vec3(" + _cs(op.light.x) + "," + _cs(op.light.y) + "," + _cs(op.light.z) + ")";
+    }
+
+    return [
+        "vec3 lightVectorW = normalize("+op.light+" - _pos);",
+        "vec3 colori  = " + (def(op.colorMap) ? op.colorMap : "vec3(" + _cs(c_c.r) + "," + _cs(c_c.g) + "," + _cs(c_c.b) + ") ") + ";",
+        "vec3 back = " + (def(op.backMap) ? op.backMap : "vec3(" + _cs(b_c.r) + "," + _cs(b_c.g) + "," + _cs(b_c.b) + ") ") + ";",
+        "float ndl = max(0.,  dot(_nrm, lightVectorW) )*" + _cs(op.colorPower) + "+" + _cs(op.colorMin) + ";",
+        "float nnl = max(0., -1.* dot(_nrm, lightVectorW) )*" + _cs(op.backPower) + "+" + _cs(op.backMin) + ";",
+        "vec3 cli = colori * ndl " + (op.reduce ? "-" : "+") + " back * nnl;",
+         def(op.clamp, false) ? "cli.x = clamp(1.0 - cli.x , 0., 1.);" : "cli.x =1.0- clamp(1.0 - cli.x , 0., 1.);",
+         def(op.clamp, false) ? "cli.y = clamp(1.0 - cli.y , 0., 1.);" : "cli.y =1.0- clamp(1.0 - cli.y , 0., 1.);",
+         def(op.clamp, false) ? "cli.z = clamp(1.0 - cli.z , 0., 1.);" : "cli.z =1.0- clamp(1.0 - cli.z , 0., 1.);",
+         def(op.alpha, false) ? "float acli = clamp(1.0 - (cli.x+cli.y+cli.z) , 0., 1.);" : "float acli = 1.;",
+         "result = vec4(  cli  , acli);",
+    ].join('\n');
+};
+var sh_specular = function () { };
+
+
 $3d.mat = {
-    
+
     shaderBase: {
-        vertex: function (fun, hp) {
 
-            if (!hp) hp = "";
-            return "precision highp float;                                                                                          \n" +
-            "                                                                                                                \n" +
-            "attribute vec3 position;                                                                                        \n" +
-            "attribute vec3 normal;                                                                                          \n" +
-            "attribute vec2 uv;                                                                                              \n" +
-            "                                                                                                                \n" +
-            "uniform mat4 worldViewProjection;                                                                               \n" +
-            "uniform mat4 worldView;                                                                                         \n" +
-            "                                                                                                                \n" +
-            "uniform sampler2D tx1;                                                                                          \n" +
-            "uniform sampler2D tx2;                                                                                          \n" +
-            "uniform sampler2D tx3;                                                                                          \n" +
-            "uniform sampler2D tx4;                                                                                          \n" +
-            "                                                                                                                \n" +
-            "uniform vec3 camera;                                                                                            \n" +
-            "uniform vec3 p1;                                                                                                \n" +
-            "uniform vec3 p2;                                                                                                \n" +
-            "uniform vec3 p3;                                                                                                \n" +
-            "uniform vec2 mouse;                                                                                             \n" +
-            "uniform float time;                                                                                             \n" +
-            "                                                                                                                \n" +
-            "                                                                                                                \n" +
-            "varying vec3 pos;                                                                                               \n" +
-            "varying vec3 posi;                                                                                               \n" +
-            "varying vec3 pr;                                                                                               \n" +
-            "varying vec3 nrm;                                                                                               \n" +
-            "varying vec2 u;                                                                                                 \n" +
-            "varying mat4 wvp;                                                                                               \n" +
-            "float rand(vec2 co){                                                                                            \n" +
-             "    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);                                           \n" +
-             "}                                                                                                               \n" +
-             "                                                                                                                \n " +
-             "   vec3 random3(vec3 c) {                                                                                        \n" +
-             "       float j = 4096.0*sin(dot(c,vec3(17.0, 59.4, 15.0)));                                                      \n" +
-             "           vec3 r;                                                                                               \n" +
-             "           r.z = fract(512.0*j);                                                                                 \n" +
-             "           j *= .125;                                                                                            \n" +
-             "           r.x = fract(512.0*j);                                                                                 \n" +
-             "           j *= .125;                                                                                            \n" +
-             "           r.y = fract(512.0*j);                                                                                 \n" +
-             "           return r-0.5;                                                                                         \n" +
-             "       }                                                                                                         \n" +
-             "                                                                                                                 \n" +
-             "       /* skew constants for 3d simplex functions */                                                             \n" +
-             "   const float F3 =  0.3333333;                                                                                  \n" +
-             "   const float G3 =  0.1666667;                                                                                  \n" +
-             "                                                                                                                 \n" +
-             "   /* 3d simplex noise */                                                                                        \n" +
-             "   float simplex3d(vec3 p) {                                                                                     \n" +
-             "        /* 1. find current tetrahedron T and it's four vertices */                                               \n" +
-             "        /* s, s+i1, s+i2, s+1.0 - absolute skewed (integer) coordinates of T vertices */                         \n" +
-             "        /* x, x1, x2, x3 - unskewed coordinates of p relative to each of T vertices*/                            \n" +
-             "                                                                                                                 \n" +
-             "        /* calculate s and x */                                                                                  \n" +
-             "        vec3 s = floor(p + dot(p, vec3(F3)));                                                                    \n" +
-             "   vec3 x = p - s + dot(s, vec3(G3));                                                                            \n" +
-             "                                                                                                                 \n" +
-             "   /* calculate i1 and i2 */                                                                                     \n" +
-             "   vec3 e = step(vec3(0.0), x - x.yzx);                                                                          \n" +
-             "   vec3 i1 = e*(1.0 - e.zxy);                                                                                    \n" +
-             "   vec3 i2 = 1.0 - e.zxy*(1.0 - e);                                                                              \n" +
-             "                                                                                                                 \n" +
-             "   /* x1, x2, x3 */                                                                                              \n" +
-             "   vec3 x1 = x - i1 + G3;                                                                                        \n" +
-             "   vec3 x2 = x - i2 + 2.0*G3;                                                                                    \n" +
-             "   vec3 x3 = x - 1.0 + 3.0*G3;                                                                                   \n" +
-             "                                                                                                                 \n" +
-             "   /* 2. find four surflets and store them in d */                                                               \n" +
-             "   vec4 w, d;                                                                                                    \n" +
-             "                                                                                                                 \n" +
-             "   /* calculate surflet weights */                                                                               \n" +
-             "   w.x = dot(x, x);                                                                                              \n" +
-             "   w.y = dot(x1, x1);                                                                                            \n" +
-             "   w.z = dot(x2, x2);                                                                                            \n" +
-             "   w.w = dot(x3, x3);                                                                                            \n" +
-             "                                                                                                                 \n" +
-             "   /* w fades from 0.6 at the center of the surflet to 0.0 at the margin */                                      \n" +
-             "   w = max(0.6 - w, 0.0);                                                                                        \n" +
-             "                                                                                                                 \n" +
-             "   /* calculate surflet components */                                                                            \n" +
-             "   d.x = dot(random3(s), x);                                                                                     \n" +
-             "   d.y = dot(random3(s + i1), x1);                                                                               \n" +
-             "   d.z = dot(random3(s + i2), x2);                                                                               \n" +
-             "   d.w = dot(random3(s + 1.0), x3);                                                                              \n" +
-             "                                                                                                                 \n" +
-             "   /* multiply d by w^4 */                                                                                       \n" +
-             "   w *= w;                                                                                                       \n" +
-             "   w *= w;                                                                                                       \n" +
-             "   d *= w;                                                                                                       \n" +
-             "                                                                                                                 \n" +
-             "   /* 3. return the sum of the four surflets */                                                                  \n" +
-             "   return dot(d, vec4(52.0));                                                                                    \n" +
-             "   }                                                                                                             \n" +
-             "                                                                                                                 \n" +
-             "   float noise(vec3 m) {                                                                             \n" +
-             "       return   0.5333333*simplex3d(m)                                                                           \n" +
-            "	            +0.2666667*simplex3d(2.0*m)                                                                        \n" +
-            "	            +0.1333333*simplex3d(4.0*m)                                                                        \n" +
-            "	            +0.0666667*simplex3d(8.0*m);                                                                       \n" +
-             "   }                                                                                                             \n" +
-            "vec3 txColor(sampler2D _tx,vec2 rep, vec2 ts,float isWorldView){                                                \n" +
-             "vec2 def;                                                                                                       \n" +
-             "if(isWorldView != 1.0)                                                                                          \n" +
-             "    def =  vec2(pos.x/rep.x+ts.x ,pos.y/ rep.y+ts.y);                                                           \n" +
-             "else                                                                                                            \n" +
-             "    def = rep;                                                                                                  \n" +
-             "                                                                                                                \n" +
-             "vec3 result  = texture2D( _tx,  def).rgb;                                                                       \n" +
-             "                                                                                                                \n" +
-             "return result;                                                                                                  \n" +
-             "}                                                                                                               \n" +
-             "                                                                                                                \n" +
-             "float dim(vec3 p1 , vec3 p2){                                                                                   \n" +
-             "    return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y)+(p2.z-p1.z)*(p2.z-p1.z));                       \n" +
-             "}                                                                                                               \n" +
-                         hp +
-             "\n                                                                                                                \n" +
-             "void main(void) {                                                                                               \n" +
-             "vec4 _p = vec4( position, 1. );                                                                             \n" +
-             "                                                                                                            \n" +
-             "pos = position;                                                                                             \n" +
-             "nrm = normal;                                                                                               \n" +
-             "u = uv;                                                                                                     \n" +
-             "wvp = worldViewProjection;                                                                                  \n" +
-             "                                                                                                            \n" +
-             "vec3 e = normalize( vec3( worldView * vec4(pos , 1.0) ) );                                                  \n" +
-             "vec3 n = normalize( worldView * vec4(nrm, 0.0) ).xyz;                                                       \n" +
-             "vec3 r = reflect( e, n );                                                                                   \n" +
-             "                                                                                                            \n" +
-             "float m = 2. * sqrt(                                                                                        \n" +
-             "pow( r.x, 2. ) +                                                                                            \n" +
-             "pow( r.y, 2. ) +                                                                                            \n" +
-             "pow( r.z + 1., 2. )                                                                                         \n" +
-             ");                                                                                                          \n" +
-             "                                                                                                            \n" +
-             "vec2 ref = r.xy / m + .5;                                                                                   \n" +
-           "   vec4 result1;result1 =vec4(0.,0.,0.,0.) ; float rp1 = 1.0;                                                                            \n" +
-             "   vec4 result2;result2 =vec4(0.,0.,0.,0.)  ; float rp2 = 0.0;                                                                            \n" +
-             "   vec4 result3;result3 =vec4(0.,0.,0.,0.) ; float rp3 = 0.0;                                                                            \n" +
-       "                                                                                                            \n" +
-             fun +
-            "\n                                                                                                              \n" +
-            "  posi = vec3(  result1.x*rp1+result2.x*rp2+result3.x*rp3 ,result1.y*rp1+result2.y*rp2+result3.y*rp3,result1.z*rp1+result2.z*rp2+result3.z*rp3  );                                                                                           \n" +
-            "    gl_Position = worldViewProjection * vec4( result1.x*rp1+result2.x*rp2+result3.x*rp3 ,result1.y*rp1+result2.y*rp2+result3.y*rp3,result1.z*rp1+result2.z*rp2+result3.z*rp3 ,result1.w*rp1+result2.w*rp2+result3.w*rp3 );}";
+        vertex: function (fun, hp, ops) {
+            ops = def(ops, [sh_global(), hp, sh_uniform(), sh_varing(), sh_tools(), sh_main_vertex(fun)]);
+            return ops.join('\n');
         },
-        fragment: function (fun, hp) {
-            if (!hp) hp = "";
-            return "precision highp float;                                                                                          \n" +
-             "                                                                                                                \n" +
-             "uniform mat4 worldView;                                                                                         \n" +
-             "uniform mat4 world;                                                                                         \n" +
-             "                                                                                                                \n" +
-             "uniform sampler2D tx1;                                                                                          \n" +
-             "uniform vec2 tx1_r;                                                                                             \n" +
-             "                                                                                                                \n" +
-             "uniform sampler2D tx2;                                                                                          \n" +
-             "uniform vec2 tx2_r;                                                                                             \n" +
-             "                                                                                                                \n" +
-             "uniform sampler2D tx3;                                                                                          \n" +
-             "uniform vec2 tx3_r;                                                                                             \n" +
-             "                                                                                                                \n" +
-             "uniform sampler2D tx4;                                                                                          \n" +
-             "uniform vec2 tx4_r;                                                                                             \n" +
-             "                                                                                                                \n" +
-             "uniform sampler2D tx5;                                                                                          \n" +
-             "uniform vec2 tx5_r;                                                                                             \n" +
-             "                                                                                                                \n" +
-             "uniform sampler2D tx6;                                                                                          \n" +
-             "uniform vec2 tx6_r;                                                                                             \n" +
-              "                                                                                                                \n" +
-             "uniform vec3 camera;                                                                                            \n" +
-             "uniform vec3 p1;                                                                                                \n" +
-             "uniform vec3 p2;                                                                                                \n" +
-             "uniform vec3 p3;                                                                                                \n" +
-             "uniform vec2 mouse;                                                                                             \n" +
-             "uniform float time;                                                                                             \n" +
-             "                                                                                                                \n" +
-             "                                                                                                                \n" +
-            "varying vec3 posi;                                                                                               \n" +
-             "varying vec3 pr;                                                                                               \n" +
-            "varying vec3 pos;                                                                                               \n" +
-             "varying vec3 nrm;                                                                                               \n" +
-             "varying vec2 u;                                                                                                 \n" +
-             "                                                                                                                \n" +
-              "   vec3 random3(vec3 c) {                                                                                        \n" +
-             "       float j = 4096.0*sin(dot(c,vec3(17.0, 59.4, 15.0)));                                                      \n" +
-             "           vec3 r;                                                                                               \n" +
-             "           r.z = fract(512.0*j);                                                                                 \n" +
-             "           j *= .125;                                                                                            \n" +
-             "           r.x = fract(512.0*j);                                                                                 \n" +
-             "           j *= .125;                                                                                            \n" +
-             "           r.y = fract(512.0*j);                                                                                 \n" +
-             "           return r-0.5;                                                                                         \n" +
-             "       }                                                                                                         \n" +
-             "                                                                                                                 \n" +
-             "       /* skew constants for 3d simplex functions */                                                             \n" +
-             "   const float F3 =  0.3333333;                                                                                  \n" +
-             "   const float G3 =  0.1666667;                                                                                  \n" +
-             "                                                                                                                 \n" +
-             "   /* 3d simplex noise */                                                                                        \n" +
-             "   float simplex3d(vec3 p) {                                                                                     \n" +
-             "        /* 1. find current tetrahedron T and it's four vertices */                                               \n" +
-             "        /* s, s+i1, s+i2, s+1.0 - absolute skewed (integer) coordinates of T vertices */                         \n" +
-             "        /* x, x1, x2, x3 - unskewed coordinates of p relative to each of T vertices*/                            \n" +
-             "                                                                                                                 \n" +
-             "        /* calculate s and x */                                                                                  \n" +
-             "        vec3 s = floor(p + dot(p, vec3(F3)));                                                                    \n" +
-             "   vec3 x = p - s + dot(s, vec3(G3));                                                                            \n" +
-             "                                                                                                                 \n" +
-             "   /* calculate i1 and i2 */                                                                                     \n" +
-             "   vec3 e = step(vec3(0.0), x - x.yzx);                                                                          \n" +
-             "   vec3 i1 = e*(1.0 - e.zxy);                                                                                    \n" +
-             "   vec3 i2 = 1.0 - e.zxy*(1.0 - e);                                                                              \n" +
-             "                                                                                                                 \n" +
-             "   /* x1, x2, x3 */                                                                                              \n" +
-             "   vec3 x1 = x - i1 + G3;                                                                                        \n" +
-             "   vec3 x2 = x - i2 + 2.0*G3;                                                                                    \n" +
-             "   vec3 x3 = x - 1.0 + 3.0*G3;                                                                                   \n" +
-             "                                                                                                                 \n" +
-             "   /* 2. find four surflets and store them in d */                                                               \n" +
-             "   vec4 w, d;                                                                                                    \n" +
-             "                                                                                                                 \n" +
-             "   /* calculate surflet weights */                                                                               \n" +
-             "   w.x = dot(x, x);                                                                                              \n" +
-             "   w.y = dot(x1, x1);                                                                                            \n" +
-             "   w.z = dot(x2, x2);                                                                                            \n" +
-             "   w.w = dot(x3, x3);                                                                                            \n" +
-             "                                                                                                                 \n" +
-             "   /* w fades from 0.6 at the center of the surflet to 0.0 at the margin */                                      \n" +
-             "   w = max(0.6 - w, 0.0);                                                                                        \n" +
-             "                                                                                                                 \n" +
-             "   /* calculate surflet components */                                                                            \n" +
-             "   d.x = dot(random3(s), x);                                                                                     \n" +
-             "   d.y = dot(random3(s + i1), x1);                                                                               \n" +
-             "   d.z = dot(random3(s + i2), x2);                                                                               \n" +
-             "   d.w = dot(random3(s + 1.0), x3);                                                                              \n" +
-             "                                                                                                                 \n" +
-             "   /* multiply d by w^4 */                                                                                       \n" +
-             "   w *= w;                                                                                                       \n" +
-             "   w *= w;                                                                                                       \n" +
-             "   d *= w;                                                                                                       \n" +
-             "                                                                                                                 \n" +
-             "   /* 3. return the sum of the four surflets */                                                                  \n" +
-             "   return dot(d, vec4(52.0));                                                                                    \n" +
-             "   }                                                                                                             \n" +
-             "                                                                                                                 \n" +
-             "   float noise(vec3 m) {                                                                             \n" +
-             "       return   0.5333333*simplex3d(m)                                                                           \n" +
-            "	            +0.2666667*simplex3d(2.0*m)                                                                        \n" +
-            "	            +0.1333333*simplex3d(4.0*m)                                                                        \n" +
-            "	            +0.0666667*simplex3d(8.0*m);                                                                       \n" +
-             "   }                                                                                                             \n" +
-            "                                                                                                                \n" +
-             "vec3 txColor(sampler2D _tx,vec2 uv,vec2 rep, vec2 ts ){                                                                \n" +
-             "vec2  def =  vec2(uv.x/rep.x+ts.x ,uv.y/ rep.y+ts.y);                                                           \n" +
-              "vec3 result  = texture2D( _tx,  def).rgb;                                                                       \n" +
-             "                                                                                                                \n" +
-             "return result;                                                                                                  \n" +
-             "}                                                                                                               \n" +
-             "float rand(vec2 co){                                                                                            \n" +
-             "    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);                                           \n" +
-             "}                                                                                                               \n" +
-             "float dim(vec3 p1 , vec3 p2){                                                                                   \n" +
-             "   return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y)+(p2.z-p1.z)*(p2.z-p1.z));                        \n" +
-             "}                                                                                                               \n" +
-                hp +
-             "\n void main(void) {                                                                                            \n" +
-             "                                                                                                            \n" +
-             "vec3 e = normalize( vec3( worldView * vec4(pos , 1.0) ) );                                                  \n" +
-             "vec3 n = normalize( worldView * vec4(nrm, 0.0) ).xyz;                                                       \n" +
-             "vec3 r = reflect( e, n );                                                                                   \n" +
-             "                                                                                                            \n" +
-             "float m = 2. * sqrt(                                                                                        \n" +
-             "    pow( r.x, 2. ) +                                                                                        \n" +
-             "    pow( r.y, 2. ) +                                                                                        \n" +
-             "    pow( r.z + 1., 2. )                                                                                     \n" +
-             ");                                                                                                          \n" +
-             "                                                                                                            \n" +
-             "                                                                                                            \n" +
-             "   vec2 ref = r.xy / m + .5;                                                                                \n" +
-            "   vec4 result1;result1 =vec4(0.,0.,0.,0.) ; float rp1 = 1.0;                                                                            \n" +
-             "   vec4 result2;result2 =vec4(0.,0.,0.,0.)  ; float rp2 = 0.0;                                                                            \n" +
-             "   vec4 result3;result3 =vec4(0.,0.,0.,0.) ; float rp3 = 0.0;                                                                            \n" +
-
-
-             "                                                                                                            \n" +
-              fun +
-             "\n   gl_FragColor =vec4( result1.x*rp1+result2.x*rp2+result3.x*rp3 ,result1.y*rp1+result2.y*rp2+result3.y*rp3,result1.z*rp1+result2.z*rp2+result3.z*rp3 ,result1.w*rp1+result2.w*rp2+result3.w*rp3 );                                                                                   \n" +
-             "   }";
-        },  
-        shader: function (op ) {
+        fragment: function (fun, hp, ops) {
+            ops = def(ops, [sh_global(), hp, sh_uniform(), sh_varing(), sh_tools(), sh_main_fragment(fun)]);
+            return ops.join('\n');
+        },
+        shader: function (op) {
             var shaderMaterial;
 
             if (op && !op.u) {
@@ -307,13 +221,11 @@ $3d.mat = {
 
             shdrIndex++;
 
-             var vtx = op.vtx;
-             var frg = op.frg;
-
+            var vtx = op.vtx;
+            var frg = op.frg;
 
             op.vtx = "sh_v_" + shdrIndex;
             op.frg = "sh_f_" + shdrIndex;
-
 
             var vtxElement = document.createElement("Script");
             vtxElement.setAttribute("id", op.vtx);
@@ -326,24 +238,38 @@ $3d.mat = {
             frgElement.setAttribute("type", "x-shader/x-fragment");
             frgElement.innerHTML = $3d.mat.shaderBase.fragment(frg, op.helper);
             document.getElementById('shaders').appendChild(frgElement);
-             
-            
+
+
             return { shader: op };
 
         },
     },
 
-    shaderSample: function (  ) {
+    shaderSample: function () {
         return $3d.mat.shaderBase.shader({
-            vtx: 'result1 = vec4(pos.x,pos.y,pos.z,1.0);',
-            frg: ['float pp = simplex3d(vec3(pos.x,pos.y,pos.z));',
-                'float pp2 = simplex3d(vec3(pos.x/20.,pos.y/20.,pos.z/20.));',
-                'result1 = vec4(pp,pp,pp,1.0);rp1 = 0.2;',
-                'result2 = vec4(sin(pos.z/5.)+sin(pos.x/5.)+pp2,sin(pos.x/5.)+pp2,pp2,1.0);rp2 = 1.0;'
-            ].join('\n'),
+            vtx: 'result = vec4(pos.x,pos.y,pos.z,1.0);',
+            frg: 
+                  sh_multi([{
+                            r: sh_range({
+                                mat1: [
+                                     'float pp = noise(_vpos);',
+                                    'result = vec4(pp,pp,pp,1.0);'].join('\n'),
+                                mat2: [ 
+                                    'result = vec4(0.,0.,0.,1.0);'].join('\n'),
+                                start: 0.1,
+                                end: 1000.2
+                            }),
+                            e: 0.5
+                        },
+                       // { r: 'result = vec4(0.,0.0,0.,1.0);', e: 0.5 },
+                        { r: sh_frensel({ color: 0xff0000 }), e: 3.3 },
+                        { r: sh_phonge({back:0x0000ff,color:0xffff00}), e: 1.0 }
+                    ])
+               ,
             helper: ''
         });
     }
+
 };
 
 
@@ -388,11 +314,7 @@ prop.$3d.color = function (p1, p2, p3, p4) {
     }
 };
 var c = prop.$3d.color;
-function _cs(i) {
 
-    if (i.toString().indexOf('.') == -1) return i + ".";
-    return i.toString();
-}
 var cs = function (p1, p2, p3, p4) {
     var co = c(p1, p2, p3, p4);
 

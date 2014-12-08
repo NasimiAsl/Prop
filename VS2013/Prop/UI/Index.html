@@ -3,7 +3,6 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title></title>
-    <script src="scripts/Jquery.js"></script>
     <link href="stylesheets/screen.css" rel="stylesheet" />
     <script src="scripts/prop/base.js"></script>
     <script src="scripts/prop/loader.js"></script>
@@ -16,11 +15,8 @@
 
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
-    <script src="/scripts/3dMaterial.js"></script>
-
+    <script src="/scripts/3dMaterial.js"></script> 
     <script src="/scripts/Melyon/scene.js"></script> 
-
-    <script src="scripts/prop/3d/Events.js"></script>
 </head>
 <body class="owf">
     <!-- fit screen dom -->
@@ -44,7 +40,7 @@
             eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
 
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
-
+            var bx, bx1;
             eng1.engine.onRequestFrame = function () {
 
                 for (var i = 0; i < b.length; i++) {
@@ -52,20 +48,28 @@
                     //b[i].rotation.x += 0.4 * deg;
                     //b[i].rotation.z += 0.2 * deg;
                 }
+
+                bx.material.setVector3("camera", eng1.get().cameras.main.position);
+                //bx.material.setFloat("time", time);
             };
 
             eng1.engine.onInitScene = function () {
 
-                var ms = $3d.tools.surface({
-                    paths: [
-                        [vec(-100, 50, -100), vec(100, 50, -100)], 
-                        [vec(-100, 50, 100), vec(100, 50, 100)], 
-                    ]
-                });
+                  bx = new BABYLON.Mesh.CreateSphere('dd',50, 33.5, eng1.get().scene);
+                //bx.position.y = 20;
+                bx.material = new $3d.iMaterial($3d.mat.shaderSample(), eng1).build();
+ 
 
-                ms.toMesh($3d.mat.shaderSample(eng1), eng1);
+                //var ms = $3d.tools.surface({
+                //    paths: [
+                //        [vec(-250, -40, -250), vec(250, -40, -250)],
+                //        [vec(-250, -40, 250), vec(250, -40, 250)],
+                //        [vec(-250, -240, 250), vec(250, -240, 250)],
+                //    ]
+                //});
 
-                 
+                //var ms1 = ms.toMesh({ diffuse:0x550000,alpha:0.8,specular:0x000000, map: { reflect: { mirror: true, list: [bx ] } } }, eng1);
+
             }
 
             eng1.start();

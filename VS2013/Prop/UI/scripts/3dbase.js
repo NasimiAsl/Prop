@@ -163,13 +163,16 @@ $3d.iShaderUniformData.prototype = {
     }
 };
 
-$3d.iMaterial = function (op) {
+$3d.iMaterial = function (op, eng) {
 
     op = def(op, {});
 
     this.shader = def(op.shader) ? op.shader : null;
     this.standard = def(op.shader) ? null : op;
     this.map = def(op.map) ? op.map : null;
+
+    if (def(eng))
+        op.engine = def(op.engine, eng);
 
     if (!def(op.engine)) return;
 

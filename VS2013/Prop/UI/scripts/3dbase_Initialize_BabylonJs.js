@@ -164,15 +164,26 @@ function createBabylonJsGeometry() {
 
 function defTexture(op, im) {
     var defTextureDefaultPath = '/images/textures/';
-    var tx = new BABYLON.Texture(defTextureDefaultPath + im.path, op.scene);
-    return tx;
+    if (im.mirror) {
+        im.dir = def(im.dir, { x: 0, y: -1, z: 0 });
+        im.ref = def(im.ref, -5);
+
+        var tx = new BABYLON.MirrorTexture("mirror", 1024, eng1.get().scene, true);
+        tx.mirrorPlane = new BABYLON.Plane(im.dir.x, im.dir.y, im.dir.z, im.ref);
+        tx.renderList = im.list;
+        return tx;
+    }
+    else {
+        var tx = new BABYLON.Texture(defTextureDefaultPath + im.path, op.scene);
+        return tx;
+    }
 }
 // { vفط:vertex,frg:fragment,helper,u:uniform,map:{path:'sample.jpg',} , alpha , back}
 function defShader(op, im) {
-
+    im.alpha = true;
     // Compile
     shaderMaterial = new BABYLON.ShaderMaterial("shader", op.scene, {
-        vertexElement:  im.shader.vtx,
+        vertexElement: im.shader.vtx,
         fragmentElement: im.shader.frg,
     }, im.shader.u);
 
@@ -245,11 +256,15 @@ function defShader(op, im) {
 function createBabylonJsMaterial() {
     var im = new $3d.iMaterial();
 
-    im.onCreateTexture = function (op,im) {
+    im.onCreateTexture = function (op, im) {
         return defTexture(op, im);
     };
     im.onCreateStandardMaterial = function (op, im) {
         var mat = new BABYLON.StandardMaterial('dfwd', op.scene);
+
+        im.map = def(im.map, {});
+        im.standard = def(im.standard, {});
+
 
         var ccolor = function (ci) {
             var cc = cs(ci);
@@ -258,13 +273,13 @@ function createBabylonJsMaterial() {
         }
         if (def(im.standard.alpha)) mat.alpha = im.standard.alpha;
         if (def(im.standard.ambient)) mat.ambientColor = ccolor(im.standard.ambient);
-        if (def(im.map.ambient)) mat.ambientTexture = im.onCreateTexture(op,im.map.ambient);
+        if (def(im.map.ambient)) mat.ambientTexture = im.onCreateTexture(op, im.map.ambient);
         if (def(im.standard.diffuse)) mat.diffuseColor = ccolor(im.standard.diffuse);
         if (def(im.map.diffuse)) mat.diffuseTexture = im.onCreateTexture(op, im.map.diffuse);
         if (def(im.standard.emissive)) mat.emissiveColor = ccolor(im.standard.emissive);
         if (def(im.map.emissive)) mat.emissiveTexture = im.onCreateTexture(op, im.map.emissive);
         if (def(im.standard.specular)) mat.specularColor = ccolor(im.standard.specular);
-        if (def(im.standard.specularPower)) mat.specularPower =  1/(im.standard.specularPower+0.0000001);
+        if (def(im.standard.specularPower)) mat.specularPower = 1 / (im.standard.specularPower + 0.0000001);
         if (def(im.map.specular)) mat.specularTexture = im.onCreateTexture(op, im.map.specular);
         if (def(im.standard.wireframe)) mat.wireframe = ccolor(im.standard.wireframe);
         if (def(im.standard.back)) mat.backFaceCulling = ccolor(im.standard.back);
@@ -274,7 +289,7 @@ function createBabylonJsMaterial() {
 
         return mat;
     };
-    im.onCreateShader = function (op,im) {
+    im.onCreateShader = function (op, im) {
         return defShader(op, im)
     };
     im.onSetUniformsData = function (d) {
@@ -283,4 +298,4 @@ function createBabylonJsMaterial() {
 
     return im;
 }
- 
+
