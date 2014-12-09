@@ -2,8 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title></title>
-    <script src="scripts/Jquery.js"></script>
+    <title></title> 
     <link href="stylesheets/screen.css" rel="stylesheet" />
     <script src="scripts/prop/base.js"></script>
     <script src="scripts/prop/loader.js"></script>
@@ -17,12 +16,10 @@
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
 
-
+    <script src="/scripts/3dMaterial.js"></script>
     <script src="/scripts/Melyon/scene.js"></script>
-
-    <script src="scripts/prop/3d/Shaders.js"></script>
-
-    <script src="scripts/prop/3d/Events.js"></script>
+     
+     
 </head>
 <body class="owf">
     <!-- fit screen dom -->
@@ -43,17 +40,14 @@
         prop.loader.get('3d/babylonjs', function (d) {
             document.getElementById('main').innerHTML += d;
 
-            eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry() });
+            eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
 
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
 
             eng1.engine.onRequestFrame = function () {
 
-                for (var i = 0; i < b.length; i++) {
-                   //b[i].rotation.y += 0.5 * deg;
-                   //b[i].rotation.x += 0.4 * deg;
-                   //b[i].rotation.z += 0.2 * deg;
-                }
+                b[0].material.setVector3("camera", eng1.get().cameras.main.position);
+
             };
  
 

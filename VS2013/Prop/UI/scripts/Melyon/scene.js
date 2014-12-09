@@ -92,57 +92,50 @@ var melyon = {
             position: { x: 0, y: 1.5, z: 0 },
         },
         around: {
-            mountion: [               
+            mountion: [
                 {
                     path: "m -6125.7143,-1811.4286 c 0,0 114.2857,2651.4286 1257.1429,3405.7143 1142.8571,754.2857 434.2857,1211.4286 1440,2148.5714 C -2422.8571,4680 -480,5297.1428 1325.7143,4931.4286",
                     inline: false,
                     pointLength: 30.,
                     position: { x: 0, y: 0, z: 0 },
-                }, 
+                },
                 {
                     path: "m -7840,2988.5714 c 0,0 251.4286,274.2857 685.7143,594.2857 434.2857,320 1783.2825,410.1803 1840,1005.7143 160,1680 -285.7143,754.2857 948.5714,845.7143 196.0873,14.525 640,868.5714 640,868.5714",
                     inline: false,
                     pointLength: 20.,
                     position: { x: 0, y: 600, z: 0 },
-                }, 
+                },
 
                  {
                      path: "m -8708.5714,4177.1429 c 0,0 320,297.1428 342.8571,480 22.8572,182.8571 274.2857,891.4285 274.2857,891.4285 0,0 1028.5715,-68.5714 1531.4286,-205.7143 502.8572,-137.1428 251.4286,1211.4286 320,1348.5714 68.5715,137.1429 708.5714,274.2858 708.5714,274.2858",
                      inline: false,
                      pointLength: 20.,
                      position: { x: 0, y: 1200, z: 0 },
-                 },  
+                 },
                  {
                      path: "m -8971.4285,6851.4286 c 0,0 548.5713,102.8571 708.5713,102.8571 160,0 285.7143,-125.7143 468.5715,0 189.292,130.1381 160,422.8571 205.7143,514.2857",
                      inline: false,
                      pointLength: 5.,
                      position: { x: 0, y: 2500, z: 0 },
                  }]
-                }
+        }
     },
 
 
 
     initBeach: function (eng, ary) {
 
-        function addGeo(paths, scale, color, flip, w) {
+        function addGeo(paths, scale, color, flip, mat) {
             var b1 = $3d.tools.surface({
                 paths: paths,
                 flip: flip
             });
 
-            ary.push(b1.toMesh(eng));
+            if (def(mat))
+                ary.push(b1.toMesh($3d.mat.frg(mat), eng));
 
-            var vc = cs(color);
+            else ary.push(b1.toMesh(eng));
 
-            ary[b.length - 1].material = new BABYLON.StandardMaterial('dd', eng.engine.instance.scene);
-            ary[b.length - 1].material.diffuseColor = new BABYLON.Color3(vc.r, vc.g, vc.b);
-            if (def(w)) {
-                ary[b.length - 1].material.wireframe = true;
-                ary[b.length - 1].material.alpha = 0.1;
-                ary[b.length - 1].material.needAlphaBlending = function () { return true; }
-                ary[b.length - 1].material.needAlphaTesting = function () { return true; }
-            }
 
             scale = def(scale, 1.0);
 
@@ -209,11 +202,29 @@ var melyon = {
             }));
         }
 
-        addGeo(paths, melyon.pattern.beachScale, 0x999999, false);
-        //addGeo(paths, melyon.pattern.beachScale, 0xff5500, false);
-        addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
-
-
+        addGeo(paths, melyon.pattern.beachScale, 0x999999, false, sh_multi([{
+            r: sh_range({
+                mat1: sh_range({
+                    mat1: 'result = vec4(0.0,0.1,0.2,1.);',
+                    mat2: 'result = vec4(0.2,0.3,0.4,1.);',
+                    start: 31,
+                    end: 35,
+                    custom: 'pos.y - floor((pos.y-2.) /40.0)*40.'
+                }),
+                mat2: 'result = vec4(0.7,0.5,0.3,1.);',
+                start: 36,
+                end: 38,
+                custom: 'pos.y - floor((pos.y-2.) /40.0)*40.'
+            }), e: 1.0
+        },
+        {
+            r: sh_range({
+                mat1: 'float pp  = noise(vec3(pos.x/3.,pos.y/3.,pos.z/3.));  result = vec4(pp,pp,pp,1.);',
+                mat2: 'result = vec4(0.,0.,0.,0.);',
+                start: 100,
+                end: 300
+            }), e: 0.31
+        }]));
 
 
         ob = melyon.pattern.appShop;
@@ -238,7 +249,7 @@ var melyon = {
 
         addGeo(paths, melyon.pattern.beachScale, 0x990000, true);
         //addGeo(paths, melyon.pattern.beachScale, 0xff5500, false);
-         addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
+        //addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
 
         //
 
@@ -250,9 +261,9 @@ var melyon = {
                 pointLength: ob[i].pointLength,
                 push: function (r, n, j) {
                     r.push({
-                        x: (n.y - paternSize.w / 2 + ob[i].position.x            )/(j>1 ? 5.: 1.0),
-                        y: (0 + ob[i].position.y + noise.simplex2(n.x,n.y)*30*(i ) )/(j>1 ? 5.: 1.0),
-                        z: (n.x - paternSize.h / 2 + ob[i].position.z            )/(j>1 ? 5.: 1.0) 
+                        x: (n.y - paternSize.w / 2 + ob[i].position.x) / (j > 1 ? 5. : 1.0),
+                        y: (0 + ob[i].position.y + noise.simplex2(n.x, n.y) * 30 * (i)) / (j > 1 ? 5. : 1.0),
+                        z: (n.x - paternSize.h / 2 + ob[i].position.z) / (j > 1 ? 5. : 1.0)
                     });
                 },
                 path: ob[i].path,
@@ -261,9 +272,21 @@ var melyon = {
             }));
         }
 
-       //addGeo(paths, melyon.pattern.beachScale, 0x999999, false);
-         addGeo(paths, melyon.pattern.beachScale/8. , 0x112222, true);
-         addGeo(paths, melyon.pattern.beachScale/8. , 0xffffff, true, true);
+        //addGeo(paths, melyon.pattern.beachScale, 0x999999, false);
+        addGeo(paths, melyon.pattern.beachScale / 8., 0x112222, true, sh_range({
+            mat1: sh_range({
+                mat1: 'result = vec4(0.,0.1,.0,1.);',
+                mat2: 'result = vec4(0.8,0.9,1.,1.);',
+                start: 250,
+                end: 2500,
+                custom: 'pos.y - floor(pos.y /3000.0)*3000.'
+            }),
+            mat2: 'result = vec4(1.,1.,1.,1.);',
+            start: 2900,
+            end: 3000,
+            custom: 'pos.y - floor(pos.y /3000.0)*3000.'
+        }));
+        //  addGeo(paths, melyon.pattern.beachScale/8. , 0xffffff, true, true);
 
 
         ob = melyon.pattern.appShop_plan;
@@ -288,7 +311,7 @@ var melyon = {
 
         addGeo(paths, melyon.pattern.beachScale, 0x990000, true);
         //addGeo(paths, melyon.pattern.beachScale, 0xff5500, false);
-        addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
+        //addGeo(paths, melyon.pattern.beachScale, 0xffffff, true, true);
 
         ob = melyon.pattern.road;
         var points = (def(ob.points) ? ob.points : $3d.tools.svg.getPoints({
@@ -307,7 +330,6 @@ var melyon = {
 
 
         addWall(points, melyon.pattern.beachScale, 0x555555, true);
-
 
 
     }

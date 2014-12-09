@@ -4,7 +4,7 @@ function _cs(i) {
     if (i.toString().indexOf('.') == -1) return i + ".";
     return i.toString();
 }
-
+var k = 0
 var sh_global = function () {
     return [
         "precision highp float;",
@@ -66,14 +66,14 @@ var sh_main_vertex = function (content) {
          "    vpos  = vec3(result.x,result.y,result.z);",
          "    _pos = vec3(world * vec4(position, 1.0));",
          "    _vpos = vec3(world * vec4(vpos, 1.0));",
-         "    _nrm = normalize(vec3(world * vec4(nrm, 0.0)));", 
+         "    _nrm = normalize(vec3(world * vec4(nrm, 0.0)));",
         "}"
     ].join('\n');
 };
 var sh_main_fragment = function (content) {
     return [
         "void main(void) { ",
-        "   vec4 result; result = vec4(1.,0.,0.,0.);", 
+        "   vec4 result; result = vec4(1.,0.,0.,0.);",
         "   ",
         content,
         "   ",
@@ -82,18 +82,19 @@ var sh_main_fragment = function (content) {
     ].join('\n');
 };
 // [{r:result,e:efficacy} , .. ]
-var sh_multi = function (contents,scaled) {
+var sh_multi = function (contents, scaled) {
+    k++;
     var pre = "", ps = ["", "", "", ""], psh = 0.0;
     for (var i = 0; i < contents.length; i++) {
-        
-        pre += " vec4 result" + i + ";result"+i+" = vec4(0.,0.,0.,0.); float rp" + i + " = " + _cs(contents[i].e) + "; \n";
-        pre += contents[i].r + "\n";
-        pre += " result" + i + " = result; \n";
 
-        ps[0] +=(i==0 ?"":" + ")+"result" + i + ".x*rp" + i ;
-        ps[1] +=(i==0 ?"":" + ")+"result" + i + ".y*rp" + i ;
-        ps[2] +=(i==0 ?"":" + ")+"result" + i + ".z*rp" + i ;
-        ps[3] +=(i==0 ?"":" + ")+"result" + i + ".w*rp" + i ;
+        pre += " vec4 result_" + k + "_" + i + ";result_" + k + "_" + i + " = vec4(0.,0.,0.,0.); float rp_" + k + "_" + i + " = " + _cs(contents[i].e) + "; \n";
+        pre += contents[i].r + "\n";
+        pre += " result_" + k + "_" + i + " = result; \n";
+
+        ps[0] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".x*rp_" + k + "_" + i;
+        ps[1] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".y*rp_" + k + "_" + i;
+        ps[2] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".z*rp_" + k + "_" + i;
+        ps[3] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".w*rp_" + k + "_" + i;
 
         psh += contents[i].e;
     }
@@ -110,7 +111,7 @@ var sh_multi = function (contents,scaled) {
     return pre;
 };
 var sh_range = function (op) {
-
+    k++;
     op = def(op, {});
 
     op.pos = def(op.pos, "_pos");
@@ -122,26 +123,26 @@ var sh_range = function (op) {
 
 
     return [
-         "float s_r_dim = dim(" + op.pos + "," + op.point + ");",
-         "if(s_r_dim > " + _cs(op.end) + "){",
+         "float s_r_dim_" + k + "_ = " + (!def(op.custom) ? " dim(" + op.pos + "," + op.point + ")" : op.custom) + ";",
+         "if(s_r_dim_" + k + "_ > " + _cs(op.end) + "){",
              op.mat2,
          "}",
          "else { ",
             op.mat1,
-         "   vec4 mat1; mat1  = result;",
-         "   if(s_r_dim > " + _cs(op.start) + "){ ",
+         "   vec4 mat1_" + k + "_; mat1_" + k + "_  = result;",
+         "   if(s_r_dim_" + k + "_ > " + _cs(op.start) + "){ ",
               op.mat2,
-         "       vec4 mati2;mati2 = result;",
-         "       float s_r_cp  = (s_r_dim - (" + _cs(op.start) + "))/(" + _cs(op.end) + "-" + _cs(op.start) + ");",
-         "       float s_r_c  = 1.0 - s_r_cp;",
-         "       result = vec4(mat1.x*s_r_c+mati2.x*s_r_cp,mat1.y*s_r_c+mati2.y*s_r_cp,mat1.z*s_r_c+mati2.z*s_r_cp,mat1.w*s_r_c+mati2.w*s_r_cp);",
+         "       vec4 mati2_" + k + "_;mati2_" + k + "_ = result;",
+         "       float s_r_cp_" + k + "_  = (s_r_dim_" + k + "_ - (" + _cs(op.start) + "))/(" + _cs(op.end) + "-" + _cs(op.start) + ");",
+         "       float s_r_c_" + k + "_  = 1.0 - s_r_cp_" + k + "_;",
+         "       result = vec4(mat1_" + k + "_.x*s_r_c_" + k + "_+mati2_" + k + "_.x*s_r_cp_" + k + "_,mat1_" + k + "_.y*s_r_c_" + k + "_+mati2_" + k + "_.y*s_r_cp_" + k + "_,mat1_" + k + "_.z*s_r_c_" + k + "_+mati2_" + k + "_.z*s_r_cp_" + k + "_,mat1_" + k + "_.w*s_r_c_" + k + "_+mati2_" + k + "_.w*s_r_cp_" + k + "_);",
          "   }",
-         "   else { result = mat1; }",
+         "   else { result = mat1_" + k + "_; }",
          "}"
     ].join('\n');
 };
 var sh_frensel = function (op) {
-
+    k++;
     op = def(op, {});
     op.color = def(op.color, 0xffffff);
     op.e = def(op.e, 0.6);
@@ -149,20 +150,21 @@ var sh_frensel = function (op) {
     var co = recolor(op.color);
 
 
-    return [ 
-        "vec3 color = vec3(" + _cs(co.r) + ", " + _cs(co.g) + ", " + _cs(co.b) + ");",
-        "vec3 viewDirectionW = normalize(camera - pos);", 
-        "float fresnelTerm = dot(viewDirectionW, nrm);",
-        def(op.clamp,true) ? "fresnelTerm = clamp(1.0 - fresnelTerm, 0., 1.);" : "",
-        'fresnelTerm *= ' + _cs(op.e) + ";",
-        def(op.custom,''),
-        def(op.alpha, true) ? 'float afren = fresnelTerm; ' : 'float afren = 1.0;',
-        "result = vec4(color * fresnelTerm, afren);"
+    return [
+        "vec3 color_" + k + "_ = vec3(" + _cs(co.r) + ", " + _cs(co.g) + ", " + _cs(co.b) + ");",
+        "vec3 viewDirectionW_" + k + "_ = normalize(camera - pos);",
+        "float fresnelTerm_" + k + "_ = dot(viewDirectionW_" + k + "_, nrm);",
+        def(op.clamp, true) ? "fresnelTerm_" + k + "_ = clamp(1.0 - fresnelTerm_" + k + "_, 0., 1.);" : "",
+        "fresnelTerm_"+k+"_ *=" + _cs(op.e) + ";", 
+        def(op.alpha, true) ? "float afren_" + k + "_ = fresnelTerm_" + k + "_; " : "float afren_" + k + "_ = 1.0;",
+        "result = vec4(color_" + k + "_ * fresnelTerm_" + k + "_, afren_" + k + "_);",
+        def(op.custom, ''),
     ].join('\n');
 };
 var sh_phonge = function (op) {
+    k++;
     op = def(op, {});
-    op.light = def(op.light, {x:300,y:300,z:300}) ; // | p1 , p2 , p3
+    op.light = def(op.light, { x: 1300, y: 1300, z: 1300 }); // | p1 , p2 , p3
     op.colori = def(op.color, 0xffffff);
     op.colorPower = def(op.colorPower, 1.0);
     op.colorMin = def(op.colorMin, 0.0);
@@ -181,17 +183,17 @@ var sh_phonge = function (op) {
     }
 
     return [
-        "vec3 lightVectorW = normalize("+op.light+" - _pos);",
-        "vec3 colori  = " + (def(op.colorMap) ? op.colorMap : "vec3(" + _cs(c_c.r) + "," + _cs(c_c.g) + "," + _cs(c_c.b) + ") ") + ";",
-        "vec3 back = " + (def(op.backMap) ? op.backMap : "vec3(" + _cs(b_c.r) + "," + _cs(b_c.g) + "," + _cs(b_c.b) + ") ") + ";",
-        "float ndl = max(0.,  dot(_nrm, lightVectorW) )*" + _cs(op.colorPower) + "+" + _cs(op.colorMin) + ";",
-        "float nnl = max(0., -1.* dot(_nrm, lightVectorW) )*" + _cs(op.backPower) + "+" + _cs(op.backMin) + ";",
-        "vec3 cli = colori * ndl " + (op.reduce ? "-" : "+") + " back * nnl;",
-         def(op.clamp, false) ? "cli.x = clamp(1.0 - cli.x , 0., 1.);" : "cli.x =1.0- clamp(1.0 - cli.x , 0., 1.);",
-         def(op.clamp, false) ? "cli.y = clamp(1.0 - cli.y , 0., 1.);" : "cli.y =1.0- clamp(1.0 - cli.y , 0., 1.);",
-         def(op.clamp, false) ? "cli.z = clamp(1.0 - cli.z , 0., 1.);" : "cli.z =1.0- clamp(1.0 - cli.z , 0., 1.);",
-         def(op.alpha, false) ? "float acli = clamp(1.0 - (cli.x+cli.y+cli.z) , 0., 1.);" : "float acli = 1.;",
-         "result = vec4(  cli  , acli);",
+        "vec3 lightVectorW_" + k + "_ = normalize(" + op.light + " - _pos);",
+        "vec3 colori_" + k + "_  = " + (def(op.colorMap) ? op.colorMap : "vec3(" + _cs(c_c.r) + "," + _cs(c_c.g) + "," + _cs(c_c.b) + ") ") + ";",
+        "vec3 back_" + k + "_ = " + (def(op.backMap) ? op.backMap : "vec3(" + _cs(b_c.r) + "," + _cs(b_c.g) + "," + _cs(b_c.b) + ") ") + ";",
+        "float ndl_" + k + "_ = max(0.,  dot(_nrm, lightVectorW_" + k + "_) )*" + _cs(op.colorPower) + "+" + _cs(op.colorMin) + ";",
+        "float nnl_" + k + "_ = max(0., -1.* dot(_nrm, lightVectorW_" + k + "_) )*" + _cs(op.backPower) + "+" + _cs(op.backMin) + ";",
+        "vec3 cli_" + k + "_ = colori_" + k + "_ * ndl_" + k + "_ " + (op.reduce ? "-" : "+") + " back_" + k + "_ * nnl_" + k + "_;",
+         def(op.clamp, false) ? "cli_" + k + "_.x = clamp(1.0 - cli_" + k + "_.x , 0., 1.);" : "cli_" + k + "_.x =1.0- clamp(1.0 - cli_" + k + "_.x , 0., 1.);",
+         def(op.clamp, false) ? "cli_" + k + "_.y = clamp(1.0 - cli_" + k + "_.y , 0., 1.);" : "cli_" + k + "_.y =1.0- clamp(1.0 - cli_" + k + "_.y , 0., 1.);",
+         def(op.clamp, false) ? "cli_" + k + "_.z = clamp(1.0 - cli_" + k + "_.z , 0., 1.);" : "cli_" + k + "_.z =1.0- clamp(1.0 - cli_" + k + "_.z , 0., 1.);",
+         def(op.alpha, false) ? "float acli_" + k + "_ =1.0- clamp(1.0 - (cli_" + k + "_.x+cli_" + k + "_.y+cli_" + k + "_.z) , 0., 1.);" : "float acli_" + k + "_ = 1.;",
+         "result = vec4(  cli_" + k + "_  , acli_" + k + "_);",
     ].join('\n');
 };
 var sh_specular = function () { };
@@ -199,8 +201,7 @@ var sh_specular = function () { };
 
 $3d.mat = {
 
-    shaderBase: {
-
+    shaderBase: { 
         vertex: function (fun, hp, ops) {
             ops = def(ops, [sh_global(), hp, sh_uniform(), sh_varing(), sh_tools(), sh_main_vertex(fun)]);
             return ops.join('\n');
@@ -244,27 +245,42 @@ $3d.mat = {
 
         },
     },
+    frg: function (op) {
+        return $3d.mat.shaderBase.shader({
+            vtx: 'result = vec4(pos.x,pos.y,pos.z,1.0);',
+            frg: op,
+            helper: ''
+        });
+    },
+    shd: function (op) {
+        return $3d.mat.shaderBase.shader({
+            vtx: op.vtx,
+            frg: op.frg,
+            helper: ''
+        });
+    },
 
     shaderSample: function () {
         return $3d.mat.shaderBase.shader({
             vtx: 'result = vec4(pos.x,pos.y,pos.z,1.0);',
-            frg: 
+            frg:
                   sh_multi([{
-                            r: sh_range({
-                                mat1: [
-                                     'float pp = noise(_vpos);',
-                                    'result = vec4(pp,pp,pp,1.0);'].join('\n'),
-                                mat2: [ 
-                                    'result = vec4(0.,0.,0.,1.0);'].join('\n'),
-                                start: 0.1,
-                                end: 1000.2
-                            }),
-                            e: 0.5
-                        },
-                       // { r: 'result = vec4(0.,0.0,0.,1.0);', e: 0.5 },
-                        { r: sh_frensel({ color: 0xff0000 }), e: 3.3 },
-                        { r: sh_phonge({back:0x0000ff,color:0xffff00}), e: 1.0 }
-                    ])
+                      r: sh_range({
+                          mat2: sh_range({
+                              mat1: 'result = vec4(1.,0.,0.,1.0);',
+                              mat2: sh_phonge({ color: 0xff0000, back: 0x550000 }),
+                              start: 150,
+                              end: 300,
+                              custom: 'pos.y+150.',
+                          }),
+                          mat1: ['float pp = noise(vec3(pos.x/20.,pos.y/20.,pos.z/20.));',
+                                  'result = vec4(pp+1.0,pp,pp,1.0);'].join('\n'),
+                          start: 20,
+                          end: 150,
+                          custom: 'pos.y+150.',
+                      }),
+                      e: 1.
+                  } ])
                ,
             helper: ''
         });

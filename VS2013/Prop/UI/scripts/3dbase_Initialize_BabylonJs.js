@@ -21,7 +21,7 @@ function createBabylonJsEngine() {
         // !!  build orthographic camera
         var pos = babylon.cameras.main.position;
         // babylon.instance.cameras.main = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);
-        babylon.instance.cameras.main = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), babylon.instance.scene);;
+        babylon.instance.cameras.main = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);;
         babylon.instance.scene.activeCamera.attachControl(babylon.instance.canvas);
 
         babylon.instance.cameras.main.lowerRadiusLimit = 10;
@@ -180,7 +180,7 @@ function defTexture(op, im) {
 }
 // { vفط:vertex,frg:fragment,helper,u:uniform,map:{path:'sample.jpg',} , alpha , back}
 function defShader(op, im) {
-    im.alpha = true;
+    // im.alpha = true;
     // Compile
     shaderMaterial = new BABYLON.ShaderMaterial("shader", op.scene, {
         vertexElement: im.shader.vtx,

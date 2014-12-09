@@ -15,8 +15,8 @@
 
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
-    <script src="/scripts/3dMaterial.js"></script> 
-    <script src="/scripts/Melyon/scene.js"></script> 
+    <script src="/scripts/3dMaterial.js"></script>
+    <script src="/scripts/Melyon/scene.js"></script>
 </head>
 <body class="owf">
     <!-- fit screen dom -->
@@ -55,11 +55,11 @@
 
             eng1.engine.onInitScene = function () {
 
-                  bx = new BABYLON.Mesh.CreateSphere('dd',50, 33.5, eng1.get().scene);
-                //bx.position.y = 20;
-                bx.material = new $3d.iMaterial($3d.mat.shaderSample(), eng1).build();
- 
+                bx = new BABYLON.Mesh.CreateSphere('dd', 50, 330.5, eng1.get().scene);
 
+                // bx.position.y = 20;
+                bx.material = new $3d.iMaterial($3d.mat.frg('result = vec4(0.0,0.0,0.0,1.0);'), eng1).build();
+                 
                 //var ms = $3d.tools.surface({
                 //    paths: [
                 //        [vec(-250, -40, -250), vec(250, -40, -250)],
