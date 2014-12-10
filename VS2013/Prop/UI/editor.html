@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title></title> 
+    <title></title>
     <link href="stylesheets/screen.css" rel="stylesheet" />
     <script src="scripts/prop/base.js"></script>
     <script src="scripts/prop/loader.js"></script>
@@ -15,62 +15,55 @@
 
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
-
     <script src="/scripts/3dMaterial.js"></script>
     <script src="/scripts/Melyon/scene.js"></script>
-     
-     
 </head>
 <body class="owf">
     <!-- fit screen dom -->
-    <div id="main" class="main ab w_f h_f owf dblue">
-    </div>
-     <!--<canvas id='renderCanvas2' class="ab w04 h04 l005 t005 sblue op03"></canvas>-->
+    <div id="main" class="main ab w_f h_f owf  sblue  ">
+    </div> 
     <!-- menu -->
-    <div class="menu ab w_a h_a b00 r00 ">
+    <div class="menu ab w_a h_a b00 r00 ">  
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/setting.svg" />
+        <img class="hdn w01 h01 mr4 mb4 " src="/images/shapes/sep.svg" /> 
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/custom.svg" />
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/specular.svg" />
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/phonge.svg" />
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/frensel.svg" />
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/range.svg" />
+        <img class="hdn w01 h01 mr4 mb4 hblue" src="/images/shapes/multi.svg" /> 
+        <img class="hdn w01 h01 mr4 mb4 " src="/images/shapes/sep.svg" /> 
         <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
-        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" onclick="  " />
+        <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/menu.svg" onclick="  " /> 
     </div>
     <!-- popup content -->
     <div class="ab l04 t04 r04 b00 hdn"></div>
     <!-- initializer -->
     <script>
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
-       
+
         prop.loader.get('3d/babylonjs', function (d) {
             document.getElementById('main').innerHTML += d;
 
             eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
 
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
-
+            var bx, bx1, phi = 0, theta = 0;
             eng1.engine.onRequestFrame = function () {
 
-                b[0].material.setVector3("camera", eng1.get().cameras.main.position);
-
+                
             };
- 
 
-            eng1.engine.onInitScene = function () {
-
-                melyon.initBeach(eng1, b);
-
-                 var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
-                //var postProcess2 = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
-
-                 eng1.engine.instance.cameras.main.attachPostProcess(postProcess);
-                //eng1.engine.instance.cameras.main.attachPostProcess(postProcess2);
+            
+            eng1.engine.onInitScene = function () { 
+                
+                b.push(new BABYLON.Mesh.CreateSphere('s', 10, 10, eng1.get().scene));
             }
 
-            eng1.engine.start();
+            eng1.start();
 
 
         });
-    </script>
-    <!-- developer tools
-         can remove in release version
-         contents : status
-    -->
-    <div id="status" class="ab t01 l01 h06 op05 blue "></div>
+    </script> 
 </body>
 </html>

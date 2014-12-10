@@ -219,10 +219,10 @@ var melyon = {
         },
         {
             r: sh_range({
-                mat1: 'float pp  = noise(vec3(pos.x/3.,pos.y/3.,pos.z/3.));  result = vec4(pp,pp,pp,1.);',
+                mat1: 'float pp  = noise(vec3(pos.x*3.,pos.y*3.,pos.z*3.));  result = vec4(pp,pp,pp,1.);',
                 mat2: 'result = vec4(0.,0.,0.,0.);',
                 start: 100,
-                end: 300
+                end: 12000
             }), e: 0.31
         }]));
 
@@ -275,7 +275,7 @@ var melyon = {
         //addGeo(paths, melyon.pattern.beachScale, 0x999999, false);
         addGeo(paths, melyon.pattern.beachScale / 8., 0x112222, true, sh_range({
             mat1: sh_range({
-                mat1: 'result = vec4(0.,0.1,.0,1.);',
+                mat1: '    result = vec4(0.2,0.2,0.2,1.);',
                 mat2: 'result = vec4(0.8,0.9,1.,1.);',
                 start: 250,
                 end: 2500,

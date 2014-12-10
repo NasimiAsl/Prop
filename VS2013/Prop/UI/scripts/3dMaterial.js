@@ -22,9 +22,12 @@ var sh_uniform = function () {
         "uniform vec3 p3;    ",
         "uniform vec2 mouse; ",
         "uniform float time; ",
-        "",
 
-
+        "uniform samplerCube refc; ",
+        "uniform sampler2D ref2; ",
+        "uniform vec3 vrefi; ",
+        "uniform mat4 refmat; ",
+        "uniform mat4 view;"
     ].join('\n');
 };
 var sh_varing = function () {
@@ -48,8 +51,7 @@ var sh_tools = function () {
         "float simplex3d(vec3 p) {   vec3 s = floor(p + dot(p, vec3(F3)));   vec3 x = p - s + dot(s, vec3(G3));  vec3 e = step(vec3(0.0), x - x.yzx);  vec3 i1 = e*(1.0 - e.zxy);  vec3 i2 = 1.0 - e.zxy*(1.0 - e);   vec3 x1 = x - i1 + G3;   vec3 x2 = x - i2 + 2.0*G3;   vec3 x3 = x - 1.0 + 3.0*G3;   vec4 w, d;    w.x = dot(x, x);   w.y = dot(x1, x1);  w.z = dot(x2, x2);  w.w = dot(x3, x3);   w = max(0.6 - w, 0.0);   d.x = dot(random3(s), x);   d.y = dot(random3(s + i1), x1);   d.z = dot(random3(s + i2), x2);  d.w = dot(random3(s + 1.0), x3);  w *= w;   w *= w;  d *= w;   return dot(d, vec4(52.0));     }  ",
         "float noise(vec3 m) {  return   0.5333333*simplex3d(m)   +0.2666667*simplex3d(2.0*m) +0.1333333*simplex3d(4.0*m) +0.0666667*simplex3d(8.0*m);   } ",
         "float dim(vec3 p1 , vec3 p2){   return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y)+(p2.z-p1.z)*(p2.z-p1.z)); }",
-        ""
-    ].join('\n');
+        ].join('\n');
 };
 var sh_main_vertex = function (content) {
     return [
@@ -72,7 +74,7 @@ var sh_main_vertex = function (content) {
 };
 var sh_main_fragment = function (content) {
     return [
-        "void main(void) { ",
+        "void main(void) { ",  
         "   vec4 result; result = vec4(1.,0.,0.,0.);",
         "   ",
         content,
@@ -155,7 +157,7 @@ var sh_frensel = function (op) {
         "vec3 viewDirectionW_" + k + "_ = normalize(camera - pos);",
         "float fresnelTerm_" + k + "_ = dot(viewDirectionW_" + k + "_, nrm);",
         def(op.clamp, true) ? "fresnelTerm_" + k + "_ = clamp(1.0 - fresnelTerm_" + k + "_, 0., 1.);" : "",
-        "fresnelTerm_"+k+"_ *=" + _cs(op.e) + ";", 
+        "fresnelTerm_" + k + "_ *=" + _cs(op.e) + ";",
         def(op.alpha, true) ? "float afren_" + k + "_ = fresnelTerm_" + k + "_; " : "float afren_" + k + "_ = 1.0;",
         "result = vec4(color_" + k + "_ * fresnelTerm_" + k + "_, afren_" + k + "_);",
         def(op.custom, ''),
@@ -196,12 +198,30 @@ var sh_phonge = function (op) {
          "result = vec4(  cli_" + k + "_  , acli_" + k + "_);",
     ].join('\n');
 };
-var sh_specular = function () { };
+var sh_cubmat = function (op) {
+    return [
+        "vec3 viewDir = pos - camera;                          ",
+        "vec3 coords = reflect(viewDir, nrm);                  ", 
+        "vec3 vReflectionUVW = vec3(refmat * vec4(coords, 0)); ", 
+        "vec3 rc= textureCube(refc, vReflectionUVW).rgb  ;      ", 
+        "result = vec4(rc.x,rc.y,rc.z,1.0);                    "  	 
+    ].join('\n');
+};
+
+var sh_specular = function (op) {
+    return [
+        "vec3 viewDir =  normalize(  camera - pos);   ",
+        "vec3 coords =   reflect( viewDir , nrm);",
+        "vec3 vReflectionUVW = vec3(refmat * vec4(coords, -1.0)); ",
+        "vec3 rc= textureCube(refc, vReflectionUVW).rgb  ;      ",
+        "result = vec4(rc.x+1.0,rc.y,rc.z,(rc.x+rc.y+rc.z)/3.0);                    "
+    ].join('\n');
+};
 
 
 $3d.mat = {
 
-    shaderBase: { 
+    shaderBase: {
         vertex: function (fun, hp, ops) {
             ops = def(ops, [sh_global(), hp, sh_uniform(), sh_varing(), sh_tools(), sh_main_vertex(fun)]);
             return ops.join('\n');
@@ -280,7 +300,7 @@ $3d.mat = {
                           custom: 'pos.y+150.',
                       }),
                       e: 1.
-                  } ])
+                  }])
                ,
             helper: ''
         });

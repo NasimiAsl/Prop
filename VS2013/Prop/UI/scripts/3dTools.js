@@ -327,6 +327,112 @@
     }
 }
 
+// points
+
+// [{x,y,z},{x,y,z},...] , {path,seg,fun:{start , end , call },svg}
+$3d.points = function (op) {
+
+}
+
+$3d.points.prototype = {
+    list: [],
+    // [{x,y,z}] | [x1,y1,z1,x2,...] | {x,y,z} | x,y,z
+    add: function (op, op2, op3) {
+
+        function append(x, y, z) {
+            list.push({ x: def(x, 0.), y: def(x, 0.), z: def(x, 0.) });
+        }
+
+        if (def(op.x) || def(op.y) || def(op.z)) {
+            append(op.x, op.y, op.z);
+        }
+        else if (def(op) && def(op2) && def(op3)) {
+            append(op, op2, op3);
+        }
+        else if (op.length > 0) {
+            if (def(op[0].x) || def(op[0].x) || def(op[0].x)) {
+                for (var i = 0; i < op.length; i++) {
+                    append(op[i].x, op[i].y, op[i].z);
+                }
+            }
+            else if (op.length % 3 == 0) {
+                for (var i = 0; i < op.length; i += 3) {
+                    append(op[i], op[i + 1], op[i + 2]);
+                }
+            }
+        }
+
+        return this;
+    },
+    // call
+    each: function (op) {
+        for (var i = 0; i < this.list.length; i++) {
+            var r = op(i, this.list[i]);
+            if (def(r)) {
+                this.list[i] = r;
+            }
+        }
+    },
+    // {x,y,z}
+    move: function (op) {
+        this.each(function (i, it) { return { x: it.x + op.x, y: it.y + op.y, z: it.z + op.z } });
+    },
+    // deg {x,y,z,center:{x,y,z}} 
+    rotate: function (op) {
+        this.each(function (i,it) {
+            this.applyAxisAngle(it, {x:1,y:0,z:0} , def(x, 0) * deg);
+            this.applyAxisAngle(it, {x:0,y:1,z:0} , def(y, 0) * deg);
+            this.applyAxisAngle(it, {x:0,y:0,z:1} , def(z, 0) * deg); 
+        });
+    },
+    applyAxisAngle: function (th,axis, angle) {
+
+        var _qt;
+
+        return function (axis, angle) {
+
+            if (_qt === undefined) _qt = new qt();
+
+            th = applyQuaternion(th,qt.setFromAxisAngle(axis, angle));
+
+            return th; 
+        };
+
+    }(),
+    // {x,y,z}
+    look: function(op){},
+    scale: function (op) { },
+    noise: function (op) { },
+
+    applyQuaternion: function (th,q) {
+
+        var x = th.x;
+        var y = th.y;
+        var z = th.z;
+
+        var qx = q.x;
+        var qy = q.y;
+        var qz = q.z;
+        var qw = q.w;
+
+        // calculate quat * vector
+
+        var ix = qw * x + qy * z - qz * y;
+        var iy = qw * y + qz * x - qx * z;
+        var iz = qw * z + qx * y - qy * x;
+        var iw = -qx * x - qy * y - qz * z;
+
+        // calculate result * inverse quat
+
+        th.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+        th.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+        th.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+
+        return th ;
+
+    },
+}
+
 
 // samples
 

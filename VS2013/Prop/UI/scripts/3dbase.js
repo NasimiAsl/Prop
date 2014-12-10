@@ -34,7 +34,7 @@ $3d.iCamera = function (op) {
 }
 
 $3d.iCamera.prototype = {
-    position: { x: 0, y:  30, z:  0 },
+    position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     up: { x: 0, y: 1, z: 0 },
     near: 0.0,
@@ -54,8 +54,7 @@ $3d.iEngine = function (op) {
         renderer: {},
         canvas: null,
         qualityMode: 1
-    },
-
+    }, 
     this.instance.canvas = op.canvas;
 }
 
@@ -134,10 +133,27 @@ $3d.geometryInstance.prototype = {
     }
 }
 
+
+
+$3d.iMove = function (op) {
+}
+$3d.iMove.prototype = {
+    dir: {}, look: {}, objects: [], velocity: 1.0, acceleration: 1.0,
+    onChanges: function () { } 
+};
+$3d.iRotate = function (op) {
+}
+$3d.iRotate.prototype = {
+    dir: {}, center: {}, look: {}, objects: [], velocity: 1.0, acceleration: 1.0,
+    onChanges: function () { }
+}; 
+
 $3d.iController = function (op) {
+
 }
 
 $3d.iController.prototype = {
+    actions: [],
     onRayCaster: function (op) { },
 }
 

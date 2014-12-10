@@ -40,35 +40,39 @@
             eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
 
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
-            var bx, bx1;
+            var bx, bx1, phi = 0, theta = 0;
             eng1.engine.onRequestFrame = function () {
 
-                for (var i = 0; i < b.length; i++) {
-                    //b[i].rotation.y += 0.5 * deg;
-                    //b[i].rotation.x += 0.4 * deg;
-                    //b[i].rotation.z += 0.2 * deg;
-                }
-
-                bx.material.setVector3("camera", eng1.get().cameras.main.position);
-                //bx.material.setFloat("time", time);
+               
             };
 
             eng1.engine.onInitScene = function () {
 
-                bx = new BABYLON.Mesh.CreateSphere('dd', 50, 330.5, eng1.get().scene);
 
-                // bx.position.y = 20;
-                bx.material = new $3d.iMaterial($3d.mat.frg('result = vec4(0.0,0.0,0.0,1.0);'), eng1).build();
-                 
-                //var ms = $3d.tools.surface({
-                //    paths: [
-                //        [vec(-250, -40, -250), vec(250, -40, -250)],
-                //        [vec(-250, -40, 250), vec(250, -40, 250)],
-                //        [vec(-250, -240, 250), vec(250, -240, 250)],
-                //    ]
-                //});
+               var skybox = BABYLON.Mesh.CreateSphere("skyBox", 60, 800.0, eng1.get().scene);
+               var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", eng1.get().scene);
+               skyboxMaterial.backFaceCulling = false;
+               skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("images/skybox/d/skybox", eng1.get().scene);
+               skyboxMaterial.reflectionTexture.coordinatesMode = 3;
+               skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+               skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+               skybox.material = skyboxMaterial;
+                
 
-                //var ms1 = ms.toMesh({ diffuse:0x550000,alpha:0.8,specular:0x000000, map: { reflect: { mirror: true, list: [bx ] } } }, eng1);
+               var skybox = BABYLON.Mesh.CreateSphere("skyBox", 60, 50.0, eng1.get().scene);
+                skybox.material = new $3d.iMaterial($3d.mat.frg(sh_specular()), eng1).build();
+                
+                b.push(skybox);
+
+
+                ref = new BABYLON.CubeTexture("images/skybox/d/skybox", eng1.get().scene);
+                ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+
+                b[0].material.setTexture("refc", ref);  
+                 b[0].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+                // b[0].material.setVector3("vrefi", ref.coordinatesMode, ref.level, ref.isCube ? 1 : 0);
+                 b[0].material.backFaceCulling = false;
+
 
             }
 
