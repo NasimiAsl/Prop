@@ -83,7 +83,7 @@
         if (!op) { op = {}; }
 
         function exch(p) { return (p.x || p.x == 0.0); }
-        if (!op.uv) { op.uv = "0123"; }
+        if (!op.uv) { op.uv = "0132"; }
 
         function addUv(i) {
             if (op.uv[i].toString() == "0") geo.uvs.push(0.0, 0.0);

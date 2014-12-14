@@ -24,6 +24,8 @@ var sh_uniform = function () {
         "uniform float time; ",
 
         "uniform samplerCube refc; ",
+        "uniform samplerCube refc2; ",
+        "uniform samplerCube refc3; ",
         "uniform sampler2D ref2; ",
         "uniform vec3 vrefi; ",
         "uniform mat4 refmat; ",
@@ -51,7 +53,7 @@ var sh_tools = function () {
         "float simplex3d(vec3 p) {   vec3 s = floor(p + dot(p, vec3(F3)));   vec3 x = p - s + dot(s, vec3(G3));  vec3 e = step(vec3(0.0), x - x.yzx);  vec3 i1 = e*(1.0 - e.zxy);  vec3 i2 = 1.0 - e.zxy*(1.0 - e);   vec3 x1 = x - i1 + G3;   vec3 x2 = x - i2 + 2.0*G3;   vec3 x3 = x - 1.0 + 3.0*G3;   vec4 w, d;    w.x = dot(x, x);   w.y = dot(x1, x1);  w.z = dot(x2, x2);  w.w = dot(x3, x3);   w = max(0.6 - w, 0.0);   d.x = dot(random3(s), x);   d.y = dot(random3(s + i1), x1);   d.z = dot(random3(s + i2), x2);  d.w = dot(random3(s + 1.0), x3);  w *= w;   w *= w;  d *= w;   return dot(d, vec4(52.0));     }  ",
         "float noise(vec3 m) {  return   0.5333333*simplex3d(m)   +0.2666667*simplex3d(2.0*m) +0.1333333*simplex3d(4.0*m) +0.0666667*simplex3d(8.0*m);   } ",
         "float dim(vec3 p1 , vec3 p2){   return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y)+(p2.z-p1.z)*(p2.z-p1.z)); }",
-        ].join('\n');
+    ].join('\n');
 };
 var sh_main_vertex = function (content) {
     return [
@@ -74,7 +76,7 @@ var sh_main_vertex = function (content) {
 };
 var sh_main_fragment = function (content) {
     return [
-        "void main(void) { ",  
+        "void main(void) { ",
         "   vec4 result; result = vec4(1.,0.,0.,0.);",
         "   ",
         content,
@@ -201,20 +203,22 @@ var sh_phonge = function (op) {
 var sh_cubmat = function (op) {
     return [
         "vec3 viewDir = pos - camera;                          ",
-        "vec3 coords = reflect(viewDir, nrm);                  ", 
-        "vec3 vReflectionUVW = vec3(refmat * vec4(coords, 0)); ", 
-        "vec3 rc= textureCube(refc, vReflectionUVW).rgb  ;      ", 
-        "result = vec4(rc.x,rc.y,rc.z,1.0);                    "  	 
+        "vec3 coords = reflect(viewDir, nrm);                  ",
+        "vec3 vReflectionUVW = vec3(refmat * vec4(coords, 0)); ",
+        "vec3 rc= textureCube(refc, vReflectionUVW).rgb  ;      ",
+        "result = vec4(rc.x,rc.y,rc.z,1.0);                    "
     ].join('\n');
 };
 
 var sh_specular = function (op) {
+    op = def(op, {});
+    k++;
     return [
-        "vec3 viewDir =  normalize(  camera - pos);   ",
-        "vec3 coords =   reflect( viewDir , nrm);",
-        "vec3 vReflectionUVW = vec3(refmat * vec4(coords, -1.0)); ",
-        "vec3 rc= textureCube(refc, vReflectionUVW).rgb  ;      ",
-        "result = vec4(rc.x+1.0,rc.y,rc.z,(rc.x+rc.y+rc.z)/3.0);                    "
+        "vec3 viewDir_" + k + "_ =  vec4(_pos,1.0).xyz - camera ;",
+        "vec3 coords_" + k + "_ = reflect(viewDir_" + k + "_" + (def(op.glass, false) ? "*vec3(1.0)" : "*vec3(-1.0)") + ", _nrm )+" + def(op.pos, 'vec3(0.0,0.0,0.0)') + "; ",
+        "vec3 vReflectionUVW_" + k + "_ = vec3( refmat *  vec4(coords_" + k + "_, 0)); ",
+        "vec3 rc_" + k + "_= textureCube(" + def(op.refc, "refc") + ", vReflectionUVW_" + k + "_*vec3(0.1)).rgb  ;      ",
+        "result = vec4(rc_" + k + "_.x ,rc_" + k + "_.y,rc_" + k + "_.z, "+(def(op.alpha,false)? "1.":"(rc_" + k + "_.x+rc_" + k + "_.y+rc_" + k + "_.z)/3.0 ")+");  "
     ].join('\n');
 };
 
@@ -236,7 +240,7 @@ $3d.mat = {
             if (op && !op.u) {
                 op.u = {
                     attributes: ["position", "normal", "uv"],
-                    uniforms: ["world", "worldView", "worldViewProjection"]
+                    uniforms: ["view", "world", "worldView", "viewProjection", "worldViewProjection"]
                 };
             }
 
@@ -251,13 +255,13 @@ $3d.mat = {
             var vtxElement = document.createElement("Script");
             vtxElement.setAttribute("id", op.vtx);
             vtxElement.setAttribute("type", "x-shader/x-vertex");
-            vtxElement.innerHTML = $3d.mat.shaderBase.vertex(vtx, op.helper);
+            vtxElement.innerHTML = $3d.mat.shaderBase.vertex(vtx, op.helper, op.vtxops);
             document.getElementById('shaders').appendChild(vtxElement);
 
             var frgElement = document.createElement("Script");
             frgElement.setAttribute("id", op.frg);
             frgElement.setAttribute("type", "x-shader/x-fragment");
-            frgElement.innerHTML = $3d.mat.shaderBase.fragment(frg, op.helper);
+            frgElement.innerHTML = $3d.mat.shaderBase.fragment(frg, op.helper, op.frgops);
             document.getElementById('shaders').appendChild(frgElement);
 
 

@@ -180,7 +180,7 @@ function defTexture(op, im) {
 }
 // { vفط:vertex,frg:fragment,helper,u:uniform,map:{path:'sample.jpg',} , alpha , back}
 function defShader(op, im) {
-      im.alpha = true;
+     // im.alpha = true;
     // Compile
     shaderMaterial = new BABYLON.ShaderMaterial("shader", op.scene, {
         vertexElement: im.shader.vtx,

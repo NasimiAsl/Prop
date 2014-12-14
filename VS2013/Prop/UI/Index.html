@@ -22,7 +22,6 @@
     <!-- fit screen dom -->
     <div id="main" class="main ab w_f h_f owf dblue">
     </div>
-    <canvas id='renderCanvas2' class="ab w04 h04 l005 t005 sblue op03"></canvas>
     <!-- menu -->
     <div class="menu ab w_a h_a b00 r00 ">
         <img class="w01 h01 mr4 mb4 hblue" src="/images/shapes/panel.svg" />
@@ -33,52 +32,120 @@
     <!-- initializer -->
     <script>
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
-
         prop.loader.get('3d/babylonjs', function (d) {
             document.getElementById('main').innerHTML += d;
-
             eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
-
             eng1.engine.instance.canvas = document.getElementById('renderCanvas');
             var bx, bx1, phi = 0, theta = 0;
             eng1.engine.onRequestFrame = function () {
+                b[0].material.setVector3("camera", eng1.get().cameras.main.position);
+                b[1].material.setVector3("camera", eng1.get().cameras.main.position);
 
-               
             };
+            eng1.engine.onInitScene = function () {  
+                var skybox = $3d.tools.surface({
+                    paths: [[{ x: 1000, y: 0., z: 1000 }, { x: 100, y: 0., z: -1000 }], [{ x: -1000, y: 0., z: 1000 }, { x: -1000, y: 0., z: -1000 }]],
+                    flip: true
+                }).toMesh(eng1); 
+                skybox.material = new $3d.iMaterial($3d.mat.frg(sh_range({
+                    start: 10, end: 300,
+                    mat1: sh_multi([
+                        { r: sh_specular({ glass: true }), e: 0.20 },
+                        { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                        { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
+                        { r: sh_phonge({ color: 0x00a2ff, back: 0x000000 }), e: 1.0 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.015 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
+                        { r: 'float pi2 =((pos.x )- floor((pos.x )/10.)*10.)*8.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,1.0);', e: 1.0 },
+                        { r: 'float pi3 =((pos.z)- floor((pos.z)/10.)*10.)*8.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,1.0);', e: 1.0 },
+                        { r: 'float pp;pp = abs( noise(vec3(pos.x/2.,pos.y/2.,pos.z/2.)));if(pp < 0.05 || pp > 0.1) pp  = -1.*pp/3.0 ;else pp = -0.2;result = vec4(pp,pp,pp,1.0);', e: 0.42 },
+                        { r: sh_frensel(), e: 0.003 }]),
+                    mat2: sh_multi([
+                        { r: sh_specular({ glass: true }), e: 0.020 },
+                        { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                        { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
+                        { r: sh_phonge({ color: 0x00a2ff, back: 0x000000 }), e: 1.0 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.15 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
+                        { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
+                        { r: 'float pi2 =((pos.x )- floor((pos.x)/10.)*10.)*15.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,0.30);', e: 1.0 },
+                        { r: 'float pi3 =((pos.z)- floor((pos.z)/10.)*10.)*15.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,0.30);', e: 1.0 },
+                        { r: sh_frensel(), e: 0.003 }])
+                })), eng1).build();
 
-            eng1.engine.onInitScene = function () {
-
-
-               var skybox = BABYLON.Mesh.CreateSphere("skyBox", 60, 800.0, eng1.get().scene);
-               var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", eng1.get().scene);
-               skyboxMaterial.backFaceCulling = false;
-               skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("images/skybox/d/skybox", eng1.get().scene);
-               skyboxMaterial.reflectionTexture.coordinatesMode = 3;
-               skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-               skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-               skybox.material = skyboxMaterial;
-                
-
-               var skybox = BABYLON.Mesh.CreateSphere("skyBox", 60, 50.0, eng1.get().scene);
-                skybox.material = new $3d.iMaterial($3d.mat.frg(sh_specular()), eng1).build();
-                
                 b.push(skybox);
-
-
-                ref = new BABYLON.CubeTexture("images/skybox/d/skybox", eng1.get().scene);
+                ref = new BABYLON.CubeTexture("images/skybox/d2/skybox", eng1.get().scene);
                 ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+                var ref2 = new BABYLON.CubeTexture("images/skybox/d/skybox", eng1.get().scene);
+                ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
 
-                b[0].material.setTexture("refc", ref);  
-                 b[0].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+
+                b[0].material.setTexture("refc", ref);
+                b[0].material.setTexture("refc2", ref2);
+                b[0].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
                 // b[0].material.setVector3("vrefi", ref.coordinatesMode, ref.level, ref.isCube ? 1 : 0);
-                 b[0].material.backFaceCulling = false;
 
 
+                 var ts = new $3d.tools.wall({
+                     path: $3d.tools.svg.getPoints({
+                         min: 1,
+                         path: "m 79.613602,81.812149 15.529186,0 c 12.766962,0 23.045062,10.278096 23.045062,23.045061 l 0,15.52918 c 0,12.76697 -10.2781,23.04506 -23.045062,23.04506 l -15.529186,0 c -12.766963,0 -23.04506,-10.27809 -23.04506,-23.04506 l 0,-15.52918 c 0,-12.766965 10.278097,-23.045061 23.04506,-23.045061 z",
+                         push: function (r, n) { r.push({ x: n.x - 100, y: 0.0, z: n.y - 100 }); }
+                     }),
+                     h: 20, 
+                     d: 10,
+                     left: function (p) { return true; },
+                     right: function (p) { return true; },
+                 
+                     lr: function (p) { return true; },
+                     smooth: true,
+                     buildGeo: true,  
+                 });
+                 
+                 ts = new $3d.tools.wall({
+                     path: $3d.tools.svg.getPoints({
+                         min:1,
+                         path: "m 79.613602,81.812149 15.529186,0 c 12.766962,0 23.045062,10.278096 23.045062,23.045061 l 0,15.52918 c 0,12.76697 -10.2781,23.04506 -23.045062,23.04506 l -15.529186,0 c -12.766963,0 -23.04506,-10.27809 -23.04506,-23.04506 l 0,-15.52918 c 0,-12.766965 10.278097,-23.045061 23.04506,-23.045061 z",
+                         push: function (r, n) { r.push({ x: n.x - 100, y: 0.0, z: n.y - 100 }); }
+                     }),
+                     h: 20,
+                     d: 10, 
+                     top: function (p) { return true; },
+                     bottom: function (p) { return true; },
+                 
+                     lr: function (p) { return true; },
+                     smooth: true,
+                     exgeo: ts
+                 }).toMesh(eng1);
+                 
+                 
+                 ts.material = new $3d.iMaterial($3d.mat.frg(sh_specular({glass:true})), eng1).build();
+                 
+                 b.push(ts);
+                 
+                 var ref3 = new BABYLON.CubeTexture("images/skybox/d2/skybox", eng1.get().scene);
+                 ref3.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+                 var ref4 = new BABYLON.CubeTexture("images/skybox/d/skybox", eng1.get().scene);
+                 ref4.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+                 
+                 
+                 b[1].material.setTexture("refc", ref3);
+                 b[1].material.setTexture("refc2", ref4);
+                 b[1].material.setMatrix("refmat", ref3.getReflectionTextureMatrix());
+                 // b[0].material.setVector3("vrefi", ref.coordinatesMode, ref.level, ref.isCube ? 1 : 0);
+
+
+
+                var postProcess = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
+                var postProcess2 = new BABYLON.FxaaPostProcess("fxaa", 1.0, null, null, eng1.engine.instance.renderer, true);
+
+                eng1.engine.instance.cameras.main.attachPostProcess(postProcess);
+                eng1.engine.instance.cameras.main.attachPostProcess(postProcess2);
             }
-
             eng1.start();
-
-
         });
     </script>
     <!-- developer tools
