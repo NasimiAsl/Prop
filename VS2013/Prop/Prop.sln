@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{6A634E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{619912A3-B8BE-4BFE-B85B-C7C30889BFA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Melyon", "Melyon\Melyon.csproj", "{9956C9DC-3742-4F9C-8889-2BF944203554}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,11 +27,16 @@ Global
 		{619912A3-B8BE-4BFE-B85B-C7C30889BFA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{619912A3-B8BE-4BFE-B85B-C7C30889BFA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{619912A3-B8BE-4BFE-B85B-C7C30889BFA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9956C9DC-3742-4F9C-8889-2BF944203554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9956C9DC-3742-4F9C-8889-2BF944203554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9956C9DC-3742-4F9C-8889-2BF944203554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9956C9DC-3742-4F9C-8889-2BF944203554}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{619912A3-B8BE-4BFE-B85B-C7C30889BFA4} = {D75CCF5D-819C-4C0C-A53B-6D7A2B4670F8}
+		{9956C9DC-3742-4F9C-8889-2BF944203554} = {D75CCF5D-819C-4C0C-A53B-6D7A2B4670F8}
 	EndGlobalSection
 EndGlobal

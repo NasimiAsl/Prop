@@ -1,0 +1,6 @@
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Melyon.dll.config
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Melyon.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Melyon.pdb
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Debug\Melyon.csprojResolveAssemblyReference.cache
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Debug\Melyon.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Debug\Melyon.pdb

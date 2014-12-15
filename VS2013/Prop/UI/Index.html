@@ -5,14 +5,11 @@
     <title></title>
     <link href="stylesheets/screen.css" rel="stylesheet" />
     <script src="scripts/prop/base.js"></script>
-    <script src="scripts/prop/loader.js"></script>
-
+    <script src="scripts/prop/loader.js"></script> 
     <!--3d-->
-    <script src="/scripts/3dbase.js"></script>
-
+    <script src="/scripts/3dbase.js"></script> 
     <script src="/scripts/prop/3d/engines/babylon.js"></script>
-    <script src="/scripts/prop/3d/engines/three.js"></script>
-
+    <script src="/scripts/prop/3d/engines/three.js"></script> 
     <script src="/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/scripts/3dTools.js"></script>
     <script src="/scripts/3dMaterial.js"></script>
@@ -39,8 +36,7 @@
             var bx, bx1, phi = 0, theta = 0;
             eng1.engine.onRequestFrame = function () {
                 b[0].material.setVector3("camera", eng1.get().cameras.main.position);
-                b[1].material.setVector3("camera", eng1.get().cameras.main.position);
-
+                b[1].material.setVector3("camera", eng1.get().cameras.main.position); 
             };
             eng1.engine.onInitScene = function () {  
                 var skybox = $3d.tools.surface({
@@ -98,8 +94,7 @@
                      h: 20, 
                      d: 10,
                      left: function (p) { return true; },
-                     right: function (p) { return true; },
-                 
+                     right: function (p) { return true; }, 
                      lr: function (p) { return true; },
                      smooth: true,
                      buildGeo: true,  
@@ -117,7 +112,7 @@
                      bottom: function (p) { return true; },
                  
                      lr: function (p) { return true; },
-                     smooth: true,
+                      smooth: true,
                      exgeo: ts
                  }).toMesh(eng1);
                  
