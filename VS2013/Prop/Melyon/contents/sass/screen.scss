@@ -2,34 +2,20 @@
  * In this file you should write your main styles. (or centralize your imports)
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+$pm:0.0px;
+$u: 32;
+$r: 1.0px;
+$mp:1.0px;
+$p : ''; 
 
-@import "general/_positions";
-@import "general/_flexy";
 
-@import "general/_material";
-@import "general/_animations";
+@import "general/positions";
+@import "general/material";
 
-.z01 { z-index:1010;}
-.z02 { z-index:1020;}
-.z03 { z-index:1030;}
-.z04 { z-index:1040;}
-.z05 { z-index:1050;}
-.z06 { z-index:1060;}
-.z07 { z-index:1070;}
-.z08 { z-index:1080;}
-.z09 { z-index:1090;}
-.z09 { z-index:1090;} 
-.z10 { z-index:1100;}
-.z11 { z-index:1110;}
-.z12 { z-index:1120;}
-.z13 { z-index:1130;}
-.z14 { z-index:1140;}
-.z15 { z-index:1150;}
-.z16 { z-index:1160;}
-.z17 { z-index:1170;}
-.z18 { z-index:1180;}
-.z19 { z-index:1190;}
-.z20 { z-index:1200;}
+@import "general/flexy"; 
+@import "general/animations";
+
+
  
 
 

@@ -58,7 +58,12 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="contents\css\root.css" />
     <Content Include="contents\css\screen.css" />
+    <None Include="contents\sass\root.scss" />
+    <None Include="contents\sass\dev\_positions.scss" />
+    <None Include="contents\sass\dev\_material.scss" />
+    <None Include="contents\sass\dev\_flexy.scss" />
     <Content Include="contents\scripts\3dbase.js" />
     <Content Include="contents\scripts\3dbase_Initialize_BabylonJs.js" />
     <Content Include="contents\scripts\3dMaterial.js" />

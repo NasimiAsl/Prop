@@ -1,138 +1,16 @@
-.op00 {
-    opacity: 0.0;
-}
+@import "dev/material"; 
 
-.op01 {
-    opacity: 0.1;
-}
-
-.op02 {
-    opacity: 0.2;
-}
-
-.op03 {
-    opacity: 0.3;
-}
-
-.op04 {
-    opacity: 0.4;
-}
-
-.op05 {
-    opacity: 0.5;
-}
-
-.op06 {
-    opacity: 0.6;
-}
-
-.op07 {
-    opacity: 0.7;
-}
-
-.op08 {
-    opacity: 0.8;
-}
-
-.op09 {
-    opacity: 0.9;
-}
-
-.op10 {
-    opacity: 1.0;
-}
-
-@mixin color {
-    .c-#{$p1} {
-        background-color: $p2;
-    }
-
-    .c-#{$p1}-i {
-        background-color: $p2 !important;
-    }
-
-    .ct-#{$p1} {
-        color: $p2;
-    }
-
-    .ct-#{$p1}-i {
-        color: $p2 !important;
-    }
-
-    .cb-#{$p1} {
-        border-color: $p2;
-    }
-
-    .cb-#{$p1}-i {
-        border-color: $p2 !important;
-    }
-
-    .c-#{$p1}-h:hover {
-        background-color: $p2;
-    }
-
-    .c-#{$p1}-i-h:hover {
-        background-color: $p2 !important;
-    }
-
-    .ct-#{$p1}-h:hover {
-        color: $p2;
-    }
-
-    .ct-#{$p1}-i-h:hover {
-        color: $p2 !important;
-    }
-
-    .cb-#{$p1}-h:hover {
-        border-color: $p2;
-    }
-
-    .cb-#{$p1}-i-h:hover {
-        border-color: $p2 !important;
-    }
-}
-
-$p1: 'blue';
-$p2: #0063ff;
-@include color;
-$p1: 'cyan';
-$p2: #00c8ff;
-@include color;
-$p1: 'blue-cyan';
-$p2: #00b9ff;
-@include color;
-$p1: 'dark-blue';
-$p2: #00317e;
-@include color;
-$p1: 'light-blue';
-$p2: #83b3ff;
-@include color;
-$p1: 'purple';
-$p2: #e500ff;
-@include color;
-$p1: 'purple-blue';
-$p2: #36008e;
-@include color;
-$p1: 'dark';
-$p2: #000000;
-@include color;
-$p1: 'light';
-$p2: #e2e2e2;
-@include color;
-$p1: 'gray';
-$p2: #787878;
-@include color;
-$p1: 'white';
-$p2: #ffffff;
-@include color;
-$p1: 'orange';
-$p2: #ff5e00;
-@include color;
-
-.owf {
-    overflow: hidden;
-}
-
-.hdn {
-    display: none;
-}
+.op0{@include op(0);}     
+.op1{@include op(20);}     
+.op2{@include op(40);}     
+.op3{@include op(60);}     
+.op4{@include op(80);}     
+.op5{@include op(100);}   
+ 
+.owf  { @include owf;}   
+.owf-x { @include owf-x;} 
+.owf-y { @include owf-y;} 
+.hdn { @include hdn;}  
+.hdn-vs { @include hdn-vs;}  
+ 
+@include color('blue',#0063ff);  

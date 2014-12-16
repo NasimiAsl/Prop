@@ -1,0 +1,31 @@
+﻿@import "dev/flexy";
+@import "dev/positions";
+@import "dev/material";
+
+
+@mixin media-style2 {
+    * {
+        background-color: #ff0000;
+    }
+}
+
+@mixin media-style3 {
+    * {
+        background-color: #005500;
+    }
+}
+
+@include media-w-2brk('b1',800px,1000px,true);
+@mixin media-style1 {
+    * {
+        background-color: #0f000f !important;
+    }
+}
+@mixin media-style3 {}
+@mixin media-style2 {
+    * {
+        background-color: #0000ff !important;
+    }
+} 
+
+@include media-w-2brk('b2',400px,799px,true);

@@ -1,0 +1,34 @@
+﻿
+@mixin c           ($p2){background-color: $p2;}           ;
+@mixin c-i         ($p2){background-color: $p2 !important;};
+@mixin c-t          ($p2){color: $p2;}                      ;
+@mixin c-t-i        ($p2){color: $p2 !important;}           ;
+@mixin c-b          ($p2){border-color: $p2;}               ;
+@mixin c-b-i        ($p2){border-color: $p2 !important;}    ;
+ 
+
+@mixin color($p1,$p2){
+   .c#{$p1}{ @include c           ($p2); }
+   .c-i#{$p1}{ @include c-i         ($p2); }
+   .c-t#{$p1}{ @include c-t          ($p2); }
+   .c-t-i#{$p1}{ @include c-t-i        ($p2); }
+   .c-b#{$p1}{ @include c-b          ($p2); }
+   .c-b-i#{$p1}{ @include c-b-i        ($p2); }
+   .c-h#{$p1}:hover   { @include c    ($p2); }
+   .c-i-h#{$p1}:hover { @include c-i  ($p2); }
+   .c-t-h#{$p1}:hover  { @include c-t   ($p2); }
+   .c-t-i-h#{$p1}:hover{ @include c-t-i ($p2); }
+   .c-b-h#{$p1}:hover  { @include c-b   ($p2); }
+   .c-b-i-h#{$p1}:hover{ @include c-b-i($p2); }
+} 
+
+@mixin op($p1){opacity:$p1;}     ;
+@mixin op-i($p1){opacity:$p1 !important;};
+@mixin owf  {overflow :hidden;}  ;
+@mixin owf-x {overflow-x:hidden;};
+@mixin owf-y {overflow-y:hidden;};
+@mixin hdn {display:none;}       ; 
+@mixin hdn-vs {visibility:hidden;} ; 
+
+
+

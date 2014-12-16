@@ -1,397 +1,222 @@
-.rt {
-    position: relative;
-}
 
-.flt-l > div {
-    float: left;
-}
+ @import "dev/positions";
+$mp:0.0px; $p: '00';$r: 0.00px;     @include size(-$mp+$r*$u*1.0);
 
-.flt-r > div {
-    float: right;
-}
-
-
-.ab {
-    position: absolute;
-}
-
-$u: 32;
-$r: 1.0px;
- $mp:1.0px;
-@mixin size {
-
-    .w-#{$p}-mx {
-        max-width: -$mp+$r*$u*1.0;
-    }
-
-    .h-#{$p}-mx {
-        max-height: -$mp+$r*$u*1.0;
-    }
-
-    .w-#{$p}-mn {
-        min-width: -$mp+$r*$u*1.0;
-    }
-
-    .h-#{$p}-mn {
-        min-height: -$mp+$r*$u*1.0;
-    }
-
-    .w-#{$p}-mx-i {
-        max-width: -$mp+$r*$u*1.0 !important;
-    }
-
-    .h-#{$p}-mx-i {
-        max-height: -$mp+$r*$u*1.0 !important;
-    }
-
-    .w-#{$p}-mn-i {
-        min-width: -$mp+$r*$u*1.0 !important;
-    }
-
-    .h-#{$p}-mn-i {
-        min-height: -$mp+$r*$u*1.0 !important;
-    }
-
-    .w-#{$p} {
-        width: -$mp+$r*$u*1.0;
-    }
-
-    .h-#{$p} {
-        height: -$mp+$r*$u*1.0;
-    }
-
-    .l-#{$p} {
-        left: -$mp+$r*$u*1.0;
-    }
-
-    .r-#{$p} {
-        right: -$mp+$r*$u*1.0;
-    }
-
-    .t-#{$p} {
-        top: -$mp+$r*$u*1.0;
-    }
-
-    .b-#{$p} {
-        bottom: -$mp+$r*$u*1.0;
-    }
-
-    .pl-#{$p} {
-        padding-left: -$mp+$r*$u*1.0;
-    }
-
-    .pr-#{$p} {
-        padding-right: -$mp+$r*$u*1.0;
-    }
-
-    .pt-#{$p} {
-        padding-top: -$mp+$r*$u*1.0;
-    }
-
-    .pb-#{$p} {
-        padding-bottom: -$mp+$r*$u*1.0;
-    }
-
-    .ml-#{$p} {
-        margin-left: -$mp+$r*$u*1.0;
-    }
-
-    .mr-#{$p} {
-        margin-right: -$mp+$r*$u*1.0;
-    }
-
-    .mt-#{$p} {
-        margin-top: -$mp+$r*$u*1.0;
-    }
-
-    .mb-#{$p} {
-        margin-bottom: -$mp+$r*$u*1.0;
-    }
-
-    .bl-#{$p} {
-        border-left-width: -$mp+$r*$u*1.0;
-    }
-
-    .br-#{$p} {
-        border-right-width: -$mp+$r*$u*1.0;
-    }
-
-    .bt-#{$p} {
-        border-top-width: -$mp+$r*$u*1.0;
-    }
-
-    .bb-#{$p} {
-        border-bottom-width: -$mp+$r*$u*1.0;
-    }
-
-    .w-#{$p}-i {
-        width: -$mp+$r*$u*1.0 !important;
-    }
-
-    .h-#{$p}-i {
-        height: -$mp+$r*$u*1.0 !important;
-    }
-
-    .l-#{$p}-i {
-        left: -$mp+$r*$u*1.0 !important;
-    }
-
-    .r-#{$p}-i {
-        right: -$mp+$r*$u*1.0 !important;
-    }
-
-    .t-#{$p}-i {
-        top: -$mp+$r*$u*1.0 !important;
-    }
-
-    .b-#{$p}-i {
-        bottom: -$mp+$r*$u*1.0 !important;
-    }
-
-    .pl-#{$p}-i {
-        padding-left: -$mp+$r*$u*1.0 !important;
-    }
-
-    .pr-#{$p}-i {
-        padding-right: -$mp+$r*$u*1.0 !important;
-    }
-
-    .pt-#{$p}-i {
-        padding-top: -$mp+$r*$u*1.0 !important;
-    }
-
-    .pb-#{$p}-i {
-        padding-bottom: -$mp+$r*$u*1.0 !important;
-    }
-
-    .ml-#{$p}-i {
-        margin-left: -$mp+$r*$u*1.0 !important;
-    }
-
-    .mr-#{$p}-i {
-        margin-right: -$mp+$r*$u*1.0 !important;
-    }
-
-    .mt-#{$p}-i {
-        margin-top: -$mp+$r*$u*1.0 !important;
-    }
-
-    .mb-#{$p}-i {
-        margin-bottom: -$mp+$r*$u*1.0 !important;
-    }
-
-    .bl-#{$p}-i {
-        border-left-width: -$mp+$r*$u*1.0 !important;
-    }
-
-    .br-#{$p}-i {
-        border-right-width: -$mp+$r*$u*1.0 !important;
-    }
-
-    .bt-#{$p}-i {
-        border-top-width: -$mp+$r*$u*1.0 !important;
-    }
-
-    .bb-#{$p}-i {
-        border-bottom-width: -$mp+$r*$u*1.0 !important;
-    }
-}
-
- $mp:0.0px;
-
-$p: '00';
-$r: 0.00px;
-@include size;
 $p: '0025';
 $r: 0.25px;
-@include size;
+
+$pm : -$mp+$r*$u*1.0;
+@include size(-$mp+$r*$u*1.0);
 $p: '005';
 $r: 0.5px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '0075';
 $r: 0.75px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '015';
 $r: 1.5px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '025';
 $r: 2.5px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 
 $mp: $u*0.25px;
 
 $p: '01';
 $r: 1.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '02';
 $r: 2.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '03';
 $r: 3.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '04';
 $r: 4.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '05';
 $r: 5.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '06';
 $r: 6.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '07';
 $r: 7.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '08';
 $r: 8.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '09';
 $r: 9.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '10';
 $r: 10.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '11';
 $r: 11.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '12';
 $r: 12.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '13';
 $r: 13.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '14';
 $r: 14.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '15';
 $r: 15.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '16';
 $r: 16.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '17';
 $r: 17.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '18';
 $r: 18.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '19';
 $r: 19.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '20';
 $r: 20.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '21';
 $r: 21.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '22';
 $r: 22.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '23';
 $r: 23.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '24';
 $r: 24.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '25';
 $r: 25.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '26';
 $r: 26.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '27';
 $r: 27.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '28';
 $r: 28.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '29';
 $r: 29.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '30';
 $r: 30.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '31';
 $r: 31.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: '32';
 $r: 32.0px;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 
 $u : 1.0;
 $p: 'p0025';
 $r: 0.25%;
-
-@include size;
+$mp: $u*0.25%;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p005';
 $r: 0.5%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p0075';
 $r: 0.75%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p015';
 $r: 1.5%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p025';
 $r: 2.5%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 
 $p: 'p10';
 $r: 10.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p15';
 $r: 15.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p20';
 $r: 20.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p25';
 $r: 25.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p30';
 $r: 30.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p35';
 $r: 35.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p40';
 $r: 40.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p45';
 $r: 45.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p50';
 $r: 50.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p55';
 $r: 55.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p60';
 $r: 60.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p65';
 $r: 65.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p70';
 $r: 70.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p75';
 $r: 75.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p80';
 $r: 80.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p85';
 $r: 85.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p90';
 $r: 90.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p95';
 $r: 95.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p100';
 $r: 100.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
 $p: 'p05';
 $r: 5.0%;
-@include size;
+@include size(-$mp+$r*$u*1.0);
+
+
+.z01 { z-index:1010;}
+.z02 { z-index:1020;}
+.z03 { z-index:1030;}
+.z04 { z-index:1040;}
+.z05 { z-index:1050;}
+.z06 { z-index:1060;}
+.z07 { z-index:1070;}
+.z08 { z-index:1080;}
+.z09 { z-index:1090;}
+.z09 { z-index:1090;} 
+.z10 { z-index:1100;}
+.z11 { z-index:1110;}
+.z12 { z-index:1120;}
+.z13 { z-index:1130;}
+.z14 { z-index:1140;}
+.z15 { z-index:1150;}
+.z16 { z-index:1160;}
+.z17 { z-index:1170;}
+.z18 { z-index:1180;}
+.z19 { z-index:1190;}
+.z20 { z-index:1200;}

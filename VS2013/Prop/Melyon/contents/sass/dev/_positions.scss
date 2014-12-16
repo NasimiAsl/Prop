@@ -1,0 +1,326 @@
+﻿/*
+
+   samples :  pl-i00 , w-mn02 , w-mn-i0025 , 
+                                                               |                 |
+                                                               |                 |
+                 sass & css                                    |     sass        |  css 
+                                                               |                 |
+    [prefix(l,r,t,b)][name      ]-[middle (w,h)]-[important   ]|(number & type)  |[type][number]
+     ----------------| width :w  | max :mx      | !important:i | ?% or ?px or .. | ???? => ??.??px
+     ----------------| height:h  | min :mn      |              |                 | p???? => ??.??%
+     padding:p       | left  :l  |--------------|              |                 |
+     margin :m       | right :r  |--------------|              |                 |
+     border :b       | top   :t  |--------------|              |                 |
+                     | bottom:b  |--------------|              |                 |
+   
+    sass sample : @include w(50em);                       | css sample : w-20 => (20*32)px
+                  @include w-l-i(50em);                   |              w-p05 => 5%
+
+    dev/positions : have just sass version for use in sass
+    general/positions : generate css (00,0.25,0.5,01,1.5,2.2.5,3,4,..,32)px 
+                                     (05,10,15,..,95,100)%
+*/
+
+
+@mixin  w-mx($pm){max-width: $pm;}
+@mixin  h-mx($pm){max-height: $pm;}
+@mixin  w-mn($pm){min-width: $pm;}
+@mixin  h-mn($pm){min-height: $pm;}
+@mixin  w-mx-i($pm) {max-width: $pm !important;}
+@mixin  h-mx-i($pm) {max-height: $pm !important;}
+@mixin  w-mn-i($pm) {min-width: $pm !important;}
+@mixin  h-mn-i($pm) {min-height: $pm !important;}
+@mixin  w($pm){width: $pm;} 
+@mixin  h($pm){height: $pm;}
+@mixin  l($pm){left: $pm;}
+@mixin  r($pm){right: $pm;}
+@mixin  t($pm){top: $pm;}
+@mixin  b($pm){bottom: $pm;}
+@mixin  pl($pm){padding-left: $pm;}
+@mixin  pr($pm){padding-right: $pm;}
+@mixin  pt($pm){padding-top: $pm;    }
+@mixin  pb($pm){padding-bottom: $pm;}
+@mixin  ml($pm){margin-left: $pm;    }
+@mixin  mr($pm){margin-right: $pm;}
+@mixin  mt($pm){margin-top: $pm;}
+@mixin  mb($pm){margin-bottom: $pm;}
+@mixin  bl($pm){border-left-width: $pm;}
+@mixin  br($pm){border-right-width: $pm;}
+@mixin  bt($pm){border-top-width: $pm;}
+@mixin  bb($pm){border-bottom-width: $pm;}
+@mixin  w-i($pm){width: $pm !important;}
+@mixin  h-i($pm){height: $pm !important;}
+@mixin  l-i($pm){left: $pm !important;}
+@mixin  r-i($pm){right: $pm !important;}
+@mixin  t-i($pm){top: $pm !important;}
+@mixin  b-i($pm){bottom: $pm !important;}
+@mixin  pl-i($pm){padding-left: $pm !important;}
+@mixin  pr-i($pm){padding-right: $pm !important;}
+@mixin  pt-i($pm){padding-top: $pm !important;}
+@mixin  pb-i($pm){padding-bottom: $pm !important;}
+@mixin  ml-i($pm){margin-left: $pm !important;}
+@mixin  mr-i($pm){margin-right: $pm !important;}
+@mixin  mt-i($pm){margin-top: $pm !important;}
+@mixin  mb-i($pm){margin-bottom: $pm !important;}
+@mixin  bl-i($pm){border-left-width: $pm !important;}
+@mixin  br-i($pm){border-right-width: $pm !important;}
+@mixin  bt-i($pm){border-top-width: $pm !important;}
+@mixin  bb-i($pm){border-bottom-width: $pm !important;}
+
+@mixin size($param) { 
+  .w-mx-#{$p}   { @include w-mx  ($param);} 
+  .h-mx-#{$p}   { @include h-mx  ($param);} 
+  .w-mn-#{$p}   { @include w-mn  ($param);} 
+  .h-mn-#{$p}   { @include h-mn  ($param);} 
+  .w-mx-i-#{$p} { @include w-mx-i($param);} 
+  .h-mx-i-#{$p} { @include h-mx-i($param);} 
+  .w-mn-i-#{$p} { @include w-mn-i($param);} 
+  .h-mn-i-#{$p} { @include h-mn-i($param);} 
+  .w-#{$p}      { @include w     ($param);}
+  .h-#{$p}      { @include h     ($param);}
+  .l-#{$p}      { @include l     ($param);}
+  .r-#{$p}      { @include r     ($param);}
+  .t-#{$p}      { @include t     ($param);}
+  .b-#{$p}      { @include b     ($param);}
+  .pl-#{$p}     { @include pl    ($param);}
+  .pr-#{$p}     { @include pr    ($param);}
+  .pt-#{$p}     { @include pt    ($param);}
+  .pb-#{$p}     { @include pb    ($param);}
+  .ml-#{$p}     { @include ml    ($param);}
+  .mr-#{$p}     { @include mr    ($param);}
+  .mt-#{$p}     { @include mt    ($param);}
+  .mb-#{$p}     { @include mb    ($param);}
+  .bl-#{$p}     { @include bl    ($param);}
+  .br-#{$p}     { @include br    ($param);}
+  .bt-#{$p}     { @include bt    ($param);}
+  .bb-#{$p}     { @include bb    ($param);}
+  .w-i-#{$p}    { @include w-i   ($param);}
+  .h-i-#{$p}    { @include h-i   ($param);}
+  .l-i-#{$p}    { @include l-i   ($param);}
+  .r-i-#{$p}    { @include r-i   ($param);}
+  .t-i-#{$p}    { @include t-i   ($param);}
+  .b-i-#{$p}    { @include b-i   ($param);}
+  .pl-i-#{$p}   { @include pl-i  ($param);}
+  .pr-i-#{$p}   { @include pr-i  ($param);}
+  .pt-i-#{$p}   { @include pt-i  ($param);}
+  .pb-i-#{$p}   { @include pb-i  ($param);}
+  .ml-i-#{$p}   { @include ml-i  ($param);}
+  .mr-i-#{$p}   { @include mr-i  ($param);}
+  .mt-i-#{$p}   { @include mt-i  ($param);}
+  .mb-i-#{$p}   { @include mb-i  ($param);}
+  .bl-i-#{$p}   { @include bl-i  ($param);}
+  .br-i-#{$p}   { @include br-i  ($param);}
+  .bt-i-#{$p}   { @include bt-i  ($param);}
+  .bb-i-#{$p}   { @include bb-i  ($param);} 
+} 
+ 
+
+@mixin z($i){ z-index:$i;}
+@mixin z-i($i){ z-index:$i !important;}
+@mixin media-zero {
+    display:none;
+}
+@mixin media-one {
+    display:block;
+}
+
+@mixin media-style1 {}
+                  
+@mixin media-style2 {}
+                  
+@mixin media-style3 {}
+                  
+@mixin media-style4 {} 
+/* break points and media query
+
+    how to define
+    @include media-[w or h]-[breakpoints count]brk(breakpoint name , sizes ... );
+    breakpoints count = [2,3,4]
+    sample
+    @include media-w-3brk('aname',200,500);
+    @include media-h-2brk('bname',200 );
+
+    use 
+    brk-aname000 : hide in all
+    brk-aname010 : show in width size number 2
+    brk-aname110 : show in width size number 2 and 1
+    brk-aname-i110 : important  show in width size number 2 and 1
+    ...
+     brk-bname10 : show in height size number 1
+
+
+*/
+/*#region 2 breakpoints */
+
+
+@mixin media-2helper($j,$n,$style) {
+
+     @for $i1 from 0 through 1
+      { @for $i2 from 0 through 1 
+        { 
+           @if ($j == 1 and $i1 == 0 ) or ($j == 2 and $i2 == 0 )
+           {  
+               .#{$n}-#{$i1}#{$i2} { @include media-zero;} 
+               
+           }
+
+          @if ($j == 1 and $i1 == 1 ) or ($j == 2 and $i2 == 1 )
+           {  
+               .#{$n}-#{$i1}#{$i2} { @include media-one;} 
+           }
+
+          
+
+        }
+      }
+}
+
+@mixin media-w-1brk($brk-name,$brk-s1,$style){
+    @media   (max-width:$brk-s1){
+        @include media-2helper(1,$brk-name,$style);
+        @if ( $style )  {  @include media-style1;}
+    }  
+
+     @media (min-width:$brk-s1)  {
+        @include media-2helper(2,$brk-name,$style);
+        @if ( $style )  {  @include media-style2;}
+    } 
+} 
+@mixin media-h-1brk($brk-name,$brk-s1,$style){
+    @media   (max-height:$brk-s1){
+        @include media-2helper(1,$brk-name,$style);
+         @if ( $style )  {  @include media-style1;}
+    }  
+
+     @media (min-height:$brk-s1)  {
+        @include media-2helper(2,$brk-name,$style);
+         @if ( $style )  {  @include media-style2;}
+    } 
+} 
+/*#endregion */
+
+/*#region 3 breakpoints */
+
+
+@mixin media-3helper($j,$n,$style) { 
+     @for $i1 from 0 through 1
+      { @for $i2 from 0 through 1 
+        {  @for $i3 from 0 through 1 
+          { 
+           @if ($j == 1 and $i1 == 0 ) or ($j == 2 and $i2 == 0 ) or ($j == 3 and $i3 == 0 )
+           {  
+               .#{$n}-#{$i1}#{$i2}#{$i3} {@include media-zero;} 
+           }
+
+           @if ($j == 1 and $i1 == 1 ) or ($j == 2 and $i2 == 1 ) or ($j == 3 and $i3 == 1 )
+           {  
+               .#{$n}-#{$i1}#{$i2}#{$i3} {@include media-one;} 
+           }
+
+          
+        }
+      }
+    }
+}
+
+@mixin media-w-2brk($brk-name,$brk-s1,$brk-s2,$style){
+    @media   (max-width:$brk-s1){
+        @include media-3helper(1,$brk-name,$style);
+         @if ( $style )  {  @include media-style1;}
+    }  
+
+     @media (min-width:$brk-s1) and (max-width:$brk-s2)  {
+        @include media-3helper(2,$brk-name,$style);
+         @if ( $style )  {  @include media-style2;}
+    } 
+     @media (min-width:$brk-s2)  {
+        @include media-3helper(3,$brk-name,$style);
+         @if ( $style )  {  @include media-style3;}
+    } 
+} 
+
+@mixin media-h-2brk($brk-name,$brk-s1,$brk-s2,$style){
+    @media   (max-height:$brk-s1){
+        @include media-3helper(1,$brk-name,$style);
+         @if ( $style )  {  @include media-style1;}
+    }  
+
+     @media (min-height:$brk-s1) and (max-width:$brk-s2)  {
+        @include media-3helper(2,$brk-name,$style);
+         @if ( $style )  {  @include media-style2;}
+    } 
+     @media (min-height:$brk-s2)  {
+        @include media-3helper(3,$brk-name,$style);
+         @if ( $style )  {  @include media-style3;}
+    } 
+} 
+
+/*#endregion */
+
+/*#region 4 breakpoints */ 
+
+@mixin media-4helper($j,$n,$style) {
+
+     @for $i1 from 0 through 1
+      { @for $i2 from 0 through 1 
+        {  @for $i3 from 0 through 1 
+          {  @for $i4 from 0 through 1 
+           { 
+           @if ($j == 1 and $i1 == 0 ) or ($j == 2 and $i2 == 0 ) or ($j == 3 and $i3 == 0 ) or ($j == 4 and $i4 == 0 )
+           {  
+               .#{$n}-#{$i1}#{$i2}#{$i3}#{$i4} { @include media-zero;}
+                
+           }
+         @if ($j == 1 and $i1 == 1 ) or ($j == 2 and $i2 == 1 ) or ($j == 3 and $i3 == 1 ) or ($j == 4 and $i4 == 1 )
+           {  
+               .#{$n}-#{$i1}#{$i2}#{$i3}#{$i4} { @include media-one;}
+                
+           }
+
+           
+         }
+        }
+      }
+    }
+}
+
+@mixin media-w-3brk($brk-name,$brk-s1,$brk-s2,$brk-s3,$style){
+    @media   (max-width:$brk-s1){
+        @include media-4helper(1,$brk-name,$style);
+         @if ( $style )  {  @include media-style1;}
+    }  
+
+     @media (min-width:$brk-s1) and (max-width:$brk-s2)  {
+        @include media-4helper(2,$brk-name,$style);
+         @if ( $style )  {  @include media-style2;}
+    }
+      @media (min-width:$brk-s2) and (max-width:$brk-s3)  {
+        @include media-4helper(3,$brk-name,$style);
+         @if ( $style )  {  @include media-style3;}
+    } 
+     @media (min-width:$brk-s3)  {
+        @include media-4helper(4,$brk-name,$style);
+         @if ( $style )  {  @include media-style4;}
+    } 
+} 
+
+@mixin media-h-4brk($brk-name,$brk-s1,$brk-s2,$brk-s3,$style){
+    @media   (max-height:$brk-s1){
+        @include media-4helper(1,$brk-name,$style);
+         @if ( $style )  {  @include media-style1;}
+    }  
+
+     @media (min-height:$brk-s1) and (max-height:$brk-s2)  {
+        @include media-4helper(2,$brk-name,$style);
+         @if ( $style )  {  @include media-style2;}
+    }
+      @media (min-height:$brk-s2) and (max-height:$brk-s3)  {
+        @include media-4helper(3,$brk-name,$style);
+         @if ( $style )  {  @include media-style3;}
+    } 
+     @media (min-height:$brk-s3)  {
+        @include media-4helper(4,$brk-name,$style);
+         @if ( $style )  {  @include media-style4;}
+    } 
+} 
+/*#endregion */
