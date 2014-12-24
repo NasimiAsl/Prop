@@ -104,6 +104,8 @@
     <Content Include="images\skybox\skybox_pz.jpg" />
     <Content Include="images\textures\lights.png" />
     <Content Include="index.html" />
+    <Content Include="tools\surface\Index.html" />
+    <Content Include="pages\layouts\3d-base.html" />
     <Content Include="pages\layouts\base.html" />
     <Content Include="pages\layouts\fit.html" />
     <Content Include="pages\sample_multi.html" />

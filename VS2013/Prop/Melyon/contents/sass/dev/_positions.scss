@@ -117,6 +117,11 @@
 
 @mixin z($i){ z-index:$i;}
 @mixin z-i($i){ z-index:$i !important;}
+
+@mixin ab { position:absolute;}
+@mixin rt { position:relative;}
+
+
 @mixin media-zero {
     display:none;
 }

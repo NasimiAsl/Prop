@@ -268,8 +268,8 @@
 
             var sr = [];
 
-            for (var i = def(op.start, 0) ; i < result[0].length - def(op.end, 0) ; i++) {
-                sr.push(result[0][i]);
+            for (var i = def(op.start, 0) ; i < results[0][0].length - def(op.end, 0) ; i++) {
+                sr.push(results[0][0][i]);
             }
 
             return sr;

@@ -194,6 +194,12 @@ $r: 95.0%;
 $p: 'p100';
 $r: 100.0%;
 @include size(-$mp+$r*$u*1.0);
+$p: 'full';
+$r: 100.0%;
+@include size($r);
+$p: 'auto';
+$r: auto;
+@include size($r);
 $p: 'p05';
 $r: 5.0%;
 @include size(-$mp+$r*$u*1.0);
@@ -220,3 +226,6 @@ $r: 5.0%;
 .z18 { z-index:1180;}
 .z19 { z-index:1190;}
 .z20 { z-index:1200;}
+
+.ab{ @include ab;}
+.rt{ @include rt;}

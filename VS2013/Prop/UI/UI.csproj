@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\textures\" />
+    <Folder Include="tools\surface\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

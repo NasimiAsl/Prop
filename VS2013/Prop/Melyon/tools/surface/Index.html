@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script type="text/javascript" src="/contents/scripts/base.js"></script>
+    <script type="text/javascript" src="/contents/scripts/loader.js"></script>
+    <link href="/contents/css/screen.css" rel="stylesheet" />
+    <link href="/contents/css/root.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="ab w-full h-full t-i-00 b-i-00 z05">
+        <canvas id="renderCanvas" class="w-full h-full"></canvas>
+    </div>
+    <div id="shaders" class="hdn"></div>
+    <script src="/contents/scripts/engine/babylon.js"></script>
+    <script src="/contents/scripts/engine/three.js"></script>
+    <script src="/contents/scripts/3dbase.js"></script>
+    <script src="/contents/scripts/3dbase_Initialize_BabylonJs.js"></script>
+    <script src="/contents/scripts/3dMaterial.js"></script>
+    <script src="/contents/scripts/3dTools.js"></script>
+    <script type="text/javascript">
+        var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
+        eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
+        eng1.engine.instance.canvas = document.getElementById('renderCanvas');
+        var bx, bx1, phi = 0, theta = 0;
+        var time = 0;
+        eng1.engine.onRequestFrame = function () {
+
+            time += 0.06;
+            _for(b, function (it, i) {
+                it.material.setVector3("camera", eng1.get().cameras.main.position);
+                it.material.setFloat("time", time); 
+               
+            });
+
+        };
+
+        function mat_sample(cl) {
+            cl = def(cl, 0x000000);
+            return sh_range({
+                start: 10, end: 1000,
+                mat1: sh_multi([
+                    { r: sh_specular({ glass: true }), e: 0.20 },
+                    { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                    { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
+                    { r: sh_phonge({ color: cl, back: 0x000000 }), e: 1.0 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.015 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
+                    { r: 'float pi2 =((pos.x )- floor((pos.x )/10.)*10.)*8.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,1.0);', e: 1.0 },
+                    { r: 'float pi3 =((pos.z )- floor((pos.z )/10.)*10.)*8.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,1.0);', e: 1.0 },
+                    // { r: 'float pi4 =((pos.y )- floor((pos.y )/10.)*10.)*8.  ; if(pi4 > 1.0) pi4 = 0.0; else pi4 = -0.1; result = vec4(pi4,pi4,pi4,1.0);', e: 1.0 },
+                    //  { r: 'float pp;pp = abs( noise(vec3(pos.x/2.,pos.y/2.,pos.z/2.)));if(pp < 0.05 || pp > 0.1) pp  = -1.*pp/3.0 ;else pp = -0.2;result = vec4(pp,pp,pp,1.0);', e: 0.12 },
+                    { r: sh_frensel(), e: 0.3 }]),
+                mat2: sh_multi([
+                    { r: sh_specular({ glass: true }), e: 0.020 },
+                    { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                    { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
+                    { r: 'result = vec4(1.,1.,1.,1.0);', e: 1.0 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.15 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
+                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
+                  //  { r: 'float pi2 =((pos.x )- floor((pos.x)/10.)*10.)*15.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,0.30);', e: 0.2 },
+                  //  { r: 'float pi3 =((pos.z)- floor((pos.z)/10.)*10.)*15.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,0.30);', e: 0.2 },
+                  //  { r: 'float pi4 =((pos.y)- floor((pos.y)/10.)*10.)*15.  ; if(pi4 > 1.0) pi4 = 0.0; else pi4 = -0.1; result = vec4(pi4,pi4,pi4,0.30);', e: 0.2 },
+                    { r: sh_frensel(), e: 0.3 }])
+            });
+        }
+
+        function mat() {
+
+            var p = new $3d.iMaterial($3d.mat.frg(mat_sample(0xededed)), eng1).build();
+            //p.material.wireframe = true;
+
+            ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
+            ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+            var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
+            ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+
+
+            p.setTexture("refc", ref);
+            p.setTexture("refc2", ref2);
+            p.setMatrix("refmat", ref.getReflectionTextureMatrix());
+
+            return p;
+        }
+        eng1.engine.onInitScene = function () {
+
+            var w = new $3d.tools.surface({
+                paths: [[{ x: -10000, y: -10, z: -10000 }, { x: 10000, y: -10, z: -10000 }], [{ x: -10000, y: -10, z: 10000 }, { x: 10000, y: -10, z: 10000 }]],
+                //flip:true
+            }).toMesh(eng1);
+            //w2.material = mat();
+
+            //var w = new BABYLON.Mesh.CreateBox('s', 30, eng1.get().scene);
+            w.material = mat();
+
+            b.push(w);
+
+        }
+        eng1.start();
+
+
+    </script>
+    <div class="ab b-00 h-auto cblack t-auto w-full z06 f f-r">
+        <div class="w-p60">
+            <input id="p1" type="text" value="m 100,150.251 c 35.97073,0 47.9079,-34.89014 47.9079,-34.89014 l 17.15184,3.74628 c 0,0 0.79971,-2.21111 1.875,-9.375 0.8811,-5.87017 0.98214,-9.73214 0.98214,-9.73214 l 13.15455,0 c 0.10055,0.0503 0.66942,-33.200791 -23.8682,-57.634341 C 132.39419,17.661836 99.893123,18.425829 100,18.571428 l 0,17.80577 c 0,0 -31.403946,-0.596963 -50.325603,24.408877 C 29.327173,86.924054 38.928571,119.10714 38.928571,119.10714 l 13.230487,-4.21787 c 0,0 10.683678,35.36173 47.840942,35.36173 z" />
+            <input id="d1" type="text" value="[1,1,1,1,1,1,1,1,1]" onclick="curr = 0; setTo(getj('d1')); curr = 1;" /> 
+
+            <input id="op1" type="text" value="{}" />
+            <input id="ch1" type="checkbox" value="false" title="points" />
+            <input id="pl1" type="text" class="w-02" value="300" />
+            <input id="h1" type="text" class="w-02" value="0.0" />
+            <br />
+            <input id="p2" type="text" value="m 99.821429,125.35715 c 14.628931,-0.53461 22.978791,-10.22138 25.000001,-22.14286 1.51749,-8.950405 -3.23861,-21.673547 -15.82973,-26.474457 L 110,45.535714 c 8.16517,1.016396 15.88234,4.400843 23.21429,9.821429 l 4.82142,-7.142858 c -8.2066,-5.237534 -16.686,-9.668511 -26.25,-10.892857 L 109.92,45.494244 108.92857,76.71875 c 0,0 -7.91794,-2.742737 -15.432111,-0.729322 -7.066697,1.893515 -16.301477,8.013145 -18.228602,20.082 -2.834279,17.750022 13.02465,29.707042 24.553572,29.285722 z" />
+            <input id="d2" type="text" value="[1,1,1,1,1,1,1,1,1]" onclick="curr = 0; setTo(getj('d2')); curr = 2;" /> 
+
+            <input id="op2" type="text" value="{}" />
+            <input id="ch2" type="checkbox" value="false" title="points" />
+            <input id="pl2" type="text" class="w-02" value="300" />
+            <input id="h2" type="text" class="w-02" value="10" />
+            <br />
+            <input id="p3" type="text" value="m 99.821429,125.35715 c 14.628931,-0.53461 22.978791,-10.22138 25.000001,-22.14286 1.51749,-8.950405 -3.23861,-21.673547 -15.82973,-26.474457 L 110,45.535714 c 8.16517,1.016396 15.88234,4.400843 23.21429,9.821429 l 4.82142,-7.142858 c -8.2066,-5.237534 -16.686,-9.668511 -26.25,-10.892857 L 109.92,45.494244 108.92857,76.71875 c 0,0 -7.91794,-2.742737 -15.432111,-0.729322 -7.066697,1.893515 -16.301477,8.013145 -18.228602,20.082 -2.834279,17.750022 13.02465,29.707042 24.553572,29.285722 z" />
+            <input id="d3" type="text" value="[1,1,1,1,1,1,1,1,1]" onclick="curr = 0; setTo(getj('d3')); curr = 3;" /> 
+
+            <input id="op3" type="text" value="{}" />
+            <input id="ch3" type="checkbox" value="false" title="points" />
+            <input id="pl3" type="text" class="w-02" value="300" />
+            <input id="h3" type="text" class="w-02" value="20" />
+
+        </div>
+        <div class="w-p25">
+            <input type="text" id="mat" value="'result = vec4(1.0,0.,0.,1.0);'" />
+            <input id="wire" type="checkbox" value="false" title="wireframe" placeholder="wire" />
+            <input id="flip" type="checkbox" value="false" title="flip" placeholder="flip" />
+        </div>
+        <div>
+            <input type="button" class="w-02 h-02" value="apply" onclick="test()" />
+            <input type="button" class="w-02 h-02" value="min" onclick="minall()" />
+            <input type="button" class="w-02 h-02" value="ref" onclick="refall()" />
+        </div>
+    </div>
+    <div id="density" class="cblue ab t-01 r-01 w-i-05 h-auto z06">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+    </div>
+    <script> 
+        var curr = 0;
+        function minall() {
+            all('#density > input', function (it, i) {
+                it.value = 0.0;
+            }, function () {
+
+                test();
+            });
+        }
+        function refall() {
+            all('#density > input', function (it, i) {
+                it.value = 50.0;
+            }, function () {
+
+                test();
+            });
+        }
+        function setTo(ar) {
+
+            minall();
+            var th = first('#density > input');
+            _for(ar, function (it, i) {
+
+                try {
+                    th.value = it*50.;
+
+                    th = th.nextElementSibling;
+                }
+                catch (e) { }
+            });
+
+        }
+        function test() {
+            if (def(b[1]))
+                b[1].dispose();
+
+            function AddNew() {
+                var k = getv('h1');
+                var push = function (r, n) { r.push({ x: -n.x + 100, y: k, z: n.y - 100 }); };
+
+                var script = "{paths:[@paths],flip:[@flip]}";
+
+                var pts = getv('ch1') ? getj('p1') : $3d.tools.svg.getPoints({ path: getv('p1'), density: getj('d1'), pointLength: getv('pl1') * 1.0, push: push });
+                k = getv('h2');
+                var pts1 = getv('ch2') ? getj('p2') : $3d.tools.svg.getPoints({ path: getv('p2'), density: getj('d2'), pointLength: getv('pl2') * 1.0, push: push });
+                k = getv('h3');
+                var pts2 = getv('ch3') ? getj('p3') : $3d.tools.svg.getPoints({ path: getv('p3'), density: getj('d3'), pointLength: getv('pl3') * 1.0, push: push });
+
+
+
+
+
+                var w = new $3d.tools.surface({
+                    paths: (pts2.length > 0 ? [pts, pts1, pts2] : [pts, pts1]),
+                    flip: getv('flip')
+                }).toMesh(eng1);
+                w.material = new $3d.iMaterial($3d.mat.frg(getj('mat')), eng1).build();
+                w.material.wireframe = getv('wire');
+
+                ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
+                ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+                var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
+                ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+
+
+                w.material.setTexture("refc", ref);
+                w.material.setTexture("refc2", ref2);
+                w.material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+
+
+                b[1] = w;
+            }
+
+            var s = '[';
+
+            all('#density > input', function (it, i) {
+                if (it.value != 0)
+                    s += "," + (it.value * 2.0) / 100.;
+            }, function () {
+                s = s.replace("[,", "[") + "]";
+                if (s == "[]") s = "[1,1,1]";
+                if (curr == 1)
+                    setv('d1', s);
+                if (curr == 2)
+                    setv('d2', s);
+                if (curr == 3)
+                    setv('d3', s);
+
+                AddNew();
+            });
+        }
+    </script>
+</body>
+</html>

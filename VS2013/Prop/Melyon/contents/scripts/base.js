@@ -11,17 +11,91 @@ function def(a, d) {
 String.prototype.replaceAll = function (str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof (str2) == "string") ? str2.replace(/\$/g, "$$$$") : str2);
 }
+// id ? {}
+function get(op, pr) {
+    pr = def(pr, document);
+    return pr.getElementById(op);
+}
+function getv(op, pr) {
 
-function _for(ar, _do) {
+    if (get(op, pr).tagName.toLowerCase() == "input" && get(op, pr).getAttribute("type").toLowerCase() == "checkbox") {
+        return get(op, pr).checked;
+    }
+
+    return get(op, pr).value;
+}
+
+function setv(op, val, pr) {
+    get(op, pr).value = val;
+}
+
+function getj(op, pr) {
+    return window.eval(get(op, pr).value);
+}
+
+function first(s, f, p) {
+    p = def(p, document);
+    var rl = p.querySelector(s);
+
+    if (!def(f)) return rl;
+
+    if (def(rl))
+        f(rl);
+}
+
+
+function last(s, f, p) {
+    p = def(p, document);
+    var rl = p.querySelectorAll(s);
+
+
+    if (!def(f)) return rl[rl.length - 1];
+    if (rl.length > 0)
+        f(rl[rl.length - 1]);
+}
+
+
+function all(s, f, e, b, p) {
+    p = def(p, document);
+    var rl = p.querySelectorAll(s)
+    _for(rl, f, e, b);
+}
+
+function all_r(s, f, e, b, p) {
+    p = def(p, document);
+    var rl = p.querySelectorAll(s)
+    _for_r(rl, f, e, b);
+}
+
+
+function _for(ar, _do, e, b) {
+    if (def(b)) b();
     for (var i = 0; i < ar.length; i++) {
         _do(ar[i], i);
     }
+    if (def(e)) e();
+}
+function _for_r(ar, _do, e, b) {
+    if (def(b)) b();
+    for (var i = ar.length - 1; i >= 0 ; i--) {
+        _do(ar[i], i);
+    }
+    if (def(e)) e();
 }
 
 function _each(ar, _do) {
     for (var x in ar) {
         _do(ar[x], x);
     }
+}
+
+function _each_r(ar, _do) {
+    var p = [];
+    for (var x in ar) {
+        p.push(x);
+    }
+
+    _for_r(p, function (it, i) { _do(ar(it), it); });
 }
 
 function state(msg, group) {
@@ -173,12 +247,12 @@ vec3.prototype = {
     }
 };
 
-
 var face3 = function (p1, p2, p3) {
     this.p1 = p1;
     this.p2 = p2;
     this.p3 = p3;
 }
+
 face3.prototype = {
     p1: {}, p2: {}, p3: {},
     getCenter: function () {

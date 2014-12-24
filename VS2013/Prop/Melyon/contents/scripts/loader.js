@@ -150,14 +150,34 @@ prop.html = {
         _for(scripts, function (it, i) {
             if (it.src) {
                 /* !!! under construction */
+                th.scriptFiles.push(it.src);
             }
             else {
                 th.script += it.innerHTML;
             }
-            elmt.removeChild(it);
+
+
+        });
+
+        _for_r(scripts, function (it, i) {
+            try { it.outerHTML = ""; } catch (e) { }
         });
 
         this.content = elmt.innerHTML;
+
+        return this;
+    },
+    loadScript: function (fun) {
+        var s = '';
+        var th = this;
+        function t() {
+            th.script = s + th.script;
+            fun(th);
+            return th;
+        }
+        prop.loader.gets(this.scriptFiles, function (o) {
+            s += o.content;
+        }, t);
 
         return this;
     },
@@ -166,7 +186,10 @@ prop.html = {
         return this;
     },
     defaultSuccess: function (op) {
-        this.getScript().setOuter(def(op.container, document.body), def(op.term, _null), def(op.sub, _null)).runScript();
+        this.getScript().setOuter(def(op.container, document.body), def(op.term, _null), def(op.sub, _null)).loadScript(function (p) {
+
+            p.runScript();
+        });
 
         return this;
     }
@@ -185,25 +208,30 @@ prop.loader.get = function (url, op) {
 
 prop.loader.get.prototype = prop.html;
 
-prop.loader.gets = function (ops,loader) {
+prop.loader.gets = function (ops, loader, end) {
     var i = 0;
     function load(th) {
         th.progress = (100 * i / ops.length);
-        if (ops.length > i)
+        if (ops.length > i) {
             new prop.loader.get(def(ops[i].url, ops[i]), {
                 success: function (o) {
                     i++;
+                    loader(o);
                     load(th);
                 },
                 error: function (th) {
                     i++;
                     load(th);
-                }
+                },
+                exactly: true
             });
+        } else {
+            end();
+        }
     }
     load(this);
 }
 
 prop.loader.gets.prototype = {
-    progress: 0., 
+    progress: 0.,
 };

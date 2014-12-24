@@ -8,21 +8,84 @@
     <link href="/contents/css/root.css" rel="stylesheet" />
 </head>
 <body>
-    <div id="main" class="ab w-p100 t-00-i b-00-i z05">
-        <div class="w-07 h-05ct-dark-i c-light f-c f f-w f-c f-ct  f-as f-jb  mfs">
-            <div class="b1-100 "> 100 </div>
-            <div class="b1-001 "> 001 </div>
-            <div class="b1-010 "> 010 </div>
-            <div class="b1-110 "> 110 </div>
-            <div class="b1-011 "> 011 </div>
-            <div class="b1-101 "> 101 </div>
-        </div>
-    </div>
-    <div id="menu" class="ab w-p100 h-01-mn-i b-00-i   z20">
-
-    </div>
+    #[main]
     <script>
-        new prop.loader.get('layouts/base');
+        new prop.loader.get('layouts/3d-base', { term: ['main'] });
+        var curr = 0;
+        function minall() {
+            all('#density > input', function (it, i) {
+                it.value = 0.0;
+            }, function () { 
+                 
+                AddNew();
+            });
+        }
+        function refall() {
+            all('#density > input', function (it, i) {
+                it.value = 100.0;
+            }, function () {
+
+                AddNew();
+            });
+        }
+        function setTo(ar) {
+
+            minall();
+            var th = first('#density > input');
+            _for(ar, function (it,i) {
+
+                try{
+                    th.value = it;
+
+                    th = th.nextSibling;
+                }
+                catch(e){}
+            });
+
+        }
+        function test() {
+            if (def(b[1]))
+                b[1].dispose();
+
+            function AddNew() {
+                var k = getv('h1');
+                var push = function (r, n) { r.push({ x: -n.x + 100, y: k, z: n.y - 100 }); };
+
+                var pts =getv('ch1') ? getj('p1')  : $3d.tools.svg.getPoints({ path: getv('p1'), density: getj('d1'), pointLength: getv('pl1') * 1.0, push: push });
+                k = getv('h2');
+                var pts1 = getv('ch2') ? getj('p2') : $3d.tools.svg.getPoints({ path: getv('p2'), density: getj('d2'), pointLength: getv('pl2') * 1.0, push: push });
+                k = getv('h3');
+                var pts2 = getv('ch3') ? getj('p3') : $3d.tools.svg.getPoints({ path: getv('p3'), density: getj('d3'), pointLength: getv('pl3') * 1.0, push: push });
+                 
+
+                var w = new $3d.tools.surface({
+                    paths: (pts2.length > 0 ?  [pts, pts1, pts2] :[pts, pts1]) ,
+                    //flip:true
+                }).toMesh(eng1);
+                w.material = new $3d.iMaterial($3d.mat.frg(getj('mat')), eng1).build();
+                w.material.wireframe = getv('wire');
+
+                b[1] = w;
+            }
+
+            var s = '[';
+
+            all('#density > input', function (it, i) {
+                if (it.value != 0)
+                    s += "," + (it.value * 2.0) / 100.;
+            }, function () {
+                s = s.replace("[,", "[") + "]";
+                if (s == "[]") s = "[1,1,1]";
+                if (curr == 1)
+                    setv('d1', s);
+                if (curr == 2)
+                    setv('d2', s);
+                if (curr == 3)
+                    setv('d3', s);
+
+                AddNew();
+            });
+        }
     </script>
 </body>
 </html>

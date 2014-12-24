@@ -82,7 +82,7 @@
     face: function (geo, p1, p2, p3, p4, op) {
         if (!op) { op = {}; }
 
-        function exch(p) { return (p.x || p.x == 0.0); }
+        function exch(p) { if (!def(p)) return false; return (p.x || p.x == 0.0); }
         if (!op.uv) { op.uv = "0132"; }
 
         function addUv(i) {
@@ -268,8 +268,8 @@
 
             var sr = [];
 
-            for (var i = def(op.start, 0) ; i < result[0].length - def(op.end, 0) ; i++) {
-                sr.push(result[0][i]);
+            for (var i = def(op.start, 0) ; i < results[0].length - def(op.end, 0) ; i++) {
+                sr.push(results[0][i]);
             }
 
             return sr;
@@ -277,7 +277,7 @@
         },
         extrudeShape_ex: function (op) {
             if (!def(op.path)) throw "not found any path";
-
+            op.full = def(op.full, false);
             var j, len1;
             var path, mesh, simpleShapes, simpleShape, shape3d;
 
@@ -302,26 +302,33 @@
                     op.push(np, shape3d.vertices[i], i);
                     poss.push(np[np.length - 1].x);
                     poss.push(np[np.length - 1].y);
-                    poss.push(np[np.length - 1].z);
-
-
+                    poss.push(np[np.length - 1].z); 
                 }
 
                 var fc = [];
 
-                for (var i = 0; i < shape3d.faces.length / 2.0 - 2; i++) {
+                for (var i = 0; i < shape3d.faces.length / (op.full?1.0:2.0) - (op.full?0.:2); i++) {
                     if (shape3d.faces[i].a < poss.length && shape3d.faces[i].b < poss.length && shape3d.faces[i].c < poss.length) {
-                        fc.push(shape3d.faces[i].a);
-                        fc.push(shape3d.faces[i].b);
-                        fc.push(shape3d.faces[i].c);
+
+                        if (def(op.flip, false)) {
+                            fc.push(shape3d.faces[i].a);
+                            fc.push(shape3d.faces[i].c);
+                            fc.push(shape3d.faces[i].b);
+                        }
+                        else {
+                            fc.push(shape3d.faces[i].a);
+                            fc.push(shape3d.faces[i].b);
+                            fc.push(shape3d.faces[i].c);
+                        }
+
+                       
                     }
                 }
 
                 geo = new $3d.geometryInstance({ faces: fc, positions: poss });
             }
 
-            return geo;
-
+            return geo; 
         },
 
     }
