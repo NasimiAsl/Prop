@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="ab w-full h-full t-i-00 b-i-00 z05">
-        <canvas id="renderCanvas" class="w-full h-full"></canvas>
+        <canvas id="renderCanvas" class=" cwhite w-full h-full"></canvas>
     </div>
     <div id="shaders" class="hdn"></div>
     <script src="/contents/scripts/engine/babylon.js"></script>
@@ -109,52 +109,48 @@
     <div class="ab b-p50 t-p50 l-p50 r-p50 h-mn-10 w-mn-10 cblue z08 hdn">
         <textarea id="ssct" class="owf-x w-full h-full" cols="50" rows="20"></textarea>
     </div>
-    <div class="ab b-00 h-auto cblack t-auto w-full z06 f f-r">
-        <div class="w-p60">
-            <input id="p1" type="text" value="m 100,150.251 c 35.97073,0 47.9079,-34.89014 47.9079,-34.89014 l 17.15184,3.74628 c 0,0 0.79971,-2.21111 1.875,-9.375 0.8811,-5.87017 0.98214,-9.73214 0.98214,-9.73214 l 13.15455,0 c 0.10055,0.0503 0.66942,-33.200791 -23.8682,-57.634341 C 132.39419,17.661836 99.893123,18.425829 100,18.571428 l 0,17.80577 c 0,0 -31.403946,-0.596963 -50.325603,24.408877 C 29.327173,86.924054 38.928571,119.10714 38.928571,119.10714 l 13.230487,-4.21787 c 0,0 10.683678,35.36173 47.840942,35.36173 z" />
-            <input id="d1" type="text" value="[1,1,1,1,1,1,1,1,0.86,1,0.9,0.78,0.56,0.52,0.4,1.44,0.72,1,1,1]" onclick="curr = 0; setTo(getj('d1')); curr = 1;" />
-
-            <input id="op1" type="text" value="{}" />
-            <input id="ch1" type="checkbox" value="false" title="points" />
-            <input id="pl1" type="text" class="w-02" value="800" />
-            <input id="h1" type="text" class="w-02" value="0.0" />
-            <br />
-            <input id="p2" type="text" value="m 98.994949,136.36039 c 0,0 28.889521,-11.2321 39.901021,-30.30458 5.69023,-9.855761 -10.64313,-32.579666 -10.64313,-32.579666 0,0 22.47714,12.78713 31.85633,-5.174781 12.47733,-23.895112 -49.03092,-52.159796 -55.95886,-44.601442 -6.288525,6.860759 6.88617,24.380598 -2.08715,31.455228 0,0 -35.266824,20.722358 -38.42355,32.970457 -7.202802,27.946874 7.576144,46.467014 35.355339,48.234784 z" />
-            <input id="d2" type="text" value="[1,0.76,1]" onclick="curr = 0; setTo(getj('d2')); curr = 2;" />
-
-            <input id="op2" type="text" value="{}" />
-            <input id="ch2" type="checkbox" value="false" title="points" />
-            <input id="pl2" type="text" class="w-02" value="60" />
-            <input id="h2" type="text" class="w-02" value="10" />
-            <br />
-            <input id="p3" type="text" value="m 99.821429,125.35715 c 14.628931,-0.53461 22.978791,-10.22138 25.000001,-22.14286 1.51749,-8.950405 -3.23861,-21.673547 -15.82973,-26.474457 L 110,45.535714 c 8.16517,1.016396 15.88234,4.400843 23.21429,9.821429 l 4.82142,-7.142858 c -8.2066,-5.237534 -16.686,-9.668511 -26.25,-10.892857 l -1.59785,8.262102 -0.81286,31.313791 c 0,0 -8.36437,-2.921308 -15.878541,-0.907893 -7.066697,1.893515 -16.301477,8.013145 -18.228602,20.082 -2.834279,17.750022 13.02465,29.707042 24.553572,29.285722 z" />
-            <input id="d3" type="text" value="[1.68,0.36,2,1.04,1.64]" onclick="curr = 0; setTo(getj('d3')); curr = 3;" />
-
-            <input id="op3" type="text" value="{}" />
-            <input id="ch3" type="checkbox" value="false" title="points" />
-            <input id="pl3" type="text" class="w-02" value="300" />
-            <input id="h3" type="text" class="w-02" value="20" />
-
-        </div>
-        <div class="w-p25">
-            <input type="text" id="mat" onchange="test()" value="'result = vec4(1.0,0.,0.,1.0);'" list="material">
-            <datalist id=material  >
-                <option value="mat_sample()"></option>
-                <option value="sh_phonge()"></option>
-                <option value="'result = vec4(1.0,0.,0.,1.0);'"></option> 
-            </datalist>
-            <input id="wire" type="checkbox" onchange="test()" value="false" title="wireframe" placeholder="wire" />
-            <input id="flip" type="checkbox" onchange="test()" value="false" title="flip" placeholder="flip" /> 
-        </div>
-        <div>
-            <input type="button" class="w-01 h-01" value="apply" onclick="test()" />
-            <input type="button" class="w-01 h-01" value="min" onclick="minall()" />
-            <input type="button" class="w-01 h-01" value="ref" onclick="refall()" />
-            <input id="pts" type="button" class="w-auto h-01 c-iblue" value="src" onclick="get('sct').parentNode.classList.toggle('hdn');" />
-            <input id="spts" type="button" class="w-auto h-01 c-iblue" value="src" onclick="get('ssct').parentNode.classList.toggle('hdn');" />
+    <div id="point-template">
+        <div class="pointitem">
+            <input id="ch" type="checkbox" value="false" title="exactly points" />
+            <input id="p" type="text" value="" placeholder="path or points" />
+            <input id="d" type="text" value="" placeholder="dencity" onclick="try { curr = 0; setTo(getj(window.eval(this.value))); curr = 1; } catch (e) { }" />
+            <input id="op" type="text" value="{}" placeholder="{transform}" />
+            <input id="pl" type="text" class="w-02" value="800" placeholder="points count" />
+            <input id="h" type="text" class="w-02" value="0.0" placeholder="vertical position" />
+            <input type="button" class="w-01 h-01 c-t-ired " value="X" onclick="this.parentNode.outerHTML = '';" />
         </div>
     </div>
-    <div id="density" class="ab t-01 r-01 w-i-05 h-auto z06">
+
+    <div id="surface-template">
+        <div class="w-p60 cntr">
+        </div>
+        <div class="w-p25">
+            <input type="button" class="w-01 h-01 c-t-iorg" value=" + " onclick="  get('.cntr', get('cntr')).appendChild(create(get('point-template').innerHTML));" />
+            <input type="text" id="mat" onchange="test()" value="'result = vec4(1.0,0.,0.,1.0);'" list="material">
+            <datalist id=material>
+                <option value="mat_sample()"></option>
+                <option value="sh_phonge()"></option>
+                <option value="glasses()"></option>
+                <option value="'result = vec4(1.0,0.,0.,1.0);'"></option>
+            </datalist>
+            <input id="wire" type="checkbox" onchange="test()" value="false" title="wireframe" placeholder="wire" />
+            <input id="flip" type="checkbox" onchange="test()" value="false" title="flip" placeholder="flip" />
+        </div>
+        <div>
+            <input type="button" class="w-auto h-01" value="apply" onclick="test()" />
+            <input id="pts" type="button" class="w-auto h-01 c-t-iorg" value="src" onclick="get('sct').parentNode.classList.toggle('hdn');" />
+            <input id="spts" type="button" class="w-auto h-01 c-t-iorg" value="src" onclick="get('ssct').parentNode.classList.toggle('hdn');" />
+        </div>
+    </div>
+    <div id="main-template">
+        <input type="button" value="surface" />
+    </div>
+
+    <div id="cntr" class="ab b-00 h-auto h-mx-05 owf-x h-mn-02 cblack t-auto w-full z06 f f-r pt-0025 pl-0025 pr-0025 pb-0025">
+        <input type="button" value="+ Surface" onclick="new_surface()" />
+        <input type="button" value="+ Wall" />
+    </div>
+    <div id="density" class="ab t-01 r-01 w-i-05 h-auto z06 hdn">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
@@ -175,6 +171,8 @@
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="button" class="w-01 h-01" value="min" onclick="minall()" />
+        <input type="button" class="w-01 h-01" value="ref" onclick="refall()" />
     </div>
     <script>
         var curr = 0;
@@ -214,47 +212,45 @@
                 b[1].dispose();
 
             function AddNew() {
-                var k = getv('h1');
-                var push = function (r, n) { r.push({ x: -n.x + 100, y: k, z: n.y - 100 }); };
+                var script = "{paths:@paths }";
+                var script_ = "{paths:@paths }";
+                var pts_s = [];
+                var pts_s1 = [];
 
-                var script = "{paths:@paths,flip:@flip}";
-                var script_ = "{paths:@paths,flip:@flip}";
+                  all('#cntr .cntr > .pointitem',
+                    function (at, i) {
+                        var h = getv('#h', at);
+                        var push = function (r, n) { r.push({ x: -n.x + 100, y: h, z: n.y - 100 }); };
 
-                var pts = getv('ch1') ? getj('p1') : $3d.tools.svg.getPoints({ path: getv('p1'), density: getj('d1'), pointLength: getv('pl1') * 1.0, push: push });
-                var pts_1 = getv('ch1') ? getv('p1') : "$3d.tools.svg.getPoints({ path: \"" + getv('p1') + "\", density: " + getv('d1') + ", pointLength: " + getv('pl1') * 1.0 + ", push: function (r, n) { r.push({ x: -n.x + 100, y: " + k + ", z: n.y - 100 }); }  })";
+                        var pts = getv('#ch', at) ? getj('#p', at) : $3d.tools.svg.getPoints({ path: getv('#p', at), density: getj('#d', at), pointLength: getv('#pl', at) * 1.0, push: push });
+                        var pts_1 = getv('#ch', at) ? getv('#p', at) : "$3d.tools.svg.getPoints({ path: \"" + getv('#p', at) + "\", density: " + getv('#d', at) + ", pointLength: " + getv('#pl', at) * 1.0 + ", push: function (r, n) { r.push({ x: -n.x + 100, y: " + h + ", z: n.y - 100 }); }  })";
 
-                k = getv('h2');
-                var pts1 = getv('ch2') ? getj('p2') : $3d.tools.svg.getPoints({ path: getv('p2'), density: getj('d2'), pointLength: getv('pl2') * 1.0, push: push });
+                        pts_s.push(pts);
+                        pts_s1.push(pts_1);
+                    });
 
-                var pts1_1 = getv('ch2') ? getv('p2') : "$3d.tools.svg.getPoints({ path: \"" + getv('p2') + "\", density: " + getv('d2') + ", pointLength: " + getv('pl2') * 1.0 + ", push: function (r, n) { r.push({ x: -n.x + 100, y: " + k + ", z: n.y - 100 }); }  })";
 
-                k = getv('h3');
-                var pts2 = getv('ch3') ? getj('p3') : $3d.tools.svg.getPoints({ path: getv('p3'), density: getj('d3'), pointLength: getv('pl3') * 1.0, push: push });
+                script = script.replace("@paths", (pts_s).toString());
 
-                var pts2_1 = getv('ch3') ? getv('p3') : "$3d.tools.svg.getPoints({ path: \"" + getv('p3') + "\", density: " + getv('d3') + ", pointLength: " + getv('pl3') * 1.0 + ", push: function (r, n) { r.push({ x: -n.x + 100, y: " + k + ", z: n.y - 100 }); }  })";
-
-                script = script.replace("@paths", (pts2.length > 0 ? [pts, pts1, pts2] : [pts, pts1]).toString());
-
-                script_ = script_.replace("@paths", (pts2.length > 0 ? [pts_1, pts1_1, pts2_1] : [pts_1, pts1_1]).toString());
+                script_ = script_.replace("@paths", (pts_s1).toString());
 
                 get('sct').textContent = script;
-                setv('pts', floor(script.length / 10) / 100 + " kb");
+                setv('#pts', floor(script.length / 10) / 100 + " kb" ,get('cntr'));
                 get('ssct').textContent = script_;
-                setv('spts', floor(script_.length / 10) / 100 + " kb");
+                setv('#spts', floor(script_.length / 10) / 100 + " kb",get('cntr'));
 
                 var w = new $3d.tools.surface({
-                    paths: (pts2.length > 0 ? [pts, pts1, pts2] : [pts, pts1]),
+                    paths: pts_s,
                     flip: getv('flip')
                 }).toMesh(eng1);
 
-                w.material = new $3d.iMaterial($3d.mat.frg(getj('mat')), eng1).build();
-                w.material.wireframe = getv('wire');
+                w.material = new $3d.iMaterial($3d.mat.frg(getj('#mat', get('cntr'))), eng1).build();
+                w.material.wireframe = getv('#wire',  get('cntr'));
 
                 ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
                 ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
                 var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
                 ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
-
 
                 w.material.setTexture("refc", ref);
                 w.material.setTexture("refc2", ref2);
@@ -265,22 +261,26 @@
 
             var s = '[';
 
-            all('#density > input', function (it, i) {
+            all('#density > input[type=range]', function (it, i) {
                 if (it.value != 0)
                     s += "," + (it.value * 2.0) / 100.;
             }, function () {
                 s = s.replace("[,", "[") + "]";
                 if (s == "[]") s = "[1,1,1]";
-                if (curr == 1)
-                    setv('d1', s);
-                if (curr == 2)
-                    setv('d2', s);
-                if (curr == 3)
-                    setv('d3', s);
 
+                var ctl = all('#cntr .cntr > .pointitem')[curr];
+
+                setv('#d', s, ctl); 
                 AddNew();
             });
         }
+
+
+        function new_surface() {
+            get('cntr').innerHTML = get('surface-template').innerHTML;
+            get('.cntr', get('cntr')).innerHTML = get('point-template').innerHTML + get('point-template').innerHTML;
+        }
+
     </script>
 </body>
 </html>

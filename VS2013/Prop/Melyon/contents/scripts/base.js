@@ -8,15 +8,27 @@ function def(a, d) {
     return null;
 }
 
+
 String.prototype.replaceAll = function (str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof (str2) == "string") ? str2.replace(/\$/g, "$$$$") : str2);
 }
 // id ? {}
+function create(content, tagname) {
+    tagname = def(tagname, "div");
+    var el = document.createElement(tagname);
+    el.innerHTML = content;
+    return el.firstElementChild;
+}
+
 function get(op, pr) {
-    pr = def(pr, document);
-    return pr.getElementById(op);
+    if (def(pr)) {
+       return first(  op, null, pr);
+    }
+    return document.getElementById(op);
 }
 function getv(op, pr) {
+
+    if (!def(op) || !def(get(op, pr))) return;
 
     if (get(op, pr).tagName.toLowerCase() == "input" && get(op, pr).getAttribute("type").toLowerCase() == "checkbox") {
         return get(op, pr).checked;
@@ -30,7 +42,7 @@ function setv(op, val, pr) {
 }
 
 function getj(op, pr) {
-    return window.eval(get(op, pr).value);
+    try { return window.eval(get(op, pr).value); } catch (e) { }
 }
 
 function first(s, f, p) {
@@ -58,13 +70,13 @@ function last(s, f, p) {
 function all(s, f, e, b, p) {
     p = def(p, document);
     var rl = p.querySelectorAll(s)
-    _for(rl, f, e, b);
+    return _for(rl, f, e, b);
 }
 
 function all_r(s, f, e, b, p) {
     p = def(p, document);
     var rl = p.querySelectorAll(s)
-    _for_r(rl, f, e, b);
+    return _for_r(rl, f, e, b);
 }
 
 function _rd(o, i) {
@@ -135,6 +147,9 @@ DOMTokenList.prototype.removemany = function (classes) {
 
 function _for(ar, _do, e, b) {
     if (def(b)) b();
+
+    if (!def(_do)) return ar;
+
     for (var i = 0; i < ar.length; i++) {
         _do(ar[i], i);
     }

@@ -169,7 +169,7 @@
     svg: {
         getPoints: function (op) {
 
-            if (!def(op.path)) throw "not found any path";
+            //if (!def(op.path)) throw "not found any path";
 
             op.push = def(op.push, function (result, point) {
                 result.push(point);

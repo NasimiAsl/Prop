@@ -13,8 +13,12 @@
 .hdn { @include hdn;}  
 .hdn-vs { @include hdn-vs;}  
  
-@include color('blue',#0063ff); 
+@include color('blue',#59b9ff); 
+@include color('sky',#a5e1ff);  
+@include color('red',#ff0000);  
+@include color('org',#ff6a00); 
 @include color('gray',#808080); 
 @include color('dark',#313131); 
 @include color('black',#000000); 
+@include color('white',#ffffff); 
  
