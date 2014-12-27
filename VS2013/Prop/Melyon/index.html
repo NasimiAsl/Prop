@@ -15,8 +15,8 @@
         function minall() {
             all('#density > input', function (it, i) {
                 it.value = 0.0;
-            }, function () { 
-                 
+            }, function () {
+
                 AddNew();
             });
         }
@@ -32,14 +32,14 @@
 
             minall();
             var th = first('#density > input');
-            _for(ar, function (it,i) {
+            _for(ar, function (it, i) {
 
-                try{
+                try {
                     th.value = it;
 
                     th = th.nextSibling;
                 }
-                catch(e){}
+                catch (e) { }
             });
 
         }
@@ -51,15 +51,15 @@
                 var k = getv('h1');
                 var push = function (r, n) { r.push({ x: -n.x + 100, y: k, z: n.y - 100 }); };
 
-                var pts =getv('ch1') ? getj('p1')  : $3d.tools.svg.getPoints({ path: getv('p1'), density: getj('d1'), pointLength: getv('pl1') * 1.0, push: push });
+                var pts = getv('ch1') ? getj('p1') : $3d.tools.svg.getPoints({ path: getv('p1'), density: getj('d1'), pointLength: getv('pl1') * 1.0, push: push });
                 k = getv('h2');
                 var pts1 = getv('ch2') ? getj('p2') : $3d.tools.svg.getPoints({ path: getv('p2'), density: getj('d2'), pointLength: getv('pl2') * 1.0, push: push });
                 k = getv('h3');
                 var pts2 = getv('ch3') ? getj('p3') : $3d.tools.svg.getPoints({ path: getv('p3'), density: getj('d3'), pointLength: getv('pl3') * 1.0, push: push });
-                 
+
 
                 var w = new $3d.tools.surface({
-                    paths: (pts2.length > 0 ?  [pts, pts1, pts2] :[pts, pts1]) ,
+                    paths: (pts2.length > 0 ? [pts, pts1, pts2] : [pts, pts1]),
                     //flip:true
                 }).toMesh(eng1);
                 w.material = new $3d.iMaterial($3d.mat.frg(getj('mat')), eng1).build();
@@ -86,6 +86,9 @@
                 AddNew();
             });
         }
+
+        
+
     </script>
 </body>
 </html>

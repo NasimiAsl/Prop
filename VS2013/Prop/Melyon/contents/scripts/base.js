@@ -67,35 +67,102 @@ function all_r(s, f, e, b, p) {
     _for_r(rl, f, e, b);
 }
 
+function _rd(o, i) {
+    if (!def(o)) return o;
+    i = def(i, 1000);
+
+    o = floor(o * i) / i;
+
+    return o;
+}
+
+
+/// Extention methods
+
+Array.prototype.toString = function (op) {
+
+    var s = "[";
+    var canPack = false;
+
+    return _each(this,
+        function (it, i) {
+            if (i == 0) {
+                if (it.toString().toLowerCase() != "[object object]" && typeof (it).toString().toLowerCase() != "string")
+                    canPack = true;
+            }
+
+            if (!canPack && !def(op)) {
+                op = function (iti) {
+                    var si = "";
+                    if (def(iti.x) && def(iti.y) && def(iti.z))
+                        return "{x:" + _rd(iti.x) + ",y:" + _rd(iti.y) + ",z:" + _rd(iti.z) + "}"
+
+                    if (typeof (iti).toString().toLowerCase() == "string")
+                        return  iti ;
+
+                    return "{}";
+                }
+            }
+
+            s += "," + (def(op) && !canPack ? op(it) : it.toString(op));
+        },
+        function () {
+            return s.replace("[,", "[") + "]";
+        });
+}
+
+
+DOMTokenList.prototype.addmany = function (classes) {
+    var classes = classes.split(' '),
+        i = 0,
+        ii = classes.length;
+
+    for (i; i < ii; i++) {
+        this.add(classes[i]);
+    }
+}
+
+DOMTokenList.prototype.removemany = function (classes) {
+    var classes = classes.split(' '),
+        i = 0,
+        ii = classes.length;
+
+    for (i; i < ii; i++) {
+        this.remove(classes[i]);
+    }
+}
+
 
 function _for(ar, _do, e, b) {
     if (def(b)) b();
     for (var i = 0; i < ar.length; i++) {
         _do(ar[i], i);
     }
-    if (def(e)) e();
+    if (def(e)) return e();
 }
 function _for_r(ar, _do, e, b) {
     if (def(b)) b();
     for (var i = ar.length - 1; i >= 0 ; i--) {
         _do(ar[i], i);
     }
-    if (def(e)) e();
+    if (def(e)) return e();
 }
 
-function _each(ar, _do) {
+function _each(ar, _do, e, b) {
+    if (def(b)) b();
     for (var x in ar) {
         _do(ar[x], x);
     }
+    if (def(e)) return e();
 }
 
-function _each_r(ar, _do) {
+function _each_r(ar, _do, e, b) {
     var p = [];
     for (var x in ar) {
         p.push(x);
     }
 
-    _for_r(p, function (it, i) { _do(ar(it), it); });
+    return _for_r(p, function (it, i) { _do(ar(it), it); }, e, b);
 }
 
 function state(msg, group) {
