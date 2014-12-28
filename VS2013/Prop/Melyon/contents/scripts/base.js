@@ -13,6 +13,12 @@ String.prototype.replaceAll = function (str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof (str2) == "string") ? str2.replace(/\$/g, "$$$$") : str2);
 }
 // id ? {}
+
+function join(ar1) {
+    var ar3 = []; 
+    return _each(ar1, function (at, i) { _each(at, function (ati, j) { ar3.push(ati); }); }, function () { return ar3; });
+}
+
 function create(content, tagname) {
     tagname = def(tagname, "div");
     var el = document.createElement(tagname);
@@ -22,7 +28,7 @@ function create(content, tagname) {
 
 function get(op, pr) {
     if (def(pr)) {
-       return first(  op, null, pr);
+        return first(op, null, pr);
     }
     return document.getElementById(op);
 }
@@ -37,12 +43,20 @@ function getv(op, pr) {
     return get(op, pr).value;
 }
 
+function kb(length) {
+    return floor(length / 10) / 100 + " kb";
+}
+
 function setv(op, val, pr) {
     get(op, pr).value = val;
 }
 
 function getj(op, pr) {
-    try { return window.eval(get(op, pr).value); } catch (e) { }
+    return js(get(op, pr).value);
+}
+
+function js(op) {
+    try { return window.eval(op); } catch (e) { }
 }
 
 function first(s, f, p) {
@@ -110,7 +124,7 @@ Array.prototype.toString = function (op) {
                         return "{x:" + _rd(iti.x) + ",y:" + _rd(iti.y) + ",z:" + _rd(iti.z) + "}"
 
                     if (typeof (iti).toString().toLowerCase() == "string")
-                        return  iti ;
+                        return iti;
 
                     return "{}";
                 }
@@ -123,6 +137,12 @@ Array.prototype.toString = function (op) {
         });
 }
 
+DOMTokenList.prototype._add = function (_class) {
+
+    this.remove(_class);
+    this.add(_class);
+
+}
 
 DOMTokenList.prototype.addmany = function (classes) {
     var classes = classes.split(' '),
@@ -130,9 +150,11 @@ DOMTokenList.prototype.addmany = function (classes) {
         ii = classes.length;
 
     for (i; i < ii; i++) {
-        this.add(classes[i]);
+        this._add(classes[i]);
     }
 }
+
+
 
 DOMTokenList.prototype.removemany = function (classes) {
     var classes = classes.split(' '),

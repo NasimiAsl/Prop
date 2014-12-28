@@ -18,6 +18,7 @@
     <script src="/contents/scripts/3dbase_Initialize_BabylonJs.js"></script>
     <script src="/contents/scripts/3dMaterial.js"></script>
     <script src="/contents/scripts/3dTools.js"></script>
+    <script src="/contents/scripts/Tools/dev.js"></script>
     <script type="text/javascript">
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
         eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
@@ -28,64 +29,16 @@
 
             time += 0.06;
             _for(b, function (it, i) {
-                it.material.setVector3("camera", eng1.get().cameras.main.position);
-                it.material.setFloat("time", time);
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                }
 
             });
 
         };
 
-        function mat_sample(cl) {
-            cl = def(cl, 0x000000);
-            return sh_range({
-                start: 10, end: 1000,
-                mat1: sh_multi([
-                    { r: sh_specular({ glass: true }), e: 0.20 },
-                    { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
-                    { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
-                    { r: sh_phonge({ color: cl, back: 0x000000 }), e: 1.0 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.015 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
-                    { r: 'float pi2 =((pos.x )- floor((pos.x )/10.)*10.)*8.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,1.0);', e: 1.0 },
-                    { r: 'float pi3 =((pos.z )- floor((pos.z )/10.)*10.)*8.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,1.0);', e: 1.0 },
-                    // { r: 'float pi4 =((pos.y )- floor((pos.y )/10.)*10.)*8.  ; if(pi4 > 1.0) pi4 = 0.0; else pi4 = -0.1; result = vec4(pi4,pi4,pi4,1.0);', e: 1.0 },
-                    //  { r: 'float pp;pp = abs( noise(vec3(pos.x/2.,pos.y/2.,pos.z/2.)));if(pp < 0.05 || pp > 0.1) pp  = -1.*pp/3.0 ;else pp = -0.2;result = vec4(pp,pp,pp,1.0);', e: 0.12 },
-                    { r: sh_frensel(), e: 0.3 }]),
-                mat2: sh_multi([
-                    { r: sh_specular({ glass: true }), e: 0.020 },
-                    { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
-                    { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
-                    { r: 'result = vec4(1.,1.,1.,1.0);', e: 1.0 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.15 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
-                    { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
-                  //  { r: 'float pi2 =((pos.x )- floor((pos.x)/10.)*10.)*15.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,0.30);', e: 0.2 },
-                  //  { r: 'float pi3 =((pos.z)- floor((pos.z)/10.)*10.)*15.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,0.30);', e: 0.2 },
-                  //  { r: 'float pi4 =((pos.y)- floor((pos.y)/10.)*10.)*15.  ; if(pi4 > 1.0) pi4 = 0.0; else pi4 = -0.1; result = vec4(pi4,pi4,pi4,0.30);', e: 0.2 },
-                    { r: sh_frensel(), e: 0.3 }])
-            });
-        }
-
-        function mat() {
-
-            var p = new $3d.iMaterial($3d.mat.frg(mat_sample(0xededed)), eng1).build();
-            //p.material.wireframe = true;
-
-            ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
-            ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
-            var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
-            ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
-
-
-            p.setTexture("refc", ref);
-            p.setTexture("refc2", ref2);
-            p.setMatrix("refmat", ref.getReflectionTextureMatrix());
-
-            return p;
-        }
         eng1.engine.onInitScene = function () {
 
             var w = new $3d.tools.surface({
@@ -100,20 +53,21 @@
             b.push(w);
         }
         eng1.start();
-
-
     </script>
+
     <div class="ab b-p50 t-p50 l-p50 r-p50 h-mn-10 w-mn-10 cblue z08 hdn">
         <textarea id="sct" class="owf-x w-full h-full" cols="50" rows="20"></textarea>
     </div>
+
     <div class="ab b-p50 t-p50 l-p50 r-p50 h-mn-10 w-mn-10 cblue z08 hdn">
         <textarea id="ssct" class="owf-x w-full h-full" cols="50" rows="20"></textarea>
     </div>
-    <div id="point-template">
+
+    <div id="point-template" class=" hdn">
         <div class="pointitem">
             <input id="ch" type="checkbox" value="false" title="exactly points" />
             <input id="p" type="text" value="" placeholder="path or points" />
-            <input id="d" type="text" value="" placeholder="dencity" onclick="try { curr = 0; setTo(getj(window.eval(this.value))); curr = 1; } catch (e) { }" />
+            <input id="d" type="text" value="" placeholder="density" onclick="try { get('density').classList.remove('hdn'); curr = 0; setTo(window.eval(this.value)); } catch (e) { } curr = this.parentNode.getAttribute('index').valueOf() * 1.0;" />
             <input id="op" type="text" value="{}" placeholder="{transform}" />
             <input id="pl" type="text" class="w-02" value="800" placeholder="points count" />
             <input id="h" type="text" class="w-02" value="0.0" placeholder="vertical position" />
@@ -121,11 +75,12 @@
         </div>
     </div>
 
-    <div id="surface-template">
+    <div id="surface-template" class=" hdn">
         <div class="w-p60 cntr">
         </div>
         <div class="w-p25">
-            <input type="button" class="w-01 h-01 c-t-iorg" value=" + " onclick="  get('.cntr', get('cntr')).appendChild(create(get('point-template').innerHTML));" />
+            <input type="button" class="w-01 h-01 c-t-iorg" value=" + "
+                   onclick="createPointElement()" />
             <input type="text" id="mat" onchange="test()" value="'result = vec4(1.0,0.,0.,1.0);'" list="material">
             <datalist id=material>
                 <option value="mat_sample()"></option>
@@ -138,18 +93,100 @@
         </div>
         <div>
             <input type="button" class="w-auto h-01" value="apply" onclick="test()" />
-            <input id="pts" type="button" class="w-auto h-01 c-t-iorg" value="src" onclick="get('sct').parentNode.classList.toggle('hdn');" />
-            <input id="spts" type="button" class="w-auto h-01 c-t-iorg" value="src" onclick="get('ssct').parentNode.classList.toggle('hdn');" />
+            <input id="pts" type="button" class="w-auto h-01 c-t-iorg" value="src"
+                   onclick="get('sct').parentNode.classList.toggle('hdn'); get('ssct').parentNode.classList._add('hdn');" />
+            <input id="spts" type="button" class="w-auto h-01 c-t-iorg" value="src"
+                   onclick="get('ssct').parentNode.classList.toggle('hdn'); get('sct').parentNode.classList._add('hdn');" />
+            <input type="button" class="w-auto h-01 c-t-iblue" value="save" onclick="save();" />
+            <input type="button" class="w-auto h-01 c-t-ired" value="back" onclick="back();" />
+
         </div>
     </div>
-    <div id="main-template">
-        <input type="button" value="surface" />
+
+    <div id="range-point-template" class=" hdn">
+        <div class="rangepointitem">
+            <input type="range" class="w-full" min="0" max="1000" />
+            <input id="p" type="text" value="" placeholder="conditions" />
+            <input type="text" class="w-02" value="10" />
+        </div>
+    </div>
+
+    <div id="wall-template" class=" hdn">
+        <div class="w-p60 cntr">
+        </div>
+        <div class="w-p25">
+            <input type="button" class="w-01 h-01 c-t-iorg" value=" + "
+                   onclick="createPointElement()" />
+            <input type="text" id="mat" onchange="test2()" value="'result = vec4(1.0,0.,0.,1.0);'" list="material">
+
+            <datalist id=material>
+                <option value="mat_sample()"></option>
+                <option value="sh_phonge()"></option>
+                <option value="glasses()"></option>
+                <option value="'result = vec4(1.0,0.,0.,1.0);'"></option>
+            </datalist>
+            <input id="wire" type="checkbox" onchange="test2()" value="false" title="wireframe" placeholder="wire" />
+            <input id="flip" type="checkbox" onchange="test2()" value="false" title="flip" placeholder="flip" />
+            <hr /><input type="text" id="deep" class="w-02" value="5" />
+            <input type="text" id="height" class="w-02" value="30" />
+            <input type="checkbox" title="top" id="top" class="w-005" />
+            <input type="checkbox" title="bottom" id="bottom" class="w-005" />
+            <input type="checkbox" title="left" id="left" class="w-005" />
+            <input type="checkbox" title="right" id="right" class="w-005" />
+            <input type="checkbox" title="closed" id="closed" class="w-005" />
+            <input type="checkbox" title="smooth" id="smooth" class="w-005" />
+        </div>
+        <div>
+            <input type="button" class="w-auto h-01" value="apply" onclick="test2()" />
+            <input id="pts" type="button" class="w-auto h-01 c-t-iorg" value="src"
+                   onclick="get('sct').parentNode.classList.toggle('hdn'); get('ssct').parentNode.classList._add('hdn');" />
+            <input id="spts" type="button" class="w-auto h-01 c-t-iorg" value="src"
+                   onclick="get('ssct').parentNode.classList.toggle('hdn'); get('sct').parentNode.classList._add('hdn');" />
+            <input type="button" class="w-auto h-01 c-t-iblue" value="save" onclick="save();" />
+            <input type="button" class="w-auto h-01 c-t-ired" value="back" onclick="back();" />
+        </div>
+    </div>
+
+    <div id="storage-template" class=" hdn">
+        <div class="w-p60 w-mx-i-p60 cntr f f-r f-w f-js f-as f-cs f-ss">
+        </div>
+        <div class="w-p25">
+            <input type="button" value="clear" />
+        </div>
+        <div>
+            <input type="button" class="w-auto h-01 c-t-ired" value="back" onclick="back();" />
+        </div>
+    </div>
+
+    <div id="storage-sub-template" class=" hdn">
+        <div class="f f-r f-nw f-ja f-ct f-at f-st w-mn-04 c-hdark">
+            <input type="button" class="h-01 f-i10" value="#[name]" />
+            <input type="button" class="w-01 h-01  f-i00 c-ired" value="X" />
+        </div>
+    </div>
+
+    <div id="material-template" class=" hdn">
+        <div class="w-p60 cntr  c-iwhite">
+        </div>
+        <div class="w-p25">
+
+        </div>
+        <div>
+            <input type="button" class="w-auto h-01 c-t-ired" value="back" onclick="back();" />
+        </div>
+    </div>
+
+    <div id="main-template" class="hdn">
+        <input type="button" value="+ Surface" onclick="new_surface()" />
+        <input type="button" value="+ Wall" onclick="new_wall()" />
+        <input type="button" value="Storage" class="c-t-iorg ml-i-02" onclick="storage()" />
+        <input type="button" value="Material" class="c-t-ired ml-i-02" onclick="material()" />
     </div>
 
     <div id="cntr" class="ab b-00 h-auto h-mx-05 owf-x h-mn-02 cblack t-auto w-full z06 f f-r pt-0025 pl-0025 pr-0025 pb-0025">
-        <input type="button" value="+ Surface" onclick="new_surface()" />
-        <input type="button" value="+ Wall" />
+
     </div>
+
     <div id="density" class="ab t-01 r-01 w-i-05 h-auto z06 hdn">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
@@ -173,43 +210,16 @@
         <input type="range" class="w-full" min="0" max="100" onchange="test()">
         <input type="button" class="w-01 h-01" value="min" onclick="minall()" />
         <input type="button" class="w-01 h-01" value="ref" onclick="refall()" />
+        <input type="button" class="w-01 h-01 cred" value="X" onclick="this.parentNode.classList._add('hdn')" />
+
     </div>
+
     <script>
-        var curr = 0;
-        function minall() {
-            all('#density > input', function (it, i) {
-                it.value = 0.0;
-            }, function () {
 
-                test();
-            });
-        }
-        function refall() {
-            all('#density > input', function (it, i) {
-                it.value = 50.0;
-            }, function () {
 
-                test();
-            });
-        }
-        function setTo(ar) {
-
-            minall();
-            var th = first('#density > input');
-            _for(ar, function (it, i) {
-
-                try {
-                    th.value = it * 50.;
-
-                    th = th.nextElementSibling;
-                }
-                catch (e) { }
-            });
-
-        }
-        function test() {
-            if (def(b[1]))
-                b[1].dispose();
+        function test2() {
+            if (def(b[storageId()]))
+                b[storageId()].dispose();
 
             function AddNew() {
                 var script = "{paths:@paths }";
@@ -217,35 +227,44 @@
                 var pts_s = [];
                 var pts_s1 = [];
 
-                  all('#cntr .cntr > .pointitem',
-                    function (at, i) {
-                        var h = getv('#h', at);
-                        var push = function (r, n) { r.push({ x: -n.x + 100, y: h, z: n.y - 100 }); };
+                all('#cntr .cntr > .pointitem',
+                  function (at, i) {
+                      var h = getv('#h', at).valueOf() * 1.0;
+                      var push = function (r, n) { r.push({ x: -n.x + 100, y: h, z: n.y - 100 }); };
 
-                        var pts = getv('#ch', at) ? getj('#p', at) : $3d.tools.svg.getPoints({ path: getv('#p', at), density: getj('#d', at), pointLength: getv('#pl', at) * 1.0, push: push });
-                        var pts_1 = getv('#ch', at) ? getv('#p', at) : "$3d.tools.svg.getPoints({ path: \"" + getv('#p', at) + "\", density: " + getv('#d', at) + ", pointLength: " + getv('#pl', at) * 1.0 + ", push: function (r, n) { r.push({ x: -n.x + 100, y: " + h + ", z: n.y - 100 }); }  })";
+                      var pts = getv('#ch', at) ? getj('#p', at) : $3d.tools.svg.getPoints({ path: getv('#p', at), density: getj('#d', at), pointLength: getv('#pl', at) * 1.0, push: push });
+                      var pts_1 = getv('#ch', at) ? getv('#p', at) : "$3d.tools.svg.getPoints({ path: \"" + getv('#p', at) + "\", density: " + getv('#d', at) + ", pointLength: " + getv('#pl', at) * 1.0 + ", push: function (r, n) { r.push({ x: -n.x + 100, y: " + h + ", z: n.y - 100 }); }  })";
 
-                        pts_s.push(pts);
-                        pts_s1.push(pts_1);
-                    });
-
-
+                      pts_s.push(pts);
+                      pts_s1.push(pts_1);
+                  });
                 script = script.replace("@paths", (pts_s).toString());
-
                 script_ = script_.replace("@paths", (pts_s1).toString());
-
                 get('sct').textContent = script;
-                setv('#pts', floor(script.length / 10) / 100 + " kb" ,get('cntr'));
+                setv('#pts', kb(script.length), get('cntr'));
                 get('ssct').textContent = script_;
-                setv('#spts', floor(script_.length / 10) / 100 + " kb",get('cntr'));
+                setv('#spts', kb(script_.length), get('cntr'));
 
-                var w = new $3d.tools.surface({
-                    paths: pts_s,
-                    flip: getv('flip')
+                function cond() {
+                    return true;
+                }
+
+                var w = new $3d.tools.wall({
+                    path: join(pts_s),
+                    d: getv('#deep', get('cntr')),
+                   // h: getv('#height', get('cntr')),
+                    flip: getv('#flip', get('cntr')),
+                    left: getv('#left', get('cntr')) ? function (p) { return cond(p); } : null,
+                    right: getv('#right', get('cntr')) ? function (p) { return cond(p); } : null,
+                    top: getv('#top', get('cntr')) ? function (p) { return cond(p); } : null,
+                    bottom: getv('#bottom', get('cntr')) ? function (p) { return cond(p); } : null,
+                    lr: function (p) { return cond(p); },
+                    closed: getv('#closed', get('cntr')),
+                    smooth: getv('#smooth', get('cntr'))
                 }).toMesh(eng1);
 
                 w.material = new $3d.iMaterial($3d.mat.frg(getj('#mat', get('cntr'))), eng1).build();
-                w.material.wireframe = getv('#wire',  get('cntr'));
+                w.material.wireframe = getv('#wire', get('cntr'));
 
                 ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
                 ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
@@ -256,9 +275,8 @@
                 w.material.setTexture("refc2", ref2);
                 w.material.setMatrix("refmat", ref.getReflectionTextureMatrix());
 
-                b[1] = w;
+                b[storageId()] = w;
             }
-
             var s = '[';
 
             all('#density > input[type=range]', function (it, i) {
@@ -268,18 +286,17 @@
                 s = s.replace("[,", "[") + "]";
                 if (s == "[]") s = "[1,1,1]";
 
-                var ctl = all('#cntr .cntr > .pointitem')[curr];
-
-                setv('#d', s, ctl); 
+                var ctl = all('#cntr .cntr > .pointitem', function (at, i) {
+                    if (at.getAttribute("index") == curr.toString()) {
+                        setv('#d', s, at);
+                        return false;
+                    }
+                });
                 AddNew();
             });
         }
 
-
-        function new_surface() {
-            get('cntr').innerHTML = get('surface-template').innerHTML;
-            get('.cntr', get('cntr')).innerHTML = get('point-template').innerHTML + get('point-template').innerHTML;
-        }
+        back();
 
     </script>
 </body>

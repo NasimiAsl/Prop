@@ -74,6 +74,7 @@
     <Content Include="contents\scripts\loader.js" />
     <Content Include="contents\scripts\Melyon\patternbeach.svg" />
     <Content Include="contents\scripts\Melyon\scene.js" />
+    <Content Include="contents\scripts\Tools\dev.js" />
     <Content Include="images\shapes\custom.svg" />
     <Content Include="images\shapes\frensel.svg" />
     <Content Include="images\shapes\menu.svg" />

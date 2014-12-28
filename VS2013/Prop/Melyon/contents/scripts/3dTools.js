@@ -472,7 +472,7 @@ $3d.tools.wall = function (op) {
     op.path.push({ x: 0.1, y: 0.1, z: 0.1 });
 
     op.d = def(op.d, 1.0);
-    op.h = def(op.h, 5.0);
+    op.h = def(op.h, 35.0);
 
 
     var builder = function (p, geo) {
