@@ -59,9 +59,7 @@ var curr = 0;
 function createPointElement() {
     var ct = create(get('point-template').innerHTML); ct.setAttribute('index', inds++); get('.cntr', get('cntr')).appendChild(ct);
 }
-function createRangePointElement() {
-    var ct = create(get('range-point-template').innerHTML); ct.setAttribute('index', inds++); get('.cntr', get('cntr')).appendChild(ct);
-}
+ 
 var helperJs;
 function createStorageElement(at, i) {
     var ct = create(get('storage-sub-template').innerHTML.replace('#[name]', kb(at.length)));
@@ -102,12 +100,25 @@ function refall() {
         test();
     });
 }
-function setTo(ar) {
+function setCondTo(cond,mx,pts,dns,hgt) {
+  
+    get('pointsChose').setAttribute('pts', pts);
+    get('pointsChose').setAttribute('dns', dns);
+    get('pointsChose').setAttribute('hgt', hgt);
+
+    var push = function (r, n) { r.push({ x: -n.x + 100, y: 1.0 , z: n.y - 100 }); };
+
+    var ptsi = $3d.tools.svg.getPoints({ path:  pts , density: js(dns), pointLength: mx * 1.0, push: push });
+     
+    get('pointsChose').setAttribute('max', ptsi.length);
+    get('pointsChose').setAttribute('len', mx); 
+
+}
+function setTo(ar  ) {
 
     minall();
     var th = first('#density > input[type=range]');
-    _for(ar, function (it, i) {
-
+    _for(ar, function (it, i) { 
         try {
             th.value = it * 50.;
 
@@ -221,8 +232,7 @@ function new_surface() {
 
 function new_wall() {
     get('cntr').innerHTML = get('wall-template').innerHTML;
-    get('.cntr', get('cntr')).innerHTML = "";
-    createRangePointElement();
+    get('.cntr', get('cntr')).innerHTML = ""; 
     createPointElement();
 }
 

@@ -11,6 +11,7 @@
     <div class="ab w-full h-full t-i-00 b-i-00 z05">
         <canvas id="renderCanvas" class=" cwhite w-full h-full"></canvas>
     </div>
+
     <div id="shaders" class="hdn"></div>
     <script src="/contents/scripts/engine/babylon.js"></script>
     <script src="/contents/scripts/engine/three.js"></script>
@@ -19,6 +20,7 @@
     <script src="/contents/scripts/3dMaterial.js"></script>
     <script src="/contents/scripts/3dTools.js"></script>
     <script src="/contents/scripts/Tools/dev.js"></script>
+
     <script type="text/javascript">
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
         eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
@@ -63,13 +65,66 @@
         <textarea id="ssct" class="owf-x w-full h-full" cols="50" rows="20"></textarea>
     </div>
 
+    <div id="density" class="ab t-01 r-01 w-i-05 h-auto z06 hdn">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="range" class="w-full" min="0" max="100" onchange="test()">
+        <input type="button" class="w-01 h-01" value="min" onclick="minall()" />
+        <input type="button" class="w-01 h-01" value="ref" onclick="refall()" />
+        <input type="button" class="w-01 h-01 cred" value="X" onclick="this.parentNode.classList._add('hdn')" />
+
+    </div>
+
+    <div id="rest" class="ab t-00 l-00 r-00 h-auto h-mn-03 ctrdark c-t-iwhite z07 ">
+        <div class="pt-005 pb-005 pr-005 pl-005 c-twhite">
+            <input id="pointsChose" type="range" class="w-full" min="0" max="1000" onchange="showHelper(this); setv('val2', this.value);" />
+            <input id="val1" type="text" class="w-015 " value="0" />
+            <input id="val2" type="text" class="w-015" value="0" />
+            <input type="button" value="point" onclick="get('val1').value = getv('val2'); showHelper(get('pointsChose'));" />
+            <input type="button" value="In" onclick="addCond('true'); get('val1').value = getv('val2'); showHelper(get('pointsChose'));" />
+            <input type="button" value="Out" onclick="addCond('false'); get('val1').value = getv('val2'); showHelper(get('pointsChose'));" />
+            <input type="button" value="In all" onclick="get('condscript').textContent = 'var isIn = true;\r\n'; showHelper(get('pointsChose'));" />
+            <input type="button" value="out all" onclick="get('condscript').textContent = 'var isIn = false;\r\n'; showHelper(get('pointsChose'));" />
+            <input type="button" value="invert" onclick="get('condscript').textContent += 'isIn =  !isIn;\r\n'; showHelper(get('pointsChose'));" />
+            <input type="checkbox" id="rest-trans" onchange="showHelper(get('pointsChose'));" />
+        </div>
+        <input type="button" value="X" class="ab t-00 l-00 w-005 h-005 c-ired" onclick="this.parentNode.classList.toggle('hdn')" />
+        <input type="button" value="||" class="ab t-00 l-01 w-005 h-005 c-isky" onclick="get('cond').classList.toggle('hdn')" />
+        <div id="cond" class="pb-005 pr-005 pl-005 c-t-ilight hdn">
+            <div>
+                function condition(i,r,p) {<br /><br />
+                <textarea spellcheck="false" id="condscript" class="w-auto  w-mn-p60 ml-02 owf-x  c-t-iwhite" rows="13" cols="30">var isIn= false;&#13;&#10;</textarea><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(def(isIn) && isIn) r.push(p);<br />
+                }
+                <br />
+            </div>
+        </div>
+    </div>
+
     <div id="point-template" class=" hdn">
         <div class="pointitem">
             <input id="ch" type="checkbox" value="false" title="exactly points" />
-            <input id="p" type="text" value="" placeholder="path or points" />
-            <input id="d" type="text" value="" placeholder="density" onclick="try { get('density').classList.remove('hdn'); curr = 0; setTo(window.eval(this.value)); } catch (e) { } curr = this.parentNode.getAttribute('index').valueOf() * 1.0;" />
-            <input id="op" type="text" value="{}" placeholder="{transform}" />
-            <input id="pl" type="text" class="w-02" value="800" placeholder="points count" />
+            <input id="p" type="text" value="m 3.5714286,159.28571 c 0,0 41.4285714,10 65.0000004,4.28572 23.571428,-5.71429 -4.285715,-45.71429 8.571428,-77.142859 C 90,55 159.28571,90.714286 171.42857,67.857143" placeholder="path or points" />
+            <input id="d" type="text" value="[1,1,1]" placeholder="density" onclick="try { get('density').classList.remove('hdn'); curr = 0; setTo(js(this.value)); } catch (e) { } curr = this.parentNode.getAttribute('index').valueOf() * 1.0;" />
+            <input id="op" type="text" value="{}" placeholder="{transform}" onclick="try { get('rest').classList.remove('hdn'); curr = 0; setCondTo(js(this.value), get('#pl', this.parentNode).value, get('#p', this.parentNode).value, get('#d', this.parentNode).value, get('#h', this.parentNode).value); } catch (e) { } curr = this.parentNode.getAttribute('index').valueOf() * 1.0;" />
+            <input id="pl" type="text" class="w-02" value="80" placeholder="points count" />
             <input id="h" type="text" class="w-02" value="0.0" placeholder="vertical position" />
             <input type="button" class="w-01 h-01 c-t-ired " value="X" onclick="this.parentNode.outerHTML = '';" />
         </div>
@@ -100,14 +155,6 @@
             <input type="button" class="w-auto h-01 c-t-iblue" value="save" onclick="save();" />
             <input type="button" class="w-auto h-01 c-t-ired" value="back" onclick="back();" />
 
-        </div>
-    </div>
-
-    <div id="range-point-template" class=" hdn">
-        <div class="rangepointitem">
-            <input type="range" class="w-full" min="0" max="1000" />
-            <input id="p" type="text" value="" placeholder="conditions" />
-            <input type="text" class="w-02" value="10" />
         </div>
     </div>
 
@@ -187,35 +234,11 @@
 
     </div>
 
-    <div id="density" class="ab t-01 r-01 w-i-05 h-auto z06 hdn">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="range" class="w-full" min="0" max="100" onchange="test()">
-        <input type="button" class="w-01 h-01" value="min" onclick="minall()" />
-        <input type="button" class="w-01 h-01" value="ref" onclick="refall()" />
-        <input type="button" class="w-01 h-01 cred" value="X" onclick="this.parentNode.classList._add('hdn')" />
-
-    </div>
-
     <script>
-
+        function addCond(val) {
+            var s = "if(i >= " + getv('val1').valueOf() * 1.0 + " && i<= " + getv('val2').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("condscript").textContent += s;
+        }
 
         function test2() {
             if (def(b[storageId()]))
@@ -252,7 +275,7 @@
                 var w = new $3d.tools.wall({
                     path: join(pts_s),
                     d: getv('#deep', get('cntr')),
-                   // h: getv('#height', get('cntr')),
+                    // h: getv('#height', get('cntr')),
                     flip: getv('#flip', get('cntr')),
                     left: getv('#left', get('cntr')) ? function (p) { return cond(p); } : null,
                     right: getv('#right', get('cntr')) ? function (p) { return cond(p); } : null,
@@ -298,6 +321,74 @@
 
         back();
 
+        var helper1, helper2;
+
+        function showHelper(th) {
+            try {
+                if (def(helper1)) helper1.dispose();
+                if (def(helper2)) helper2.dispose();
+
+                var pts = th.getAttribute('pts');
+                var dns = js(th.getAttribute('dns'));
+                var pl = js(th.getAttribute('len'));
+                var h = js(th.getAttribute('hgt'));
+
+                var push = function (r, n) { r.push({ x: -n.x + 100, y: h.valueOf() * 1.0 - 3, z: n.y - 100 }); };
+
+                var ptsi = $3d.tools.svg.getPoints({ path: pts, density: dns, pointLength: pl.valueOf() * 1.0, push: push });
+                var new_points = [];
+                new_points = _each(ptsi,
+                function (at, i) {
+                    if (i >= th.value.valueOf() * 1.0 - 1 && i <= th.value.valueOf() * 1.0 + 1) {
+
+                        new_points.push({ x: at.x, y: at.y - 3.0, z: at.z });
+                    }
+                }, function () { return new_points; })
+
+                helper1 = $3d.tools.wall({
+                    path: new_points,
+                    d: 2.,
+                    h: 12,
+                    left: function (p) { return true; },
+                    right: function (p) { return true; },
+                    top: function (p) { return true; },
+                    bottom: function (p) { return true; },
+                    lr: function (p) { return true; },
+                    front: function (p) { return true; },
+                    back: function (p) { return true; },
+
+                    closed: false,
+                }).toMesh(sh_multi([{ r: sh_phonge({ color: 0xff0000, back: 0x0000ff }), e: 1.0 }]), eng1);
+
+                push = function (r, n) { r.push({ x: -n.x + 100, y: h.valueOf() * 1.0 - 3, z: n.y - 100 }); };
+                new_points = [];
+                var condCall = js('condCall = function(i,r,p){' + get('condscript').textContent + ' if(def(isIn) && isIn) r.push(p);};');
+                var _condCall = js('condCall = function(i,r,p){' + get('condscript').textContent + ' if(def(isIn) && isIn) return true; return false};');
+
+                new_points = _each(ptsi,
+                function (at, i) {
+                    condCall(i, new_points, at);
+                }, function () { return new_points; })
+
+                mgop = { alpha: getv('rest-trans') };
+                helper2 = $3d.tools.wall({
+                    path: ptsi,
+                    d: 3.,
+                    h: 6,
+                    left: function (p) { return _condCall(p.i); },
+                    right: function (p) { return _condCall(p.i); },
+                    top: function (p) { return _condCall(p.i); },
+                    bottom: function (p) { return _condCall(p.i); },
+                    front: function (p) { return _condCall(p.i); },
+                    back: function (p) { return _condCall(p.i + 1); },
+
+                    lr: function (p) { return _condCall(p.i);; },
+
+                    closed: false,
+                }).toMesh(sh_multi([{ r: sh_phonge({ color: 0x0034db, colorMin: 0.3, back: 0x002395 }), e: getv('rest-trans') ? 0.4 : 2.0 }]), eng1);
+                mgop = null;
+            } catch (e) { }
+        }
     </script>
 </body>
 </html>

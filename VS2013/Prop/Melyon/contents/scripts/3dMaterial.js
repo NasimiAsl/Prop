@@ -1,5 +1,5 @@
 ﻿var shdrIndex = 0;
-
+var mgop;
 function _cs(i) {
     if (i.toString().indexOf('.') == -1) return i + ".";
     return i.toString();
@@ -264,6 +264,7 @@ $3d.mat = {
             frgElement.innerHTML = $3d.mat.shaderBase.fragment(frg, op.helper, op.frgops);
             document.getElementById('shaders').appendChild(frgElement);
 
+            
 
             return { shader: op };
 

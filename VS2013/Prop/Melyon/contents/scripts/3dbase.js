@@ -54,7 +54,7 @@ $3d.iEngine = function (op) {
         renderer: {},
         canvas: null,
         qualityMode: 1
-    }, 
+    },
     this.instance.canvas = op.canvas;
 }
 
@@ -126,9 +126,15 @@ $3d.geometryInstance.prototype = {
 
         var mesh = eng.geometry.onRequestMesh({ scene: eng.engine.instance.scene, geo: this });
         if (!def(mat)) return mesh;
-        mat.engine = eng;
-        mesh.material = new $3d.iMaterial(mat).build();
 
+        if (def(mat.shader)) {
+
+            mat.engine = eng;
+            mesh.material = new $3d.iMaterial(mat).build();
+        }
+        else {
+            mesh.material = new $3d.iMaterial($3d.mat.frg(mat), eng).build();
+        }
         return mesh;
     }
 }
@@ -139,14 +145,14 @@ $3d.iMove = function (op) {
 }
 $3d.iMove.prototype = {
     dir: {}, look: {}, objects: [], velocity: 1.0, acceleration: 1.0,
-    onChanges: function () { } 
+    onChanges: function () { }
 };
 $3d.iRotate = function (op) {
 }
 $3d.iRotate.prototype = {
     dir: {}, center: {}, look: {}, objects: [], velocity: 1.0, acceleration: 1.0,
     onChanges: function () { }
-}; 
+};
 
 $3d.iController = function (op) {
 

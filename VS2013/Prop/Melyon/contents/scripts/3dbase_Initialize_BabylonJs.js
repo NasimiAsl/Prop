@@ -182,6 +182,14 @@ function defTexture(op, im) {
 function defShader(op, im) {
      // im.alpha = true;
     // Compile
+
+
+    if (def(mgop)) {
+
+        im.alpha = def(im.alpha, def(mgop.alpha, false));
+        im.alpha = def(im.alpha, def(mgop.alpha, false));
+    }
+
     shaderMaterial = new BABYLON.ShaderMaterial("shader", op.scene, {
         vertexElement: im.shader.vtx,
         fragmentElement: im.shader.frg,

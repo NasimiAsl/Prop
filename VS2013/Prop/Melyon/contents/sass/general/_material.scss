@@ -21,4 +21,8 @@
 @include color('dark',#313131); 
 @include color('black',#000000); 
 @include color('white',#ffffff); 
+@include color('light',#c4c4c4);  
+@include color('trans',rgba(255, 255, 255, 0.00)); 
+@include color('trdark',rgba(0, 0, 0, 0.21)); 
+
  

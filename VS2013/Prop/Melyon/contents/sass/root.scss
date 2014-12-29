@@ -16,6 +16,17 @@ input[type=text]{
     background-color:rgba(255, 255, 255, 0.13) !important;
 }
 
+textarea{
+    border: none !important; 
+    padding:4px; 
+    border-left:solid 2px rgba(255, 255, 255, 0.42) !important;
+    font-family: 'Segoe UI semibold';
+    overflow-y:auto;
+    color:rgba(255, 255, 255, 0.37);
+    background-color:rgba(255, 255, 255, 0.13) !important;
+}
+
+
 input[type=button] {
     background-color: rgba(153, 153, 153, 0.00);
     cursor: pointer;
