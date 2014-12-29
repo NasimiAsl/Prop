@@ -171,8 +171,10 @@ function test() {
         get('ssct').textContent = script_;
         setv('#spts', kb(script_.length), get('cntr'));
 
+
         var w = new $3d.tools.surface({
             paths: pts_s,
+            conds:[function(i,r,p){  return i != 53;},function(i,r,p){return i != 13;}],
             flip: getv('#flip', get('cntr'))
         }).toMesh(eng1);
 

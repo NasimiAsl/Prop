@@ -1,4 +1,5 @@
-﻿$3d.tools = {
+﻿var isInOp;
+$3d.tools = {
     importGeo: function (geo, v, f, op) {
         var st = 0;
         st = geo.vertices.length;
@@ -45,13 +46,24 @@
         if (op.p2Ind == null || op.p2Ind == undefined) op.p2Ind = p2;
         if (op.p3Ind == null || op.p3Ind == undefined) op.p3Ind = p3;
 
-
-        if (op.flip) {
-            geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
+        if (!def(isInOp)) {
+            if (op.flip) {
+                geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
+            }
+            else {
+                geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
+            }
         }
         else {
-            geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
+            if (op.flip) {
+                if(isInOp.a && isInOp.b && isInOp.c) geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
+            }
+            else {
+                if (isInOp.a && isInOp.c && isInOp.b) geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
+            }
         }
+
+        isInOp = null;
 
         return [op.p1Ind, op.p2Ind, op.p3Ind];
     },
@@ -107,16 +119,30 @@
         if (op.p3Ind == null || op.p3Ind == undefined) op.p3Ind = p3;
         if (op.p4Ind == null || op.p4Ind == undefined) op.p4Ind = p4;
 
+        if (!def(isInOp)) {
+            if (op.flip) {
 
-        if (op.flip) {
-            geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
-            geo.faces.push(op.p2Ind, op.p4Ind, op.p3Ind);
+                geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
+                geo.faces.push(op.p2Ind, op.p4Ind, op.p3Ind);
+            }
+            else {
+                geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
+                geo.faces.push(op.p2Ind, op.p3Ind, op.p4Ind);
+            }
         }
         else {
-            geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
-            geo.faces.push(op.p2Ind, op.p3Ind, op.p4Ind);
+            if (op.flip) { 
+                if (isInOp.a && isInOp.b && isInOp.c) geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
+                if (isInOp.b && isInOp.d && isInOp.c) geo.faces.push(op.p2Ind, op.p4Ind, op.p3Ind);
+            }
+            else {
+                if (isInOp.a && isInOp.c && isInOp.b) geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
+                if (isInOp.b && isInOp.c && isInOp.d) geo.faces.push(op.p2Ind, op.p3Ind, op.p4Ind);
+            }
         }
 
+
+        isInOp = null;
         return [op.p1Ind, op.p2Ind, op.p3Ind, op.p4Ind];
     },
     push: function (geo, p1, p2, p3, p4, op) {
@@ -302,12 +328,12 @@
                     op.push(np, shape3d.vertices[i], i);
                     poss.push(np[np.length - 1].x);
                     poss.push(np[np.length - 1].y);
-                    poss.push(np[np.length - 1].z); 
+                    poss.push(np[np.length - 1].z);
                 }
 
                 var fc = [];
 
-                for (var i = 0; i < shape3d.faces.length / (op.full?1.0:2.0) - (op.full?0.:2); i++) {
+                for (var i = 0; i < shape3d.faces.length / (op.full ? 1.0 : 2.0) - (op.full ? 0. : 2) ; i++) {
                     if (shape3d.faces[i].a < poss.length && shape3d.faces[i].b < poss.length && shape3d.faces[i].c < poss.length) {
 
                         if (def(op.flip, false)) {
@@ -321,14 +347,14 @@
                             fc.push(shape3d.faces[i].c);
                         }
 
-                       
+
                     }
                 }
 
                 geo = new $3d.geometryInstance({ faces: fc, positions: poss });
             }
 
-            return geo; 
+            return geo;
         },
 
     }
@@ -386,13 +412,13 @@ $3d.points.prototype = {
     },
     // deg {x,y,z,center:{x,y,z}} 
     rotate: function (op) {
-        this.each(function (i,it) {
-            this.applyAxisAngle(it, {x:1,y:0,z:0} , def(x, 0) * deg);
-            this.applyAxisAngle(it, {x:0,y:1,z:0} , def(y, 0) * deg);
-            this.applyAxisAngle(it, {x:0,y:0,z:1} , def(z, 0) * deg); 
+        this.each(function (i, it) {
+            this.applyAxisAngle(it, { x: 1, y: 0, z: 0 }, def(x, 0) * deg);
+            this.applyAxisAngle(it, { x: 0, y: 1, z: 0 }, def(y, 0) * deg);
+            this.applyAxisAngle(it, { x: 0, y: 0, z: 1 }, def(z, 0) * deg);
         });
     },
-    applyAxisAngle: function (th,axis, angle) {
+    applyAxisAngle: function (th, axis, angle) {
 
         var _qt;
 
@@ -400,18 +426,18 @@ $3d.points.prototype = {
 
             if (_qt === undefined) _qt = new qt();
 
-            th = applyQuaternion(th,qt.setFromAxisAngle(axis, angle));
+            th = applyQuaternion(th, qt.setFromAxisAngle(axis, angle));
 
-            return th; 
+            return th;
         };
 
     }(),
     // {x,y,z}
-    look: function(op){},
+    look: function (op) { },
     scale: function (op) { },
     noise: function (op) { },
 
-    applyQuaternion: function (th,q) {
+    applyQuaternion: function (th, q) {
 
         var x = th.x;
         var y = th.y;
@@ -435,7 +461,7 @@ $3d.points.prototype = {
         th.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
         th.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
 
-        return th ;
+        return th;
 
     },
 }
@@ -469,10 +495,10 @@ $3d.tools.wall = function (op) {
         closed: true,
     });
 
-    op.path.push({ x: 0.1, y: 0.1, z: 0.1 });
+    // op.path.push({ x: 0.1, y: 0.1, z: 0.1 });
 
     op.d = def(op.d, 1.0);
-    op.h = def(op.h, 35.0); 
+    op.h = def(op.h, 35.0);
 
     var builder = function (p, geo) {
 
@@ -566,7 +592,7 @@ $3d.tools.wall = function (op) {
     return new $3d.geometryInstance(geo);
 }
 
-//{ paths  }
+//{ paths , cond  }
 $3d.tools.surface = function (op) {
 
     op = def(op, {});
@@ -602,6 +628,11 @@ $3d.tools.surface = function (op) {
         }
         return inds;
     };
+    function isIn(l, i, p) {
+        if (!def(op.conds) || op.conds.length - 1 < l) return true;
+
+        return op.conds[l](i, null, p);
+    }
     var curlevel = 0;
     var builder = function (re, geo) {
 
@@ -617,20 +648,47 @@ $3d.tools.surface = function (op) {
 
         // faces 
 
+
+
         for (var i = 0; i < helper.p1.length - 1; i++) {
 
-            if (helper.p1[i] != helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
-                if (def(op.flip, false)) $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
-                else $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
+            if ( def(op.conds) && op.conds.length - 1 <= re.curlevel) {
+                isInOp = { a: isIn(re.curlevel - 1, i), b: isIn(re.curlevel - 1, i + 1), c: isIn(re.curlevel, i), d: isIn(re.curlevel  , i+1) };
+                // [1,1,2,2] level 
             }
+            else {
+                isInOp = null;
+            }
+
+            if (helper.p1[i] != helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
+                if (def(op.flip, false)) {
+                     $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
+                }
+                else {
+                    $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
+                }
+            }
+
             else if (helper.p1[i] != helper.p1[i + 1] && helper.p2[i] == helper.p2[i + 1]) {
+                if (def(isInOp))
+                    isInOp.d = null;// [1,1,2]
+
+
+
                 if (def(op.flip, false)) $3d.tools.face3(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], {});
                 else $3d.tools.face3(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], { flip: 1 });
             }
             else if (helper.p1[i] == helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
+                if (def(isInOp)) {
+                    isInOp.d = null;// [1,2,2]
+                    isInOp.b = isIn(re.curlevel  , i  );
+                    isInOp.c = isIn(re.curlevel  , i + 1);
+                }
+                
                 if (def(op.flip, false)) $3d.tools.face3(geo, i1[helper.p1[i]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
                 else $3d.tools.face3(geo, i1[helper.p1[i]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
             }
+
         }
 
         re.preIndexs = i2;
