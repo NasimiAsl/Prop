@@ -187,7 +187,9 @@ function defShader(op, im) {
     if (def(mgop)) {
 
         im.alpha = def(im.alpha, def(mgop.alpha, false));
-        im.alpha = def(im.alpha, def(mgop.alpha, false));
+        im.back = def(im.alpha, def(mgop.back, false));
+
+        if (!def(mgop.fix)) { mgop = null; }
     }
 
     shaderMaterial = new BABYLON.ShaderMaterial("shader", op.scene, {

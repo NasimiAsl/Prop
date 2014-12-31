@@ -281,7 +281,7 @@ $3d.mat = {
         return $3d.mat.shaderBase.shader({
             vtx: op.vtx,
             frg: op.frg,
-            helper: ''
+            helper: def(op.hlp,'')
         });
     },
 

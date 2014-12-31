@@ -1,0 +1,145 @@
+﻿<templates>
+    <div id="main-tmp">
+        <a>
+            <img class="w-01 h-01" src="/images/shapes/surface.svg" />
+            <div class="h-01 p-r0025">Surface</div>
+        </a>
+        <a>
+            <img class="w-01 h-01" src="/images/shapes/wall.svg" />
+            <div class="h-01 p-r0025">Wall</div>
+        </a>
+        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+        <a>
+            <img class="w-01 h-01" src="/images/shapes/specular.svg" />
+            <div class="h-01 p-r0025">material</div>
+        </a>
+        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+        <a>
+            <div class="h-01 p-r0025">Paths</div>
+        </a>
+        <a>
+            <div class="h-01 p-r0025">Objects</div>
+        </a>
+    </div>
+    <script>
+        function home() {
+            get('cntr').innerHTML = get('main-tmp').innerHTML;
+        }
+
+        home();
+    </script>
+</templates>
+<menu>
+    <div class="menu ab l-00 r-00 b-00 p-005 z10 f f-jb f-r f-ct f-ae f-st c-htrdark ">
+        <img class="w-01 h-01 op2 op-h5" src="/images/shapes/devlogo.svg" />
+        <img class="w-01 h-01" src="/images/shapes/menu.svg" />
+        <div id="cntr" class="f-i10 w-full f f-js f-r f-ct f-as f-st   ">
+
+        </div>
+    </div>
+</menu>
+<engine>
+    <div class="ab w-full h-full t-i-00 b-i-00 z05">
+        <canvas id="renderCanvas" class=" cwhite w-full h-full"></canvas>
+    </div>
+    <div id="shaders" class="hdn"></div>
+
+    <script src="/contents/scripts/engine/babylon.js"></script>
+    <script src="/contents/scripts/engine/three.js"></script>
+    <script src="/contents/scripts/3dbase.js"></script>
+    <script src="/contents/scripts/3dbase_Initialize_BabylonJs.js"></script>
+    <script src="/contents/scripts/3dMaterial.js"></script>
+    <script src="/contents/scripts/3dTools.js"></script>
+    <script src="/contents/scripts/Tools/dev.js"></script>
+
+
+    <script type="text/javascript">
+        var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
+        eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
+        eng1.engine.instance.canvas = document.getElementById('renderCanvas');
+        var bx, bx1, phi = 0, theta = 0;
+        var time = 0;
+        eng1.engine.onRequestFrame = function () {
+
+            time += 0.06;
+            _for(b, function (it, i) {
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                }
+
+            });
+
+        };
+
+        eng1.engine.onInitScene = function () {
+
+            var w = new $3d.tools.surface({
+                paths: [[{ x: -10000, y: -10, z: -10000 }, { x: 10000, y: -10, z: -10000 }], [{ x: -10000, y: -10, z: 10000 }, { x: 10000, y: -10, z: 10000 }]],
+                //flip:true
+            }).toMesh(eng1);
+            //w2.material = mat();
+
+            //var w = new BABYLON.Mesh.CreateBox('s', 30, eng1.get().scene);
+            w.material = mat(mat_table());
+
+            b.push(w);
+            var t = 40;
+            var r = [];
+            for (i = -t; i < t; i++) {
+                r[i+t] = [];
+                for (j = -t; j < t; j++) {
+                    r[i+t][j+t] = {x:i*1000,y:10000-abs(i+j),z:j*1000};
+                }
+            }
+
+
+            var w = new $3d.tools.surface({
+                paths: r,
+                //flip:true
+            }).toMesh(eng1);
+            
+            //var w = new BABYLON.Mesh.CreateBox('s', 30, eng1.get().scene); 
+            mgop = { back: true, alpha: true };
+            var ki1 = 10000.1;
+            var ki2 = ki1 * 3.; 
+            var ki3 = ki1 * 11.;
+
+            w.material = mat_s({
+               vtx: [
+                     'float i = noise(vec3(pos.x/' + ki1 + '+time/60.0,pos.y/' + ki1 + '+time/60.0,pos.z/' + ki1 + '+time/60.0));',
+                     'float j = noise(vec3(pos.x/' + ki2 + '+time/60.0,pos.y/' + ki2 + '+time/60.0,pos.z/' + ki2 + '+time/60.0));',
+                'float k = noise(vec3(pos.x/' + ki3 + '+time/60.0,pos.y/' + ki3 + '+time/60.0,pos.z/' + ki3 + '+time/60.0));',
+                'float i2 = i*2.0 +j +k/3.0;',
+                'float ix = nrm.x *i2*5.0 ;',
+                'float iy = nrm.y *i2*5.0 ;',
+                'float iz = nrm.z *i2*5.0 ;',
+                'pr = vec3(pos.x+ix ,pos.y+iy,pos.z+iz );',
+                'result = vec4(pos.x+ix/5.0 ,pos.y+iy/5.0,pos.z+iz/5.0  ,1.0);'
+               ].join('\n'),
+               frg: [
+
+                     ' float i_i = dim(vec3(pr.x,pr.y,pr.z) ,vec3(0. ,0. ,0.)); ',
+                      ' float i_j = dim(vec3(pos.x,pos.y,pos.z) ,vec3(0. ,0. ,0.)); ',
+                      'float i = dim(vec3(pr.x,pr.y,pr.z) ,vec3(pos.x ,pos.y ,pos.z));',
+                      //'if(i_i < i_j ) i = -1.0*i; ',
+                      //'  i = (i+5.0)/10.0;',
+                      'float co =abs(pos.x+pos.y)/50.0;',
+                      ' vec3 cloud ;',
+                      '  cloud = vec3(   (i-0.4)*2.0 , (i-0.4)*2.0, (i-0.4)*2.0 );',
+                      // 'else  cloud = vec3(  0.  , 0. , 0.   );',
+                    '  vec3 sky= vec3( (1.0-co)/2.0 ,(1.0-co)/2.0 +0.1 ,1.0  );',
+                    'result = vec4(sky.x + cloud.x,sky.y+cloud.y,sky.z+cloud.z,cloud.z);', 
+
+               ].join('\n') });
+            
+            b.push(w);
+
+
+
+        }
+        eng1.start();
+    </script>
+
+</engine>

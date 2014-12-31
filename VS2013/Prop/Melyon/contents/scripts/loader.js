@@ -30,14 +30,15 @@
             if (this.readyState == this.DONE) {
                 if (this.status == 200) {
                     // success!
-                    processData(this.responseText);
-                    return;
+                    processData(this.responseText);  
                 }
-                if (def(op.error))
+                else if (def(op.error)) {
                     op.error(this);
-
-                // something went wrong 
-                ops("status is " + this.status, 'error', this);
+                    // something went wrong 
+                    ops("status is " + this.status, 'error', this);
+                }
+               
+                if (def(op.end)) { op.end(); }
             }
         }
 
@@ -194,12 +195,16 @@ prop.html = {
         return this;
     }
 }
-//  'pages'+url+'.html'  , { container , term ,success:f(o), exactly}
+//  'pages'+url+'.html'  , { container , term ,success:f(o),end, exactly}
 prop.loader.get = function (url, op) {
     op = def(op, {});
     op.path = url;
     op.success = def(op.success, function (o) {
         o.defaultSuccess(op);
+    });
+
+    op.end = def(op.end, function () {
+
     });
     op.type = 'GET';
     this.isInstance = true;

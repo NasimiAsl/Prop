@@ -56,7 +56,7 @@ function getj(op, pr) {
 }
 
 function js(op) {
-    try { return window.eval(op); } catch (e) { }
+    try { var r = window.eval(" r = " + op); return r; } catch (e) { }
 }
 
 function first(s, f, p) {

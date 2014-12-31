@@ -7,70 +7,71 @@ body {
     @include owf;
 }
 
-input[type=text]{
-    border: none !important; 
-    padding:4px; 
-    border-bottom:solid 2px rgba(255, 255, 255, 0.42) !important;
+input[type=text] {
+    border: none !important;
+    padding: 4px;
+    border-bottom: solid 2px rgba(255, 255, 255, 0.42) !important;
     font-family: 'Segoe UI semibold';
-    color:rgba(255, 255, 255, 0.57);
-    background-color:rgba(255, 255, 255, 0.13) !important;
+    color: rgba(255, 255, 255, 0.57);
+    background-color: rgba(255, 255, 255, 0.13) !important;
 }
 
-textarea{
-    border: none !important; 
-    padding:4px; 
-    border-left:solid 2px rgba(255, 255, 255, 0.42) !important;
+textarea {
+    border: none !important;
+    padding: 4px;
+    border-left: solid 2px rgba(255, 255, 255, 0.42) !important;
     font-family: 'Segoe UI semibold';
-    overflow-y:auto;
-    color:rgba(255, 255, 255, 0.37);
-    background-color:rgba(255, 255, 255, 0.13) !important;
+    overflow-y: auto;
+    color: rgba(255, 255, 255, 0.37);
+    background-color: rgba(255, 255, 255, 0.13) !important;
 }
 
 
 input[type=button] {
     background-color: rgba(153, 153, 153, 0.00);
     cursor: pointer;
-    padding:4px; 
-    color:#808080;
-    border: none !important; 
-    border-bottom:solid 2px rgba(0, 99, 255, 0.18) !important;
-    margin:2px;
+    padding: 4px;
+    color: #808080;
+    border: none !important;
+    border-bottom: solid 2px rgba(0, 99, 255, 0.18) !important;
+    margin: 2px;
 }
+
 input[type=button]:hover {
     background-color: rgb(0, 99, 255);
     cursor: pointer;
-    padding:4px; 
-    color:#ffffff;
-    border: none !important;  
-    border-bottom:solid 2px #ffffff !important;
+    padding: 4px;
+    color: #ffffff;
+    border: none !important;
+    border-bottom: solid 2px #ffffff !important;
 }
 
 input[type=range] {
-    border: none !important;    
+    border: none !important;
 }
 
 input[type='range'] {
-    -webkit-appearance: none; 
-    background-color: rgba(0,0,0, 0.052) ;
+    -webkit-appearance: none;
+    background-color: rgba(0,0,0, 0.052);
     height: 12px;
     vertical-align: middle;
 }
 
 input[type='range']::-moz-range-track {
-    -moz-appearance: none; 
+    -moz-appearance: none;
     background-color: rgba(0,0,0, 0.052);
     height: 12px;
 }
 
 input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none !important; 
+    -webkit-appearance: none !important;
     background-color: rgba(0,0,0, 0.21);
     height: 12px;
     width: 20px;
 }
 
 input[type='range']::-moz-range-thumb {
-    -moz-appearance: none; 
+    -moz-appearance: none;
     background-color: rgba(0,0,0, 0.21);
     border: 1px solid #999;
     height: 12px;
@@ -78,15 +79,37 @@ input[type='range']::-moz-range-thumb {
 }
 
 input[type='range']::-webkit-slider-thumb:hover {
-    -webkit-appearance: none !important; 
+    -webkit-appearance: none !important;
     background-color: rgba(0,0,0, 0.81) !important;
     height: 12px;
     width: 20px;
 }
 
 input[type='range']::-moz-range-thumb:hover {
-    -webkit-appearance: none !important; 
+    -webkit-appearance: none !important;
     background-color: rgba(0,0,0, 0.81) !important;
     height: 12px;
     width: 20px;
+}
+
+
+.menu { 
+    a, > img, > div > img, > input[type=button], > div > input[type=button] {
+        @include f-center;
+        @include f-r;
+        @include p(7px);
+        cursor: pointer;
+        
+        @include c-t(#002d81);
+    }
+
+    a:hover, > img:hover {
+        @include c(rgba(0,0,0, 0.81));
+        @include c-t(#ffffff);
+    }
+
+    > div { 
+        @include h-mx-i(200px);
+        @include owf-x;
+    }
 }

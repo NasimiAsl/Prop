@@ -76,6 +76,7 @@
     <Content Include="contents\scripts\Melyon\scene.js" />
     <Content Include="contents\scripts\Tools\dev.js" />
     <Content Include="images\shapes\custom.svg" />
+    <Content Include="images\shapes\devlogo.svg" />
     <Content Include="images\shapes\frensel.svg" />
     <Content Include="images\shapes\menu.svg" />
     <Content Include="images\shapes\multi.svg" />
@@ -85,6 +86,8 @@
     <Content Include="images\shapes\sep.svg" />
     <Content Include="images\shapes\setting.svg" />
     <Content Include="images\shapes\specular.svg" />
+    <Content Include="images\shapes\surface.svg" />
+    <Content Include="images\shapes\wall.svg" />
     <Content Include="images\skybox\d2\skybox_nx.jpg" />
     <Content Include="images\skybox\d2\skybox_ny.jpg" />
     <Content Include="images\skybox\d2\skybox_nz.jpg" />
@@ -105,11 +108,13 @@
     <Content Include="images\skybox\skybox_pz.jpg" />
     <Content Include="images\textures\lights.png" />
     <Content Include="index.html" />
+    <Content Include="tools\Index.html" />
     <Content Include="tools\surface\Index.html" />
     <Content Include="pages\layouts\3d-base.html" />
     <Content Include="pages\layouts\base.html" />
     <Content Include="pages\layouts\fit.html" />
     <Content Include="pages\sample_multi.html" />
+    <Content Include="tools\Templates.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

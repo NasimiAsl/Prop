@@ -139,8 +139,7 @@ $3d.tools = {
                 if (isInOp.a && isInOp.c && isInOp.b) geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
                 if (isInOp.b && isInOp.c && isInOp.d) geo.faces.push(op.p2Ind, op.p3Ind, op.p4Ind);
             }
-        }
-
+        } 
 
         isInOp = null;
         return [op.p1Ind, op.p2Ind, op.p3Ind, op.p4Ind];

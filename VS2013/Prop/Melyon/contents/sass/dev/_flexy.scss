@@ -276,8 +276,7 @@ $f-basis : auto;
     -ms-flex: $f-grow $f-shrink $f-basis  !important;
     flex: $f-grow $f-shrink $f-basis  !important; 
 }
-  
-  
+   
 @mixin f-center{
 	@include f;
 	@include f-cc;

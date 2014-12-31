@@ -40,14 +40,29 @@
 @mixin  pr($pm){padding-right: $pm;}
 @mixin  pt($pm){padding-top: $pm;    }
 @mixin  pb($pm){padding-bottom: $pm;}
+@mixin  ptb($pm){padding-bottom: $pm;padding-top: $pm;}
+@mixin  plr($pm){padding-left: $pm;padding-right: $pm;}
+@mixin  p($pm){padding : $pm;}
+@mixin  ptb-i($pm){padding-bottom: $pm !important;padding-top: $pm !important;}
+@mixin  plr-i($pm){padding-left: $pm !important;padding-right: $pm !important;}
+@mixin  p-i($pm){padding : $pm;}
+
 @mixin  ml($pm){margin-left: $pm;    }
 @mixin  mr($pm){margin-right: $pm;}
 @mixin  mt($pm){margin-top: $pm;}
-@mixin  mb($pm){margin-bottom: $pm;}
+@mixin  mb($pm){margin-bottom: $pm;} 
+@mixin  mtb($pm){margin-bottom: $pm;margin-top: $pm;}
+@mixin  mlr($pm){margin-left: $pm;margin-right: $pm;}
+@mixin  m($pm){margin : $pm;}
+@mixin  mtb-i($pm){margin-bottom: $pm!important;margin-top: $pm !important;}
+@mixin  mlr-i($pm){margin-left: $pm !important;margin-right: $pm!important;}
+@mixin  m-i($pm){margin : $pm !important;}
+
 @mixin  bl($pm){border-left-width: $pm;}
 @mixin  br($pm){border-right-width: $pm;}
 @mixin  bt($pm){border-top-width: $pm;}
-@mixin  bb($pm){border-bottom-width: $pm;}
+@mixin  bb($pm){border-bottom-width: $pm;} 
+
 @mixin  w-i($pm){width: $pm !important;}
 @mixin  h-i($pm){height: $pm !important;}
 @mixin  l-i($pm){left: $pm !important;}
@@ -86,14 +101,29 @@
   .pr-#{$p}     { @include pr    ($param);}
   .pt-#{$p}     { @include pt    ($param);}
   .pb-#{$p}     { @include pb    ($param);}
+  .ptb-#{$p}     { @include ptb    ($param);}
+  .plr-#{$p}     { @include plr ($param);}
+  .p-#{$p}      { @include p     ($param);}
+  .ptb-i-#{$p}     { @include ptb-i    ($param);}
+  .plr-i-#{$p}     { @include plr-i ($param);}
+  .p-i-#{$p}      { @include p-i     ($param);}
+
   .ml-#{$p}     { @include ml    ($param);}
   .mr-#{$p}     { @include mr    ($param);}
   .mt-#{$p}     { @include mt    ($param);}
   .mb-#{$p}     { @include mb    ($param);}
+  .mtb-#{$p}     { @include mtb    ($param);}
+  .mlr-#{$p}     { @include mlr    ($param);}
+  .m-#{$p}      { @include m     ($param);}
+  .mtb-i-#{$p}     { @include mtb-i    ($param);}
+  .mlr-i-#{$p}     { @include mlr-i    ($param);}
+  .m-i-#{$p}      { @include m-i     ($param);}
+
   .bl-#{$p}     { @include bl    ($param);}
   .br-#{$p}     { @include br    ($param);}
   .bt-#{$p}     { @include bt    ($param);}
   .bb-#{$p}     { @include bb    ($param);}
+ 
   .w-i-#{$p}    { @include w-i   ($param);}
   .h-i-#{$p}    { @include h-i   ($param);}
   .l-i-#{$p}    { @include l-i   ($param);}
