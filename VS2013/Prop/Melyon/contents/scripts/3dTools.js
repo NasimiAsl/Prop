@@ -369,33 +369,7 @@ $3d.points = function (op) {
 $3d.points.prototype = {
     list: [],
     // [{x,y,z}] | [x1,y1,z1,x2,...] | {x,y,z} | x,y,z
-    add: function (op, op2, op3) {
-
-        function append(x, y, z) {
-            list.push({ x: def(x, 0.), y: def(x, 0.), z: def(x, 0.) });
-        }
-
-        if (def(op.x) || def(op.y) || def(op.z)) {
-            append(op.x, op.y, op.z);
-        }
-        else if (def(op) && def(op2) && def(op3)) {
-            append(op, op2, op3);
-        }
-        else if (op.length > 0) {
-            if (def(op[0].x) || def(op[0].x) || def(op[0].x)) {
-                for (var i = 0; i < op.length; i++) {
-                    append(op[i].x, op[i].y, op[i].z);
-                }
-            }
-            else if (op.length % 3 == 0) {
-                for (var i = 0; i < op.length; i += 3) {
-                    append(op[i], op[i + 1], op[i + 2]);
-                }
-            }
-        }
-
-        return this;
-    },
+  
     // call
     each: function (op) {
         for (var i = 0; i < this.list.length; i++) {
@@ -403,7 +377,8 @@ $3d.points.prototype = {
             if (def(r)) {
                 this.list[i] = r;
             }
-        }
+        } 
+        return this;
     },
     // {x,y,z}
     move: function (op) {
@@ -435,7 +410,8 @@ $3d.points.prototype = {
     look: function (op) { },
     scale: function (op) { },
     noise: function (op) { },
-
+     
+     
     applyQuaternion: function (th, q) {
 
         var x = th.x;
@@ -493,6 +469,16 @@ $3d.tools.wall = function (op) {
         lr: function (p) { return true; },
         closed: true,
     });
+
+    if ( op.lr == 'default') {
+        op.lr = function (p) { return true; };
+        op.left = def(op.left, function (p) { return true; });
+        op.right = def(op.right, function (p) { return true; });
+        op.top = def(op.top, function () { return true; });
+        op.bottom = def(op.bottom, function (p) { return true; });
+        op.front = def(op.front, function (p) { return true; });
+        op.back = def(op.back, function (p) { return true; });
+    }
 
     // op.path.push({ x: 0.1, y: 0.1, z: 0.1 });
 

@@ -1,0 +1,44 @@
+﻿
+.ns {
+    > .sub, > .sub-f {
+        display: none;
+    }
+
+    > .menu > .sel {
+        border-bottom: solid 5px #000000;
+    }
+
+    .show.sub { 
+        display:block !important;
+    }
+     .show.sub-f { 
+        @include f;
+    }
+
+    > .sub > div, > .sub-f > div {
+        display: none;
+    }
+
+    > .sub > .sel, > .sub-f > .sel {
+        display: block !important;
+    }
+
+    > .sub > .sel-f, > .sub-f > .sel-f {
+        @include f;
+    }
+
+    .act {
+        background-color: #ff6a00 !important;
+    }
+}
+
+
+.ns:hover {
+    > .sub {
+        display: block;
+    }
+
+    > .sub-f {
+        @include f;
+    }
+}

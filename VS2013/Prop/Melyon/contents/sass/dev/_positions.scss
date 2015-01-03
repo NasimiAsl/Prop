@@ -63,6 +63,9 @@
 @mixin  bt($pm){border-top-width: $pm;}
 @mixin  bb($pm){border-bottom-width: $pm;} 
 
+@mixin  fs($pm){font-size: $pm/8.0;} 
+
+
 @mixin  w-i($pm){width: $pm !important;}
 @mixin  h-i($pm){height: $pm !important;}
 @mixin  l-i($pm){left: $pm !important;}
@@ -77,10 +80,10 @@
 @mixin  mr-i($pm){margin-right: $pm !important;}
 @mixin  mt-i($pm){margin-top: $pm !important;}
 @mixin  mb-i($pm){margin-bottom: $pm !important;}
-@mixin  bl-i($pm){border-left-width: $pm !important;}
-@mixin  br-i($pm){border-right-width: $pm !important;}
-@mixin  bt-i($pm){border-top-width: $pm !important;}
-@mixin  bb-i($pm){border-bottom-width: $pm !important;}
+@mixin  bl-i($pm){border-left-style:  solid; border-left-width: $pm !important;}
+@mixin  br-i($pm){border-right-style:  solid; border-right-width: $pm !important;}
+@mixin  bt-i($pm){border-top-style:   solid; border-top-width: $pm !important;}
+@mixin  bb-i($pm){border-bottom-style:solid;   border-bottom-width: $pm !important;}
 
 @mixin size($param) { 
   .w-mx-#{$p}   { @include w-mx  ($param);} 
@@ -123,6 +126,7 @@
   .br-#{$p}     { @include br    ($param);}
   .bt-#{$p}     { @include bt    ($param);}
   .bb-#{$p}     { @include bb    ($param);}
+  .fs-#{$p}     { @include fs    ($param);}
  
   .w-i-#{$p}    { @include w-i   ($param);}
   .h-i-#{$p}    { @include h-i   ($param);}

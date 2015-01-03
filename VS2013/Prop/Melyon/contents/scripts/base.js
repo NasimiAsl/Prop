@@ -8,6 +8,32 @@ function def(a, d) {
     return null;
 }
 
+var always = function () { return true };
+
+function css_r(th,css ) {
+    
+    if (def(th.length)) {
+        _each(th, function (it, i) { try { if (def(it) && def(it.classList)) it.classList.remove(css); } catch (e) { } }, function () { }, function () { });
+    }
+    else
+        try { if (def(th) && def(th.classList)) th.classlist.remove(css); } catch (e) { }
+
+}
+
+
+function css(th,css ) {
+
+    if (def(th.length)) {
+        _each(th, function (it, i) { try { if (def(it) && def(it.classList)) it.classList._add(css); } catch (e) { } }, function () { }, function () { });
+    }
+    else
+        try { if (def(th) && def(th.classList)) th.classList._add(css); } catch (e) { }
+
+}
+
+String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/gm, '');
+}
 
 String.prototype.replaceAll = function (str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof (str2) == "string") ? str2.replace(/\$/g, "$$$$") : str2);

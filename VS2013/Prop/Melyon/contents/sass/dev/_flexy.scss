@@ -261,20 +261,20 @@ $f-grow : 0;
 $f-shrink:1;
 $f-basis : auto;
 
- @mixin f-flex{ 
-	 -webkit-box-flex: $f-grow;
-    -moz-box-flex: $f-grow;
-    -webkit-flex: $f-grow $f-shrink $f-basis;
-    -ms-flex: $f-grow $f-shrink $f-basis;
-    flex: $f-grow $f-shrink $f-basis; 
+ @mixin f-flex($fp,$fs){ 
+	 -webkit-box-flex: $fp;
+    -moz-box-flex: $fp;
+    -webkit-flex: $fp $fs $f-basis;
+    -ms-flex:$fp $fs $f-basis;
+    flex: $fp $fs $f-basis; 
 }
 
- @mixin f-flex-im{ 
-	 -webkit-box-flex: $f-grow !important;
-    -moz-box-flex: $f-grow  !important;
-    -webkit-flex: $f-grow $f-shrink $f-basis  !important;
-    -ms-flex: $f-grow $f-shrink $f-basis  !important;
-    flex: $f-grow $f-shrink $f-basis  !important; 
+ @mixin f-flex-im($fp,$fs){ 
+	-webkit-box-flex: $fp !important;
+    -moz-box-flex: $fp !important;
+    -webkit-flex: $fp $fs $f-basis !important;
+    -ms-flex:$fp $fs $f-basis !important;
+    flex: $fp $fs $f-basis !important;
 }
    
 @mixin f-center{
@@ -296,31 +296,31 @@ $f-basis : auto;
 			$f-shrink:0 !important; 
 			$f-basis :auto;
 			@include f-st;
-			@include f-flex-im;  
+			@include f-flex-im(1,0);  
 	}
 }  
 @mixin f-i01{
    $f-grow :0;
 	$f-shrink:1;
 	$f-basis :auto;
-	@include f-flex-im; 
+	@include f-flex-im(0,1); 
 }  
 @mixin f-i11{
     $f-grow :1;
 	$f-shrink:1;
 	$f-basis :auto;
-	@include f-flex-im; 
+	@include f-flex-im(1,1); 
 } 
 @mixin f-i00{
    $f-grow :0;
 	$f-shrink:0;
 	$f-basis :auto;
-	@include f-flex-im; 
+	@include f-flex-im(0,0); 
 } 
 @mixin f-i10{
     $f-grow :1;
 	$f-shrink:0;
 	$f-basis :auto;
-	@include f-flex-im; 
+	@include f-flex-im(1,0); 
 } 
  

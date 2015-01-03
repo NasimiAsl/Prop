@@ -64,6 +64,7 @@
     <None Include="contents\sass\dev\_positions.scss" />
     <None Include="contents\sass\dev\_material.scss" />
     <None Include="contents\sass\dev\_flexy.scss" />
+    <None Include="contents\sass\general\_nasted.scss" />
     <Content Include="contents\scripts\3dbase.js" />
     <Content Include="contents\scripts\3dbase_Initialize_BabylonJs.js" />
     <Content Include="contents\scripts\3dMaterial.js" />
@@ -75,6 +76,7 @@
     <Content Include="contents\scripts\Melyon\patternbeach.svg" />
     <Content Include="contents\scripts\Melyon\scene.js" />
     <Content Include="contents\scripts\Tools\dev.js" />
+    <Content Include="contents\scripts\Tools\helpers.js" />
     <Content Include="images\shapes\custom.svg" />
     <Content Include="images\shapes\devlogo.svg" />
     <Content Include="images\shapes\frensel.svg" />
@@ -114,7 +116,7 @@
     <Content Include="pages\layouts\base.html" />
     <Content Include="pages\layouts\fit.html" />
     <Content Include="pages\sample_multi.html" />
-    <Content Include="tools\Templates.html" />
+    <Content Include="tools\templates.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

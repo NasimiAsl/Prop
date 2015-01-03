@@ -6,12 +6,14 @@
     <script type="text/javascript" src="/contents/scripts/loader.js"></script>
     <link href="/contents/css/screen.css" rel="stylesheet" />
     <link href="/contents/css/root.css" rel="stylesheet" />
+    <script src="/contents/scripts/Tools/helpers.js"></script>
 </head>
 <body>
-   #[engine] #[menu] 
+   #[engine] #[menu] #[panels]
     <div class="hdn">#[templates]</div>
+
     <script>
-        new prop.loader.get('/tools/templates.html', {exactly: true, term: ['templates','engine','menu'] });
+        new prop.loader.get('/tools/templates.html', {exactly: true, term: ['templates','engine','menu','panels'] });
     </script>
 </body>
 </html>

@@ -1,40 +1,80 @@
 ﻿<templates>
     <div id="main-tmp">
-        <a>
-            <img class="w-01 h-01" src="/images/shapes/surface.svg" />
-            <div class="h-01 p-r0025">Surface</div>
-        </a>
-        <a>
-            <img class="w-01 h-01" src="/images/shapes/wall.svg" />
-            <div class="h-01 p-r0025">Wall</div>
-        </a>
-        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
-        <a>
-            <img class="w-01 h-01" src="/images/shapes/specular.svg" />
-            <div class="h-01 p-r0025">material</div>
-        </a>
-        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
-        <a>
-            <div class="h-01 p-r0025">Paths</div>
-        </a>
-        <a>
-            <div class="h-01 p-r0025">Objects</div>
-        </a>
+
+    </div>
+    <div id="path-tmp">
+        <div >
+            <input type="button" value="&nbsp;+&nbsp;" class="fs-04 " onclick="path_new();" />
+            <input type="button" value="&nbsp;×&nbsp;" class="fs-04 c-ired" onclick="this.parentNode.parentNode.removeChild(this.parentNode); pathHelper();" />
+            <input id="path-path" type="text" value="M 35.355339,158.58375 C 55.54984,106.78976 87.063718,64.051262 147.48227,44.436508" class="c-t-iblack w-02" />
+            <input id="path-pointLength" type="text" value="80" class="c-t-iblack w-01" />.
+            <input type="button" value="&nbsp;active&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_load(); pathHelper();" />
+            <input type="button" value="&nbsp;apply&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_build(); pathHelper();" /> 
+        </div>
     </div>
     <script>
         function home() {
             get('cntr').innerHTML = get('main-tmp').innerHTML;
         }
-
         home();
     </script>
 </templates>
+<panels>
+    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns">
+        <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite">
+            <input type="button" class="fs-04 c-i-hred" value="&nbsp;×&nbsp;" onclick="get('point-panel').classList._add('hdn')" />
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 sel"> Point Struct </a>
+            <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
+            <a onclick="selTab(this)">paths    </a>
+            <a onclick="selTab(this)">Restriction      </a>
+            <a onclick="selTab(this)">Cut-Join </a>
+            <a onclick="selTab(this)">Custom   </a>
+            <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
+            <input type="button" value="source" />
+        </div>
+        <div class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
+            <div id="Point-Struct">points</div>
+            <div id="paths" class="f f-r f-w f-jb f-as f-ct f-st w-full">
+                <div class=" f-i01" id="paths_list">
+                    <input type="button" value="new path" onclick="path_new();" />
+                </div>
+                <div class="f-i11  c-itrdark ns bl-i-0025 c-b-iorg">
+                    <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite ">
+                        <a onclick="selTab(this)">Push    </a>
+                        <a onclick="selTab(this)">Density</a>
+                    </div>
+                    <div class="ctrdark h-mn-04 sub-f p-0025 show">
+                        <div id="Push">
+                            <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack " id="path-push">r.push({x:-n.x+100.0,y:0.0,z:n.y-100})</textarea>
+                        </div>
+                        <div id="Density">
+                            <textarea cols="60" rows="10" class="owf-x  w-p80  c-t-iblack" id="path-density">[1,1,1,1,1]</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="Restriction">Restriction</div>
+            <div id="Cut-Join">Cut-Join</div>
+            <div id="Custom">Custom</div>
+        </div>
+    </div>
+
+    <script>
+        function selTab(th) {
+            all('a', function (it, i) { if (def(it.classList)) it.classList.remove('sel'); }, function () { th.classList._add('sel'); }, null, th.parentNode);
+            all('.sub-f > div', function (it, i) { if (def(it.classList)) it.classList.remove('sel-f'); }, function () {
+                get(th.innerText.trim().replaceAll(' ', '-')).classList._add('sel-f');
+            }, null, th.parentNode.parentNode);
+        }
+    </script>
+</panels>
 <menu>
     <div class="menu ab l-00 r-00 b-00 p-005 z10 f f-jb f-r f-ct f-ae f-st c-htrdark ">
-        <img class="w-01 h-01 op2 op-h5" src="/images/shapes/devlogo.svg" />
         <img class="w-01 h-01" src="/images/shapes/menu.svg" />
-        <div id="cntr" class="f-i10 w-full f f-js f-r f-ct f-as f-st   ">
+        <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
+        <img class="w-01 h-01" src="/images/shapes/newPoint.svg" />
 
+        <div id="cntr" class=" w-full f f-js f-r f-ct f-as f-st   ">
         </div>
     </div>
 </menu>
@@ -47,14 +87,15 @@
     <script src="/contents/scripts/engine/babylon.js"></script>
     <script src="/contents/scripts/engine/three.js"></script>
     <script src="/contents/scripts/3dbase.js"></script>
-    <script src="/contents/scripts/3dbase_Initialize_BabylonJs.js"></script>
+    <script src="/contents/scripts/3dbase_initialize_babylonJs.js"></script>
     <script src="/contents/scripts/3dMaterial.js"></script>
-    <script src="/contents/scripts/3dTools.js"></script>
-    <script src="/contents/scripts/Tools/dev.js"></script>
+    <script src="/contents/scripts/3dtools.js"></script>
+    <script src="/contents/scripts/tools/dev.js"></script>
 
 
     <script type="text/javascript">
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
+        var helpers = [];
         eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
         eng1.engine.instance.canvas = document.getElementById('renderCanvas');
         var bx, bx1, phi = 0, theta = 0;
@@ -85,61 +126,13 @@
             w.material = mat(mat_table());
 
             b.push(w);
-            var t = 40;
-            var r = [];
-            for (i = -t; i < t; i++) {
-                r[i+t] = [];
-                for (j = -t; j < t; j++) {
-                    r[i+t][j+t] = {x:i*1000,y:10000-abs(i+j),z:j*1000};
-                }
-            }
-
-
-            var w = new $3d.tools.surface({
-                paths: r,
-                //flip:true
-            }).toMesh(eng1);
-            
-            //var w = new BABYLON.Mesh.CreateBox('s', 30, eng1.get().scene); 
-            mgop = { back: true, alpha: true };
-            var ki1 = 10000.1;
-            var ki2 = ki1 * 3.; 
-            var ki3 = ki1 * 11.;
-
-            w.material = mat_s({
-               vtx: [
-                     'float i = noise(vec3(pos.x/' + ki1 + '+time/60.0,pos.y/' + ki1 + '+time/60.0,pos.z/' + ki1 + '+time/60.0));',
-                     'float j = noise(vec3(pos.x/' + ki2 + '+time/60.0,pos.y/' + ki2 + '+time/60.0,pos.z/' + ki2 + '+time/60.0));',
-                'float k = noise(vec3(pos.x/' + ki3 + '+time/60.0,pos.y/' + ki3 + '+time/60.0,pos.z/' + ki3 + '+time/60.0));',
-                'float i2 = i*2.0 +j +k/3.0;',
-                'float ix = nrm.x *i2*5.0 ;',
-                'float iy = nrm.y *i2*5.0 ;',
-                'float iz = nrm.z *i2*5.0 ;',
-                'pr = vec3(pos.x+ix ,pos.y+iy,pos.z+iz );',
-                'result = vec4(pos.x+ix/5.0 ,pos.y+iy/5.0,pos.z+iz/5.0  ,1.0);'
-               ].join('\n'),
-               frg: [
-
-                     ' float i_i = dim(vec3(pr.x,pr.y,pr.z) ,vec3(0. ,0. ,0.)); ',
-                      ' float i_j = dim(vec3(pos.x,pos.y,pos.z) ,vec3(0. ,0. ,0.)); ',
-                      'float i = dim(vec3(pr.x,pr.y,pr.z) ,vec3(pos.x ,pos.y ,pos.z));',
-                      //'if(i_i < i_j ) i = -1.0*i; ',
-                      //'  i = (i+5.0)/10.0;',
-                      'float co =abs(pos.x+pos.y)/50.0;',
-                      ' vec3 cloud ;',
-                      '  cloud = vec3(   (i-0.4)*2.0 , (i-0.4)*2.0, (i-0.4)*2.0 );',
-                      // 'else  cloud = vec3(  0.  , 0. , 0.   );',
-                    '  vec3 sky= vec3( (1.0-co)/2.0 ,(1.0-co)/2.0 +0.1 ,1.0  );',
-                    'result = vec4(sky.x + cloud.x,sky.y+cloud.y,sky.z+cloud.z,cloud.z);', 
-
-               ].join('\n') });
-            
-            b.push(w);
-
-
-
         }
         eng1.start();
+
+
+
+
+
     </script>
 
 </engine>
