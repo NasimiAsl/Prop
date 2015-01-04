@@ -137,8 +137,8 @@ function mat_table(cl) {
     return sh_range({
         start: 10, end: 1000,
         mat1: sh_multi([
-            { r: 'float pi2 =((pos.x )- floor((pos.x )/10.)*10.)*8.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 =  0.2; result = vec4(0.,0.,0.,pi2);', e: 0.5 },
-            { r: 'float pi3 =((pos.z )- floor((pos.z )/10.)*10.)*8.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 =  0.2; result = vec4(0.,0.,0.,pi3);', e: 0.5 },
+            { r: 'float pi2 =((pos.x )- floor((pos.x )/10.)*10.)*8.  ; if(pi2 <= 1.0)  result = vec4(0.,0.,0.,0.4); else result = vec4(0.0); '+
+                 'float pi3 =((pos.z )- floor((pos.z )/10.)*10.)*8.  ;  if(pi3 <= 1.0)  result = vec4(0.,0.,0.,0.3); ', e: 0.5 },
             { r: 'float pi4 =(abs(pos.x ))/10.0 +(abs(pos.z ))/10.0   ; if(pi4 < 1.0) pi4 = 0.2; else pi4 =  0.; result = vec4(0.,0.,0.,pi4);', e: 0.5 }
         ]),
         mat2: sh_multi([

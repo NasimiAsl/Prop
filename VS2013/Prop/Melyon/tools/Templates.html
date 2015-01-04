@@ -1,54 +1,151 @@
 ﻿<templates>
     <div id="main-tmp">
-
+        <img class="w-01 h-01" src="/images/shapes/surface.svg" onclick="menu_cl('surface');" />
+        <img class="w-01 h-01" src="/images/shapes/wall.svg" onclick="menu_cl('wall');" />
+        <img class="w-01 h-01" src="/images/shapes/stair.svg" onclick="menu_cl('stair');" />
+        <img class="w-01 h-01" src="/images/shapes/repeat.svg" onclick="menu_cl('repeat');" />
+        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+        <a>
+            Material
+        </a>
+        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+        <a>
+            Storage
+        </a>
+    </div>
+    <div id="point-item-tmp">
+        <div class="point-item-struct">
+            <h2>#[name]</h2>
+            #[size]
+        </div>
     </div>
     <div id="path-tmp">
-        <div >
+        <div>
             <input type="button" value="&nbsp;+&nbsp;" class="fs-04 " onclick="path_new();" />
             <input type="button" value="&nbsp;×&nbsp;" class="fs-04 c-ired" onclick="this.parentNode.parentNode.removeChild(this.parentNode); pathHelper();" />
-            <input id="path-path" type="text" value="M 35.355339,158.58375 C 55.54984,106.78976 87.063718,64.051262 147.48227,44.436508" class="c-t-iblack w-02" />
+            <input id="path-path" type="text" value="m 100.0051,100.71429 -71.215752,0 2.020305,-16.881833 c 0,0 5.555839,3.535534 15.152288,-0.505076 C 55.55839,79.286771 97.984797,71.205551 67.175144,64.639559 36.365492,58.073567 4.5456865,64.134483 15.152288,41.40605 25.75889,18.677618 26.263966,-22.23356 31.314729,-22.23356 c 5.050763,0 7.071068,-5.050763 1.010152,18.6878222 C 26.263966,20.192847 22.728433,35.850211 29.7995,45.951737 c 3.023953,4.319934 19.697975,11.616754 37.375644,12.12183 17.67767,0.505077 32.829956,0 32.829956,0" class="c-t-iblack w-02" />
             <input id="path-pointLength" type="text" value="80" class="c-t-iblack w-01" />.
             <input type="button" value="&nbsp;active&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_load(); pathHelper();" />
-            <input type="button" value="&nbsp;apply&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_build(); pathHelper();" /> 
+            <input type="button" value="&nbsp;apply&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_build(); pathHelper();" />
         </div>
     </div>
     <script>
+        var menu_cl_h;
+        function menu_cl(menu) {
+            menu = "." + menu;
+            if (def(menu_cl_h)) menu_cl_h();
+            get('point-panel').classList.toggle('hdn'); first(menu).classList.toggle('hdn-i');
+            menu_cl_h = function () { get('point-panel').classList.toggle('hdn'); first(menu).classList.toggle('hdn-i'); }
+
+            if (menu == '.surface') {
+                helperBase = function (p) {
+                    var st = js(p);
+                    if (st.name == "point 2") return;
+                    var tk = create(get('point-item-tmp').innerHTML.replaceAll('#[name]', st.name.replaceAll(' ', '-')).replaceAll('#[size]', kb(p.length)));
+                    tk.setAttribute('struct',p);
+                    var vct = def(get('sr_pt_' + st.name.replaceAll(' ', '-'))) ? get('sr_pt_' + st.name.replaceAll(' ', '-')).innerHTML = tk.innerHTML : tk;
+                    tk.id = 'sr_pt_' + st.name.replaceAll(' ', '-');
+                    if (!def(get('sr_pt_' + st.name.replaceAll(' ', '-')))) first('#Surface #Points').appendChild(vct);
+
+                    st = "[";
+                    all('#Surface #Points > .point-item-struct',
+                        function (at) {
+                            st += at.getAttribute('struct') + ",";
+                        },
+                    function () {
+                        buildSurface(st + "]", 'surface-help');
+                    }); 
+
+                }
+            }
+        }
+
         function home() {
             get('cntr').innerHTML = get('main-tmp').innerHTML;
         }
         home();
+       var  ijk = 2;
     </script>
 </templates>
 <panels>
-    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns">
+    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns hdn">
         <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite">
-            <input type="button" class="fs-04 c-i-hred" value="&nbsp;×&nbsp;" onclick="get('point-panel').classList._add('hdn')" />
-            <a onclick="selTab(this)" class="c-t-iwhite ml-005 sel"> Point Struct </a>
+            <img class="w-01 h-01" src="/images/shapes/close.svg" onclick="get('point-panel').classList._add('hdn'); menu_cl_h = null;" />
+            <img class="w-01 h-01" src="/images/shapes/keep.svg" onclick="get('point-sub').classList.toggle('show')" />
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 surface hdn-i">Surface</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 wall hdn-i">Wall</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 stair hdn-i">Stair</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat hdn-i">Repeat</a>
+
             <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
             <a onclick="selTab(this)">paths    </a>
             <a onclick="selTab(this)">Restriction      </a>
             <a onclick="selTab(this)">Cut-Join </a>
             <a onclick="selTab(this)">Custom   </a>
             <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
-            <input type="button" value="source" />
+            <input type="button" value="source" onclick="source()" />
+            <input id="point-name" type="text" value="point 1" onkeypress="if (event.keyCode == 13) { get('paths_list').innerHTML = ''; this.value = 'point ' + ijk; ijk++; path_new(); }" />
+            <input type="button" value="new path" onclick=" get('paths_list').innerHTML = ''; get('point-name').value = 'point ' + ijk; ijk++; path_new();" />
         </div>
-        <div class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
-            <div id="Point-Struct">points</div>
+        <div id="point-sub" class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
+            <div id="Surface">
+                <div id="Points">
+                </div>
+            </div>
+            <div id="Wall">Wall</div>
+            <div id="Stair">Stair</div>
+            <div id="Repeat">Repeat</div>
             <div id="paths" class="f f-r f-w f-jb f-as f-ct f-st w-full">
                 <div class=" f-i01" id="paths_list">
-                    <input type="button" value="new path" onclick="path_new();" />
                 </div>
                 <div class="f-i11  c-itrdark ns bl-i-0025 c-b-iorg">
                     <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite ">
-                        <a onclick="selTab(this)">Push    </a>
+                        <a onclick="selTab(this)" class="sel">Push    </a>
                         <a onclick="selTab(this)">Density</a>
                     </div>
                     <div class="ctrdark h-mn-04 sub-f p-0025 show">
-                        <div id="Push">
-                            <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack " id="path-push">r.push({x:-n.x+100.0,y:0.0,z:n.y-100})</textarea>
+                        <div id="Push" class="sel-f ">
+                            <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack hdn" id="path-push">r.push({x:-n.x+100.0,y:0.0,z:n.y-100});</textarea>
+                            <div class="pnl w-mx-22">
+                                <input type="button" value="top" onclick="setSource(this,'r[r.length-1] = {x:-n.x+100.0,y:0.0,z:n.y-100};')" />
+                                <input type="button" value="bottom" onclick="setSource(this,'r[r.length-1] = {x: n.x-100.0,y:0.0,z:n.y-100};')" />
+                                <input type="button" value="left" onclick="setSource(this, 'r[r.length-1] = {x:-n.x+100.0,z:0.0,y:n.y-100};')" />
+                                <input type="button" value="right" onclick="setSource(this, 'r[r.length-1] = {x: n.x-100.0,z:0.0,y:n.y-100};')" />
+                                <input type="button" value="front" onclick="setSource(this, 'r[r.length-1] = {y:-n.x+100.0,x:0.0,z:n.y-100};')" />
+                                <input type="button" value="back" onclick="setSource(this, 'r[r.length-1] = {y:n.x-100.0,x:0.0,z:n.y-100};')" />
+                                <br />
+                                <div class="f f-r f-ja f-ct f-at ">
+                                    <div class="w-p30 f f-c ">
+                                        <input id="rt_x" type="range" class="w-mx-i-05" min="-360" max="360" onchange="  path_build(); pathHelper();" />
+                                        <input id="rt_y" type="range" class="w-mx-i-05" min="-360" max="360" onchange="  path_build(); pathHelper();" />
+                                        <input id="rt_z" type="range" class="w-mx-i-05" min="-360" max="360" onchange="  path_build(); pathHelper();" />
+                                        <div>
+                                            <input type="button" value="get center" onclick="getCenter('path-center', 'path');" />
+                                            <input type="button" value="clear"
+                                                   onclick="get('rt_x').value = 0; get('rt_y').value = 0; get('rt_z').value = 0; get('rt_center').value = '{x:0,y:0,z:0}'; path_build(); pathHelper();" />
+                                        </div> <input id="rt_center" type="text" value="{x:0,y:0,z:0}" onkeydown="  path_build(); pathHelper();" />
+                                        <input id="rtt_x" type="text" value="0.0" onkeydown="get('rt_x').value = this.value; path_build(); pathHelper();" />
+                                        <input id="rtt_y" type="text" value="0.0" onkeydown="    get('rt_y').value = this.value; path_build(); pathHelper();" />
+                                        <input id="rtt_z" type="text" value="0.0" onkeydown="    get('rt_z').value = this.value; path_build(); pathHelper();" />
+                                    </div>
+                                    <div class="w-p30  f f-c ">
+                                        <input id="t_x" type="text" value="0.0" onkeydown="path_build(); pathHelper();" />
+                                        <input id="t_y" type="text" value="0.0" onkeydown="path_build(); pathHelper();" />
+                                        <input id="t_z" type="text" value="0.0" onkeydown="path_build(); pathHelper();" />
+                                    </div>
+                                    <div class="w-p30  f f-c ">
+                                        <input id="s_x" type="text" value="1.0" onkeydown="path_build(); pathHelper();" />
+                                        <input id="s_y" type="text" value="1.0" onkeydown="path_build(); pathHelper();" />
+                                        <input id="s_z" type="text" value="1.0" onkeydown="path_build(); pathHelper();" />
+                                        <input id="si_z" type="range" class="w-mx-i-05" min="1" max="10" onchange="get('s_x').value = this.value; get('s_y').value = this.value; get('s_z').value = this.value; path_build(); pathHelper();" />
+                                        <input id="si_z" type="range" class="w-mx-i-05" min="0.1" max="1" step="0.05" onchange="get('s_x').value = this.value; get('s_y').value = this.value; get('s_z').value = this.value; path_build(); pathHelper();" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div id="Density">
-                            <textarea cols="60" rows="10" class="owf-x  w-p80  c-t-iblack" id="path-density">[1,1,1,1,1]</textarea>
+                            <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-density">[1,1,1,1,1]</textarea>
+                            <div class="pnl"></div>
                         </div>
                     </div>
                 </div>
@@ -60,11 +157,37 @@
     </div>
 
     <script>
+
+
         function selTab(th) {
             all('a', function (it, i) { if (def(it.classList)) it.classList.remove('sel'); }, function () { th.classList._add('sel'); }, null, th.parentNode);
             all('.sub-f > div', function (it, i) { if (def(it.classList)) it.classList.remove('sel-f'); }, function () {
                 get(th.innerText.trim().replaceAll(' ', '-')).classList._add('sel-f');
             }, null, th.parentNode.parentNode);
+        }
+
+        function setSource(th, src, app) {
+            get('textarea', th.parentNode.parentNode).textContent = (def(app, true) ? get('textarea', th.parentNode.parentNode).textContent : "\r\n") + src;
+            path_build(); pathHelper();
+        }
+
+        function source() {
+            all('textarea', function (at) { at.classList.toggle('hdn'); });
+            all('.pnl', function (at) { at.classList.toggle('hdn'); });
+        }
+
+        function path_fixed() {
+            path_fixedControl = "r_x(r[r.length-1]," + (getv('rt_x').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+            path_fixedControl += "r_y(r[r.length-1]," + (getv('rt_y').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+            path_fixedControl += "r_z(r[r.length-1]," + (getv('rt_z').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+
+            path_fixedControl += "r[r.length-1].x += " + (getv('t_x').valueOf() * 1) + " ;";
+            path_fixedControl += "r[r.length-1].y += " + (getv('t_y').valueOf() * 1) + " ;";
+            path_fixedControl += "r[r.length-1].z += " + (getv('t_z').valueOf() * 1) + " ;";
+
+            path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
+            path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
+            path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
         }
     </script>
 </panels>
@@ -72,8 +195,7 @@
     <div class="menu ab l-00 r-00 b-00 p-005 z10 f f-jb f-r f-ct f-ae f-st c-htrdark ">
         <img class="w-01 h-01" src="/images/shapes/menu.svg" />
         <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
-        <img class="w-01 h-01" src="/images/shapes/newPoint.svg" />
-
+        <img class="w-01 h-01" src="/images/shapes/newPoint.svg" onclick="get('point-panel').classList.toggle('hdn');" />
         <div id="cntr" class=" w-full f f-js f-r f-ct f-as f-st   ">
         </div>
     </div>

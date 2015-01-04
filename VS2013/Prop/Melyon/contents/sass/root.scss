@@ -31,7 +31,7 @@ input[type=button] {
     background-color: rgba(153, 153, 153, 0.00);
     cursor: pointer;
     padding: 4px;
-    color: #808080;
+    color: #ffffff;
     border: none !important;
     border-bottom: solid 2px rgba(0, 99, 255, 0.18) !important;
     margin: 2px;
@@ -93,7 +93,7 @@ input[type='range']::-moz-range-thumb:hover {
 }
 
 
-.menu { 
+.menu {  
     a, > img, > div > img, > input[type=button], > div > input[type=button] {
         @include f-center;
         @include f-r;
@@ -103,7 +103,11 @@ input[type='range']::-moz-range-thumb:hover {
         @include c-t(#002d81);
     }
 
-    a:hover, > img:hover {
+    a.hdn-i {
+        display:none !important;
+    }
+
+    a:hover, > img:hover, > div > img:hover {
         @include c(rgba(0,0,0, 0.81));
         @include c-t(#ffffff);
     }

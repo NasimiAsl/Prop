@@ -77,11 +77,14 @@
     <Content Include="contents\scripts\Melyon\scene.js" />
     <Content Include="contents\scripts\Tools\dev.js" />
     <Content Include="contents\scripts\Tools\helpers.js" />
+    <Content Include="images\shapes\close.svg" />
     <Content Include="images\shapes\custom.svg" />
     <Content Include="images\shapes\devlogo.svg" />
     <Content Include="images\shapes\frensel.svg" />
+    <Content Include="images\shapes\keep.svg" />
     <Content Include="images\shapes\menu.svg" />
     <Content Include="images\shapes\multi.svg" />
+    <Content Include="images\shapes\newPoint.svg" />
     <Content Include="images\shapes\panel.svg" />
     <Content Include="images\shapes\phonge.svg" />
     <Content Include="images\shapes\range.svg" />

@@ -10,8 +10,8 @@ function def(a, d) {
 
 var always = function () { return true };
 
-function css_r(th,css ) {
-    
+function css_r(th, css) {
+
     if (def(th.length)) {
         _each(th, function (it, i) { try { if (def(it) && def(it.classList)) it.classList.remove(css); } catch (e) { } }, function () { }, function () { });
     }
@@ -21,7 +21,7 @@ function css_r(th,css ) {
 }
 
 
-function css(th,css ) {
+function css(th, css) {
 
     if (def(th.length)) {
         _each(th, function (it, i) { try { if (def(it) && def(it.classList)) it.classList._add(css); } catch (e) { } }, function () { }, function () { });
@@ -31,7 +31,7 @@ function css(th,css ) {
 
 }
 
-String.prototype.trim = function() {
+String.prototype.trim = function () {
     return this.replace(/^\s+|\s+$/gm, '');
 }
 
@@ -41,7 +41,7 @@ String.prototype.replaceAll = function (str1, str2, ignore) {
 // id ? {}
 
 function join(ar1) {
-    var ar3 = []; 
+    var ar3 = [];
     return _each(ar1, function (at, i) { _each(at, function (ati, j) { ar3.push(ati); }); }, function () { return ar3; });
 }
 
@@ -82,7 +82,7 @@ function getj(op, pr) {
 }
 
 function js(op) {
-    try { var r = window.eval(" r = " + op); return r; } catch (e) { }
+    try { var r = window.eval(" r = " + op.replaceAll('\n', ' ')); return r; } catch (e) { }
 }
 
 function first(s, f, p) {
@@ -332,6 +332,49 @@ function rotate_xy(pr1, pr2, alpha) {
         x: pr1.x + pp2.x * cos(alpha) - pp2.y * sin(alpha),
         y: pr1.y + pp2.x * sin(alpha) + pp2.y * cos(alpha)
     };
+}
+
+function r_y(n ,a, c) {
+
+    c = def(c, { x: 0, y: 0 , z:0 });
+    c.x = c.x;
+    c.y = c.z;
+
+    var p = rotate_xy(c,{ x: n.x, y: n.z } , a);
+
+    n.x = p.x;
+    n.z = p.y;
+
+    return n;
+
+}
+
+function r_x(n, a, c) {
+
+    c = def(c, { x: 0, y: 0, z: 0 });
+    c.x = c.y;
+    c.y = c.z;
+
+    var p = rotate_xy(c,{ x: n.y, y: n.z } , a);
+
+    n.y = p.x;
+    n.z = p.y;
+
+    return n;
+
+}
+
+function r_z(n, a, c) {
+
+    c = def(c, { x: 0, y: 0, z: 0 }); 
+
+    var p = rotate_xy(c,{ x: n.x, y: n.y } , a);
+
+    n.x = p.x;
+    n.y = p.y;
+
+    return n;
+
 }
 
 function vec(x, y, z) {

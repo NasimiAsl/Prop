@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    viewbox="0 0 200 200"
-   sodipodi:docname="surface.svg">
+   sodipodi:docname="wall.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -27,7 +27,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="175.27015"
-     inkscape:cy="111.67499"
+     inkscape:cy="83.103561"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -54,13 +54,41 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-852.36218)">
-    <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect4943"
-       width="103.57143"
-       height="103.57143"
-       x="49.285713"
-       y="-999.50507"
-       transform="scale(1,-1)" />
+    <g
+       id="g5035"
+       transform="translate(0,-8.5714286)">
+      <rect
+         transform="scale(1,-1)"
+         y="-1010.6084"
+         x="37.468075"
+         height="20.063845"
+         width="65.77813"
+         id="rect4943"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:3.50758243;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         transform="scale(1,-1)"
+         y="-983.58459"
+         x="59.729977"
+         height="20.063845"
+         width="65.77813"
+         id="rect4943-9"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:3.50758243;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         transform="scale(1,-1)"
+         y="-956.56073"
+         x="81.991882"
+         height="20.063845"
+         width="65.77813"
+         id="rect4943-4"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:3.50758243;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         transform="scale(1,-1)"
+         y="-929.53693"
+         x="104.25379"
+         height="20.063845"
+         width="65.77813"
+         id="rect4943-4-8"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:3.50758243;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
   </g>
 </svg>

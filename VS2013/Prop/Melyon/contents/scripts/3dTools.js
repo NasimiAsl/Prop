@@ -216,7 +216,7 @@ $3d.tools = {
 
             op.density = def(op.density, [1]);
 
-            function getDencityMapStep(index) {
+            function getDensityMapStep(index) {
                 var ps = floor(op.density.length * (index / len));
 
                 return op.step / op.density[ps];
@@ -229,7 +229,7 @@ $3d.tools = {
             var result = [];
             op.push(result, s);
 
-            for (var i = op.step * 2; i < len; i += getDencityMapStep(i)) {
+            for (var i = op.step * 2; i < len; i += getDensityMapStep(i)) {
 
                 var n = path.getPointAtLength(i);
                 plen += op.step;

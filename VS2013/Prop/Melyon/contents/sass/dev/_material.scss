@@ -28,6 +28,8 @@
 @mixin owf-x {overflow-x:hidden;};
 @mixin owf-y {overflow-y:hidden;};
 @mixin hdn {display:none;}       ; 
+@mixin hdn-i {display:none !important;}       ; 
+
 @mixin hdn-vs {visibility:hidden;} ; 
 
 
