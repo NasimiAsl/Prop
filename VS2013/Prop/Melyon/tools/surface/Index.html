@@ -35,8 +35,15 @@
                 if (def(it)) {
                     it.material.setVector3("camera", eng1.get().cameras.main.position);
                     it.material.setFloat("time", time);
-                }
+                } 
+            });
 
+            _each(helpers, function (it, i) {
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                }
             });
 
         };

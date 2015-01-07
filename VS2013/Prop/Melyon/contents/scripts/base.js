@@ -194,6 +194,13 @@ DOMTokenList.prototype.removemany = function (classes) {
         this.remove(classes[i]);
     }
 }
+var this_helper;
+function doEvent(ctl, ev) {
+    if (def(ctl) && def(ev)) {
+        this_helper = ctl;
+        js(ctl.getAttribute('on' + ev).replaceAll('this', 'this_helper'));
+    }
+}
 
 
 function _for(ar, _do, e, b) {

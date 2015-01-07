@@ -14,12 +14,12 @@
    .c-t-i#{$p1}{ @include c-t-i        ($p2); }
    .c-b#{$p1}{ @include c-b          ($p2); }
    .c-b-i#{$p1}{ @include c-b-i        ($p2); }
-   .c-h#{$p1}:hover   { @include c    ($p2); }
-   .c-i-h#{$p1}:hover { @include c-i  ($p2); }
-   .c-t-h#{$p1}:hover  { @include c-t   ($p2); }
-   .c-t-i-h#{$p1}:hover{ @include c-t-i ($p2); }
-   .c-b-h#{$p1}:hover  { @include c-b   ($p2); }
-   .c-b-i-h#{$p1}:hover{ @include c-b-i($p2); }
+   .c-h#{$p1}:hover   { @include c    ($p2);cursor:pointer; }
+   .c-i-h#{$p1}:hover { @include c-i  ($p2); cursor:pointer;  }
+   .c-t-h#{$p1}:hover  { @include c-t   ($p2);cursor:pointer;  }
+   .c-t-i-h#{$p1}:hover{ @include c-t-i ($p2);cursor:pointer;  }
+   .c-b-h#{$p1}:hover  { @include c-b   ($p2);cursor:pointer;  }
+   .c-b-i-h#{$p1}:hover{ @include c-b-i($p2); cursor:pointer; }
 } 
 
 @mixin op($p1){opacity:$p1;}     ;

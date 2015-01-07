@@ -190,7 +190,28 @@ $3d.tools = {
 
         return exgeo;
     },
+    cache: {
+        items: [],
+        one_cache: {},
+        get: function (op, val) {
+            if (def(val)) {
+                if (op == -1) {
+                    $3d.tools.cache.one_cache = val;
+                    return -1;
+                } else {
+                    $3d.tools.cache.items.push({ op: op, val: val });
 
+                    return $3d.tools.cache.items.length - 1;
+                }
+            } else {
+                if (op == -1 || op.i == -1) {
+                    return $3d.tools.cache.one_cache;
+                }
+                return $3d.tools.cache.items[op.i].val;
+            }
+        },
+
+    },
     svg: {
         getPoints: function (op) {
 
@@ -200,17 +221,24 @@ $3d.tools = {
                 result.push(point);
             });
 
+            if (def(js(op.path))) { 
+                op.path = $3d.tools.cache.get(js(op.path));
+            }
+            else {
+                $3d.tools.cache.get(-1, op.path);
+            }
+
             op.step = def(op.step, 0.5);
 
             var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", op.path);
 
             var result = [];
-              
+
 
             var len = path.getTotalLength();
-             
-            if(def(op.inLine) && (!def(op.pointLength) || op.pointLength < 1000)){
+
+            if (def(op.inLine) && (!def(op.pointLength) || op.pointLength < 1000)) {
                 op.step = 0.3;
             }
 
@@ -244,13 +272,13 @@ $3d.tools = {
                 var m1 = ((c.y - p.y) != 0 ? (c.x - p.x) / (c.y - p.y) : 'nan');
                 var m2 = ((n.y - c.y) != 0 ? (n.x - c.x) / (n.y - c.y) : 'nan');
 
-                if (abs(m1 - m2 ) > 0.01  || def(op.inLine,true)) {
+                if (abs(m1 - m2) > 0.01 || def(op.inLine, true)) {
                     if (i == op.step * 2)
                         op.push(result, c);
 
                     if (plen > def(op.min, 10.)) {
                         op.push(result, n); plen = 0.0;
-                    } 
+                    }
                 }
 
                 p = c;

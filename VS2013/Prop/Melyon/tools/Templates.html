@@ -14,8 +14,8 @@
         </a>
     </div>
     <div id="point-item-tmp">
-        <div class="point-item-struct">
-            #[name] #[size] <input type="button" value="×" onclick="try { this.parentNode.parentNode.removeChild(this.parentNode); path_build(); pathHelper(); } catch (e) { }">
+        <div class="point-item-struct c-i-hblack c-t-i-hwhite pl-005" onclick="path_new(this.getAttribute('struct'))">
+            #[name] <span class="c-t-iblue">[#[size]]</span>  <input type="button" value="×" class="w-005" onclick="try { this.parentNode.parentNode.removeChild(this.parentNode); path_build(); pathHelper(); } catch (e) { }">
         </div>
     </div>
     <div id="path-tmp">
@@ -25,7 +25,7 @@
             <input id="path-inLine" type="checkbox" onchange="path_build(); pathHelper();" /> 
             <input id="path-path" type="text" value="m 100.0051,100.71429 -71.215752,0 2.020305,-16.881833 c 0,0 5.555839,3.535534 15.152288,-0.505076 C 55.55839,79.286771 97.984797,71.205551 67.175144,64.639559 36.365492,58.073567 4.5456865,64.134483 15.152288,41.40605 25.75889,18.677618 26.263966,-22.23356 31.314729,-22.23356 c 5.050763,0 7.071068,-5.050763 1.010152,18.6878222 C 26.263966,20.192847 22.728433,35.850211 29.7995,45.951737 c 3.023953,4.319934 19.697975,11.616754 37.375644,12.12183 17.67767,0.505077 32.829956,0 32.829956,0" class="c-t-iblack w-02" />
             <input id="path-pointLength" type="text" value="80" class="c-t-iblack w-01" />.
-            <input type="button" value="&nbsp;active&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_load(); pathHelper();" />
+            <input type="button" id="__act" value="&nbsp;active&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_load(); pathHelper();" />
             <input type="button" value="&nbsp;apply&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_build(); pathHelper();" />
         </div>
     </div>
@@ -73,7 +73,7 @@
     </script>
 </templates>
 <panels>
-    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns hdn">
+    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns hdn" >
         <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite">
             <img class="w-01 h-01" src="/images/shapes/close.svg" onclick="get('point-panel').classList._add('hdn'); menu_cl_h = null;" />
             <img class="w-01 h-01" src="/images/shapes/keep.svg" onclick="get('point-sub').classList.toggle('show')" />
@@ -83,7 +83,7 @@
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat hdn-i">Repeat</a>
 
             <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
-            <a onclick="selTab(this)">paths    </a>
+            <a id="path-tabPath" onclick="selTab(this)">paths    </a>
             <a onclick="selTab(this)">Restriction      </a>
             <a onclick="selTab(this)">Cut-Join </a>
             <a onclick="selTab(this)">Custom   </a>
@@ -93,10 +93,12 @@
             <input type="button" value="new path" onclick=" get('paths_list').innerHTML = '';   path_new();" />
             <input type="button" value="new Point" onclick="   get('point-name').value = 'point ' + ijk; ijk++; path_build(); pathHelper(); " />
             <input type="button" value="apply" onclick="     path_build(); pathHelper(); " />
+            <input type="checkbox"  id="wire" onclick="     path_build(); pathHelper(); " />
+
         </div>
         <div id="point-sub" class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
             <div id="Surface">
-                <div id="Points">
+                <div id="Points" class="f f-r f-w f-as f-cs f-js">
                 </div>
             </div>
             <div id="Wall">Wall</div>
@@ -107,7 +109,7 @@
                 </div>
                 <div class="f-i11  c-itrdark ns bl-i-0025 c-b-iorg">
                     <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite ">
-                        <a onclick="selTab(this)" class="sel">Push    </a>
+                        <a id="path-tabPush" onclick="selTab(this)" class="sel">Push    </a>
                         <a onclick="selTab(this)">Density</a>
                     </div>
                     <div class="ctrdark h-mn-04 sub-f p-0025 show">
@@ -123,31 +125,51 @@
                                 <br />
                                 <div class="f f-r f-ja f-ct f-at ">
                                     <div class="w-p30 f f-c ">
+                                        rotate: <br />
                                         <div>
                                             <input type="button" value="get center" onclick="getCenter('path-center', 'path');" />
                                             <input type="button" value="clear"
-                                                   onclick="get('rtt_x').value = 0; get('rtt_y').value = 0; get('rtt_z').value = 0; get('rt_center').value = '{x:0,y:0,z:0}'; path_build(); pathHelper();" />
+                                                   onclick=" " />
                                         </div> <input id="rt_center" type="text" value="{x:0,y:0,z:0}" onkeydown="  path_build(); pathHelper();" />
                                         <input id="rtt_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                         <input id="rtt_y" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                         <input id="rtt_z" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                     </div>
                                     <div class="w-p30  f f-c ">
+                                        move: <br />
                                         <input id="t_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                         <input id="t_y" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                         <input id="t_z" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                     </div>
                                     <div class="w-p30  f f-c ">
-                                        <input id="s_x" type="text" value="1.0" onkeydown="if(event.keyCode == 13){path_build(); pathHelper();}" />
-                                        <input id="s_y" type="text" value="1.0" onkeydown="if(event.keyCode == 13){path_build(); pathHelper();}" />
-                                        <input id="s_z" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                        scale : <br />
+                                        <input id="s_x" type="text" value="1.0" onkeydown="if(event.keyCode == 13){ path_build(); pathHelper();}" />
+                                        <input id="s_y" type="text" value="1.0" onkeydown="if(event.keyCode == 13){ path_build(); pathHelper();}" />
+                                        <input id="s_z" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" /> 
+                                        <input id="s_a" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { setv('s_x', this.value); setv('s_y', this.value); setv('s_z', this.value); path_build(); pathHelper(); }" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div id="Density">
                             <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-density">[1,1,1,1,1]</textarea>
-                            <div class="pnl"></div>
+                            <div class="pnl">
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
+                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" /> 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -171,6 +193,13 @@
         function setSource(th, src, app) {
             get('textarea', th.parentNode.parentNode).textContent = (def(app, true) ? get('textarea', th.parentNode.parentNode).textContent : "\r\n") + src;
             path_build(); pathHelper();
+        }
+
+        function path_resetPush(op) {
+            get('rtt_x').value = 0; get('rtt_y').value = 0; get('rtt_z').value = 0;
+            get('t_x').value = 0; get('t_y').value = 0; get('t_z').value = 0;
+            get('s_x').value = 1; get('s_y').value = 1; get('s_z').value = 1; get('s_a').value = 0;
+            get('rt_center').value = '{x:0,y:0,z:0}'; path_build(); pathHelper();
         }
 
         function source() {
@@ -228,6 +257,15 @@
 
             time += 0.06;
             _for(b, function (it, i) {
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                }
+
+            });
+
+            _each(helpers, function (it, i) {
 
                 if (def(it)) {
                     it.material.setVector3("camera", eng1.get().cameras.main.position);
