@@ -56,7 +56,7 @@ $3d.tools = {
         }
         else {
             if (op.flip) {
-                if(isInOp.a && isInOp.b && isInOp.c) geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
+                if (isInOp.a && isInOp.b && isInOp.c) geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
             }
             else {
                 if (isInOp.a && isInOp.c && isInOp.b) geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
@@ -131,7 +131,7 @@ $3d.tools = {
             }
         }
         else {
-            if (op.flip) { 
+            if (op.flip) {
                 if (isInOp.a && isInOp.b && isInOp.c) geo.faces.push(op.p1Ind, op.p2Ind, op.p3Ind);
                 if (isInOp.b && isInOp.d && isInOp.c) geo.faces.push(op.p2Ind, op.p4Ind, op.p3Ind);
             }
@@ -139,7 +139,7 @@ $3d.tools = {
                 if (isInOp.a && isInOp.c && isInOp.b) geo.faces.push(op.p1Ind, op.p3Ind, op.p2Ind);
                 if (isInOp.b && isInOp.c && isInOp.d) geo.faces.push(op.p2Ind, op.p3Ind, op.p4Ind);
             }
-        } 
+        }
 
         isInOp = null;
         return [op.p1Ind, op.p2Ind, op.p3Ind, op.p4Ind];
@@ -205,7 +205,14 @@ $3d.tools = {
             var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", op.path);
 
+            var result = [];
+              
+
             var len = path.getTotalLength();
+             
+            if(def(op.inLine) && (!def(op.pointLength) || op.pointLength < 1000)){
+                op.step = 0.3;
+            }
 
             if (def(op.pointLength)) {
                 op.min = len / op.pointLength;
@@ -226,7 +233,7 @@ $3d.tools = {
             var c = path.getPointAtLength(op.step);
             plen += op.step;
 
-            var result = [];
+
             op.push(result, s);
 
             for (var i = op.step * 2; i < len; i += getDensityMapStep(i)) {
@@ -237,14 +244,13 @@ $3d.tools = {
                 var m1 = ((c.y - p.y) != 0 ? (c.x - p.x) / (c.y - p.y) : 'nan');
                 var m2 = ((n.y - c.y) != 0 ? (n.x - c.x) / (n.y - c.y) : 'nan');
 
-                if (m1 != m2 || def(op.inLine, true)) {
+                if (abs(m1 - m2 ) > 0.01  || def(op.inLine,true)) {
                     if (i == op.step * 2)
                         op.push(result, c);
 
                     if (plen > def(op.min, 10.)) {
                         op.push(result, n); plen = 0.0;
-                    }
-
+                    } 
                 }
 
                 p = c;
@@ -260,102 +266,6 @@ $3d.tools = {
 
             return sr;
         },
-        getPoints_ex: function (op) {
-            if (!def(op.path)) throw "not found any path";
-
-            op.push = def(op.push, function (result, point) {
-                result.push(point);
-            });
-
-            var j, len1;
-            var path, mesh, color, simpleShapes, simpleShape, shape3d, results = [];
-
-            path = $d3g.transformSVGPath(op.path);
-            results = new Array();
-            amount = -100;
-            simpleShapes = path.toShapes(true);
-            len1 = simpleShapes.length;
-            for (j = 0; j < len1; ++j) {
-                simpleShape = simpleShapes[j];
-                shape3d = simpleShape.extrude({
-                    amount: 0.0,
-                    bevelEnabled: false
-                });
-
-                shape3d.computeFaceNormals();
-
-                results[j] = new Array();
-                h = 0;
-                for (i = 0; i < shape3d.vertices.length / 2  ; i++) {
-                    op.push(results[j], { x: shape3d.vertices[i].x, y: shape3d.vertices[i].y }, i);
-                }
-            }
-
-            var sr = [];
-
-            for (var i = def(op.start, 0) ; i < results[0].length - def(op.end, 0) ; i++) {
-                sr.push(results[0][i]);
-            }
-
-            return sr;
-
-        },
-        extrudeShape_ex: function (op) {
-            if (!def(op.path)) throw "not found any path";
-            op.full = def(op.full, false);
-            var j, len1;
-            var path, mesh, simpleShapes, simpleShape, shape3d;
-
-            path = $d3g.transformSVGPath(op.path);
-
-            simpleShapes = path.toShapes(true);
-            len1 = simpleShapes.length;
-
-            var geo;
-
-            for (j = 0; j < len1; ++j) {
-                simpleShape = simpleShapes[j];
-                shape3d = simpleShape.extrude({
-                    amount: def(op.amount, 10.0),
-                    bevelEnabled: false
-                });
-
-                var poss = [];
-
-                for (var i = 0; i < shape3d.vertices.length / 2.0 ; i++) {
-                    var np = [];
-                    op.push(np, shape3d.vertices[i], i);
-                    poss.push(np[np.length - 1].x);
-                    poss.push(np[np.length - 1].y);
-                    poss.push(np[np.length - 1].z);
-                }
-
-                var fc = [];
-
-                for (var i = 0; i < shape3d.faces.length / (op.full ? 1.0 : 2.0) - (op.full ? 0. : 2) ; i++) {
-                    if (shape3d.faces[i].a < poss.length && shape3d.faces[i].b < poss.length && shape3d.faces[i].c < poss.length) {
-
-                        if (def(op.flip, false)) {
-                            fc.push(shape3d.faces[i].a);
-                            fc.push(shape3d.faces[i].c);
-                            fc.push(shape3d.faces[i].b);
-                        }
-                        else {
-                            fc.push(shape3d.faces[i].a);
-                            fc.push(shape3d.faces[i].b);
-                            fc.push(shape3d.faces[i].c);
-                        }
-
-
-                    }
-                }
-
-                geo = new $3d.geometryInstance({ faces: fc, positions: poss });
-            }
-
-            return geo;
-        },
-
     }
 }
 
@@ -369,7 +279,7 @@ $3d.points = function (op) {
 $3d.points.prototype = {
     list: [],
     // [{x,y,z}] | [x1,y1,z1,x2,...] | {x,y,z} | x,y,z
-  
+
     // call
     each: function (op) {
         for (var i = 0; i < this.list.length; i++) {
@@ -377,7 +287,7 @@ $3d.points.prototype = {
             if (def(r)) {
                 this.list[i] = r;
             }
-        } 
+        }
         return this;
     },
     // {x,y,z}
@@ -410,8 +320,8 @@ $3d.points.prototype = {
     look: function (op) { },
     scale: function (op) { },
     noise: function (op) { },
-     
-     
+
+
     applyQuaternion: function (th, q) {
 
         var x = th.x;
@@ -470,7 +380,7 @@ $3d.tools.wall = function (op) {
         closed: true,
     });
 
-    if ( op.lr == 'default') {
+    if (op.lr == 'default') {
         op.lr = function (p) { return true; };
         op.left = def(op.left, function (p) { return true; });
         op.right = def(op.right, function (p) { return true; });
@@ -637,8 +547,8 @@ $3d.tools.surface = function (op) {
 
         for (var i = 0; i < helper.p1.length - 1; i++) {
 
-            if ( def(op.conds) && op.conds.length - 1 <= re.curlevel) {
-                isInOp = { a: isIn(re.curlevel - 1, i), b: isIn(re.curlevel - 1, i + 1), c: isIn(re.curlevel, i), d: isIn(re.curlevel  , i+1) };
+            if (def(op.conds) && op.conds.length - 1 <= re.curlevel) {
+                isInOp = { a: isIn(re.curlevel - 1, i), b: isIn(re.curlevel - 1, i + 1), c: isIn(re.curlevel, i), d: isIn(re.curlevel, i + 1) };
                 // [1,1,2,2] level 
             }
             else {
@@ -647,7 +557,7 @@ $3d.tools.surface = function (op) {
 
             if (helper.p1[i] != helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
                 if (def(op.flip, false)) {
-                     $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
+                    $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
                 }
                 else {
                     $3d.tools.face(geo, i1[helper.p1[i]], i1[helper.p1[i + 1]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
@@ -666,10 +576,10 @@ $3d.tools.surface = function (op) {
             else if (helper.p1[i] == helper.p1[i + 1] && helper.p2[i] != helper.p2[i + 1]) {
                 if (def(isInOp)) {
                     isInOp.d = null;// [1,2,2]
-                    isInOp.b = isIn(re.curlevel  , i  );
-                    isInOp.c = isIn(re.curlevel  , i + 1);
+                    isInOp.b = isIn(re.curlevel, i);
+                    isInOp.c = isIn(re.curlevel, i + 1);
                 }
-                
+
                 if (def(op.flip, false)) $3d.tools.face3(geo, i1[helper.p1[i]], i2[helper.p2[i]], i2[helper.p2[i + 1]], { flip: 1 });
                 else $3d.tools.face3(geo, i1[helper.p1[i]], i2[helper.p2[i]], i2[helper.p2[i + 1]], {});
             }

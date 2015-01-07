@@ -74,7 +74,10 @@ function kb(length) {
 }
 
 function setv(op, val, pr) {
-    get(op, pr).value = val;
+
+    if (get(op, pr).tagName.toLowerCase() == "input" && get(op, pr).getAttribute("type").toLowerCase() == "checkbox") {
+        get(op, pr).checked = val;
+    } else get(op, pr).value = val;
 }
 
 function getj(op, pr) {
@@ -334,13 +337,13 @@ function rotate_xy(pr1, pr2, alpha) {
     };
 }
 
-function r_y(n ,a, c) {
+function r_y(n, a, c) {
 
-    c = def(c, { x: 0, y: 0 , z:0 });
+    c = def(c, { x: 0, y: 0, z: 0 });
     c.x = c.x;
     c.y = c.z;
 
-    var p = rotate_xy(c,{ x: n.x, y: n.z } , a);
+    var p = rotate_xy(c, { x: n.x, y: n.z }, a);
 
     n.x = p.x;
     n.z = p.y;
@@ -355,7 +358,7 @@ function r_x(n, a, c) {
     c.x = c.y;
     c.y = c.z;
 
-    var p = rotate_xy(c,{ x: n.y, y: n.z } , a);
+    var p = rotate_xy(c, { x: n.y, y: n.z }, a);
 
     n.y = p.x;
     n.z = p.y;
@@ -366,9 +369,9 @@ function r_x(n, a, c) {
 
 function r_z(n, a, c) {
 
-    c = def(c, { x: 0, y: 0, z: 0 }); 
+    c = def(c, { x: 0, y: 0, z: 0 });
 
-    var p = rotate_xy(c,{ x: n.x, y: n.y } , a);
+    var p = rotate_xy(c, { x: n.x, y: n.y }, a);
 
     n.x = p.x;
     n.y = p.y;

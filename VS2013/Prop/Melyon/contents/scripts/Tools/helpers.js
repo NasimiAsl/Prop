@@ -13,6 +13,7 @@ function pathToPoint(op) {
 
     op.pointLength = def(op.pointLength, 80);
 
+    
     return $3d.tools.svg.getPoints(op);
 }
 
@@ -41,11 +42,16 @@ function path_build(op) {
     if (def(st) && def(st.push)) get('path-push').textContent = st.push + path_fixedControl;
     else st.push = get('path-push').textContent + path_fixedControl;
 
+    if (def(st) && def(st.inLine)) setv('path-inLine' , !st.inLine );
+    else st.inLine = !getv('path-inLine'); 
+    
     if (def(st) && def(st.density)) get('path-density').textContent = st.density;
     else st.density = get('path-density').textContent;
 
     if (def(st) && def(st.pointLength)) get('#path-pointLength', th).value = st.pointLength;
     else st.pointLength = get('#path-pointLength', th).value.valueOf() * 1.0;
+
+    
 
     if (def(st) && def(st.path)) get('#path-path', th).value = st.path;
     else st.path = get('#path-path', th).value;
@@ -57,6 +63,7 @@ function path_build(op) {
     if (def(st.density)) _st += "density:'" + st.density + "',";
 
     if (def(st.pointLength)) _st += "pointLength:" + st.pointLength + ",";
+    if (def(st.inLine)) _st += "inLine:" + st.inLine + ","; 
 
     th.setAttribute('struct', _st + "}");
 }
@@ -71,6 +78,9 @@ function path_load() {
     // st = def(st, {});
 
     if (def(st) && def(st.push)) get('path-push').textContent = st.push;
+
+    if (def(st) && def(st.inLine)) setv('path-inLine' ,!st.inLine);
+
     //else st.push = get('path-push').textContent;
 
     if (def(st) && def(st.density)) get('path-density').textContent = st.density;
@@ -119,20 +129,23 @@ function pathHelper() {
         lr: always,
         front: always,
         back: always,
-    }).toMesh('result = vec4(1.0,0.,0.,1.0);', eng1);
-
+    }).toMesh('result = vec4(1.0,0.,0.,1.0);', eng1); 
 
     helperBase(point_script);
 }
 
 
 function buildSurface(st , helper) {
-    if (def(helper) && def(helpers[helper]))
+    if (def(helper) && def(helpers[helper])) {
         helpers[helper].dispose();
+        helpers[helper+"q"].dispose();
+    }
 
     st = js(st);
     
     var paths = [];  
+
+    if (st.length < 2) return;
 
     _for(st , function (at) {
 
@@ -145,7 +158,9 @@ function buildSurface(st , helper) {
         paths.push(points);
 
     }, function () {  
-        helpers[helper] = $3d.tools.surface({ paths: paths , flip:true }).toMesh(sh_phonge(), eng1);
-       // helpers[helper].material.wireframe = true;
+
+        helpers[helper] = $3d.tools.surface({ paths: paths, flip: true }).toMesh(mat_noise(0xff0000), eng1);
+        helpers[helper+"q"] = $3d.tools.surface({ paths: paths  }).toMesh(mat_noise(0xff0000), eng1);
+        
     });
 }
