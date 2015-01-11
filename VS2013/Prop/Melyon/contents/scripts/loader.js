@@ -240,3 +240,4 @@ prop.loader.gets = function (ops, loader, end) {
 prop.loader.gets.prototype = {
     progress: 0.,
 };
+

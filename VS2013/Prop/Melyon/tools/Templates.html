@@ -14,16 +14,16 @@
         </a>
     </div>
     <div id="point-item-tmp">
-        <div class="point-item-struct c-i-hblack c-t-i-hwhite pl-005" onclick="path_new(this.getAttribute('struct'))">
-            #[name] <span class="c-t-iblue">[#[size]]</span>  <input type="button" value="×" class="w-005" onclick="try { this.parentNode.parentNode.removeChild(this.parentNode); path_build(); pathHelper(); } catch (e) { }">
+        <div class="point-item-struct c-i-hblack c-t-i-hwhite pl-005">
+            <span onclick="this.parentNode.classList._add('active'); path_new(this.parentNode.getAttribute('struct'))"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="    try { this.parentNode.parentNode.removeChild(this.parentNode); } catch (e) { } path_build(); pathHelper();">
         </div>
     </div>
     <div id="path-tmp">
         <div>
             <input type="button" value="&nbsp;+&nbsp;" class="fs-04 " onclick="path_new();" />
             <input type="button" value="&nbsp;×&nbsp;" class="fs-04 c-ired" onclick="this.parentNode.parentNode.removeChild(this.parentNode); pathHelper();" />
-            <input id="path-inLine" type="checkbox" onchange="path_build(); pathHelper();" /> 
-            <input id="path-path" type="text" value="m 100.0051,100.71429 -71.215752,0 2.020305,-16.881833 c 0,0 5.555839,3.535534 15.152288,-0.505076 C 55.55839,79.286771 97.984797,71.205551 67.175144,64.639559 36.365492,58.073567 4.5456865,64.134483 15.152288,41.40605 25.75889,18.677618 26.263966,-22.23356 31.314729,-22.23356 c 5.050763,0 7.071068,-5.050763 1.010152,18.6878222 C 26.263966,20.192847 22.728433,35.850211 29.7995,45.951737 c 3.023953,4.319934 19.697975,11.616754 37.375644,12.12183 17.67767,0.505077 32.829956,0 32.829956,0" class="c-t-iblack w-02" />
+            <input id="path-inLine" type="checkbox" onchange="path_build(); pathHelper();" />
+            <input id="path-path" type="text" value="m 513.15749,769.51947 c 0,0 -143.44166,-90.91373 -153.54318,-183.84776 C 349.51278,492.73767 547.50268,464.4534 549.52298,371.51937 551.54329,278.58533 402.04071,181.61069 402.04071,181.61069" />
             <input id="path-pointLength" type="text" value="80" class="c-t-iblack w-01" />.
             <input type="button" id="__act" value="&nbsp;active&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_load(); pathHelper();" />
             <input type="button" value="&nbsp;apply&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_build(); pathHelper();" />
@@ -40,7 +40,7 @@
             if (menu == '.surface') {
                 helperBase = function (p) {
                     var st = js(p);
-                   // if (st.name == "point 2") return;
+                    // if (st.name == "point 2") return;
                     var tk = create(get('point-item-tmp').innerHTML.replaceAll('#[name]', st.name.replaceAll(' ', '-')).replaceAll('#[size]', kb(p.length)));
                     tk.setAttribute('struct', p);
                     var vct = def(get('sr_pt_' + st.name.replaceAll(' ', '-'))) ? get('sr_pt_' + st.name.replaceAll(' ', '-')).innerHTML = tk.innerHTML : tk;
@@ -63,6 +63,29 @@
 
                 }
             }
+            else if (menu == '.wall') {
+                helperBase = function (p) {
+                    var st = js(p);
+                    // if (st.name == "point 2") return;
+                    var tk = create(get('point-item-tmp').innerHTML.replaceAll('#[name]', st.name.replaceAll(' ', '-')).replaceAll('#[size]', kb(p.length)));
+                    tk.setAttribute('struct', p);
+                    var vct = def(get('sr_pt_' + st.name.replaceAll(' ', '-'))) ? get('sr_pt_' + st.name.replaceAll(' ', '-')).innerHTML = tk.innerHTML : tk;
+                    tk.id = 'sr_pt_' + st.name.replaceAll(' ', '-');
+                    if (!def(get('sr_pt_' + st.name.replaceAll(' ', '-')))) {
+                        first('#Wall #Points').appendChild(vct);
+                    }
+                    else {
+                        get('sr_pt_' + st.name.replaceAll(' ', '-')).setAttribute('struct', p);
+                    }
+
+                    st = "[";
+                    first('#Wall #Points > .point-item-struct.active',
+                        function (at) {
+                            buildWall(at.getAttribute('struct'), 'wall-help'); 
+                        } 
+                    ); 
+                }
+            }
         }
 
         function home() {
@@ -73,10 +96,10 @@
     </script>
 </templates>
 <panels>
-    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns hdn" >
+    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns hdn">
         <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite">
             <img class="w-01 h-01" src="/images/shapes/close.svg" onclick="get('point-panel').classList._add('hdn'); menu_cl_h = null;" />
-            <img class="w-01 h-01" src="/images/shapes/keep.svg" onclick="get('point-sub').classList.toggle('show')" />
+            <img class="w-01 h-01" src="/images/shapes/keep.svg" onclick="ctl.check(this); get('point-sub').classList.toggle('show')" />
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 surface hdn-i">Surface</a>
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 wall hdn-i">Wall</a>
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 stair hdn-i">Stair</a>
@@ -84,24 +107,39 @@
 
             <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
             <a id="path-tabPath" onclick="selTab(this)">paths    </a>
-            <a onclick="selTab(this)">Restriction      </a>
-            <a onclick="selTab(this)">Cut-Join </a>
-            <a onclick="selTab(this)">Custom   </a>
+            <a onclick="selTab(this); loadbefor();">Befor </a>
+            <a onclick="selTab(this); loadrest();">Restriction      </a>
+            <a onclick="selTab(this); loadafter();">After   </a>
             <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
-            <input type="button" value="source" onclick="source()" />
             <input id="point-name" type="text" value="point 1" onkeypress="if (event.keyCode == 13) { get('paths_list').innerHTML = ''; this.value = 'point ' + ijk; ijk++; path_build(); pathHelper(); }" />
             <input type="button" value="new path" onclick=" get('paths_list').innerHTML = '';   path_new();" />
-            <input type="button" value="new Point" onclick="   get('point-name').value = 'point ' + ijk; ijk++; path_build(); pathHelper(); " />
-            <input type="button" value="apply" onclick="     path_build(); pathHelper(); " />
-            <input type="checkbox"  id="wire" onclick="     path_build(); pathHelper(); " />
-
+            <input type="button" value="new Point" onclick=" get('point-name').value = 'point ' + ijk; ijk++; path_build(); pathHelper(); " />
+            <input type="button" value="apply" onclick="path_build(); pathHelper(); " />
+            <input type="button" value="wireframe" id="wire" onclick="ctl.check(this); path_build(); pathHelper(); " />
+            <input type="button" value="alpha" id="alpha" onclick="ctl.check(this); path_build(); pathHelper(); " />
+            <input type="button" value="back" id="back" onclick="ctl.check(this); path_build(); pathHelper(); " />
+            <input type="button" value="source" class="" onclick="ctl.check(this); source()" />
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat">Material</a>
         </div>
         <div id="point-sub" class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
             <div id="Surface">
                 <div id="Points" class="f f-r f-w f-as f-cs f-js">
                 </div>
             </div>
-            <div id="Wall">Wall</div>
+            <div id="Wall">
+                <div id="Points" class="f f-r f-w f-as f-cs f-js">
+                </div>
+                <input type="button" value="front" id="wall-front" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="back" id="wall-back" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="left" id="wall-left" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="right" id="wall-right" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="top" id="wall-top" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="bottom" id="wall-bottom" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="smooth" id="wall-smooth" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="button" value="closed" id="wall-closed" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                <input type="text" value="2" id="wall-height" class="w-02" />
+                <input type="text" value="2" id="wall-deep" class="w-02" />
+            </div>
             <div id="Stair">Stair</div>
             <div id="Repeat">Repeat</div>
             <div id="paths" class="f f-r f-w f-jb f-as f-ct f-st w-full">
@@ -110,18 +148,18 @@
                 <div class="f-i11  c-itrdark ns bl-i-0025 c-b-iorg">
                     <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite ">
                         <a id="path-tabPush" onclick="selTab(this)" class="sel">Push    </a>
-                        <a onclick="selTab(this)">Density</a>
+                        <a onclick="selTab(this); loadDensity();">Density</a>
                     </div>
                     <div class="ctrdark h-mn-04 sub-f p-0025 show">
                         <div id="Push" class="sel-f ">
-                            <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack hdn" id="path-push">r.push({x:-n.x+100.0,y:0.0,z:n.y-100});</textarea>
+                            <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack hdn" id="path-push">r.push({x:-n.x+526.0,y:0.0,z:n.y-526});</textarea>
                             <div class="pnl w-mx-22">
-                                <input type="button" value="top" onclick="setSource(this,'r[r.length-1] = {x:-n.x+100.0,y:0.0,z:n.y-100};')" />
-                                <input type="button" value="bottom" onclick="setSource(this,'r[r.length-1] = {x: n.x-100.0,y:0.0,z:n.y-100};')" />
-                                <input type="button" value="left" onclick="setSource(this, 'r[r.length-1] = {x:-n.x+100.0,z:0.0,y:n.y-100};')" />
-                                <input type="button" value="right" onclick="setSource(this, 'r[r.length-1] = {x: n.x-100.0,z:0.0,y:n.y-100};')" />
-                                <input type="button" value="front" onclick="setSource(this, 'r[r.length-1] = {y:-n.x+100.0,x:0.0,z:n.y-100};')" />
-                                <input type="button" value="back" onclick="setSource(this, 'r[r.length-1] = {y:n.x-100.0,x:0.0,z:n.y-100};')" />
+                                <input type="button" value="top" onclick="setSource(this,'r[r.length-1] = {x:-n.x+526.0,y:0.0,z:n.y-526};')" />
+                                <input type="button" value="bottom" onclick="setSource(this,'r[r.length-1] = {x: n.x-526.0,y:0.0,z:n.y-526};')" />
+                                <input type="button" value="left" onclick="setSource(this, 'r[r.length-1] = {x:-n.x+526.0,z:0.0,y:n.y-526};')" />
+                                <input type="button" value="right" onclick="setSource(this, 'r[r.length-1] = {x: n.x-526.0,z:0.0,y:n.y-526};')" />
+                                <input type="button" value="front" onclick="setSource(this, 'r[r.length-1] = {y:-n.x+526.0,x:0.0,z:n.y-526};')" />
+                                <input type="button" value="back" onclick="setSource(this, 'r[r.length-1] = {y:n.x-526.0,x:0.0,z:n.y-526};')" />
                                 <br />
                                 <div class="f f-r f-ja f-ct f-at ">
                                     <div class="w-p30 f f-c ">
@@ -129,7 +167,7 @@
                                         <div>
                                             <input type="button" value="get center" onclick="getCenter('path-center', 'path');" />
                                             <input type="button" value="clear"
-                                                   onclick=" " />
+                                                   onclick="path_resetPush(); get('path-push').textContent = 'r.push({ x: -n.x + 526.0, y: 0.0, z: n.y - 526 });';" />
                                         </div> <input id="rt_center" type="text" value="{x:0,y:0,z:0}" onkeydown="  path_build(); pathHelper();" />
                                         <input id="rtt_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                         <input id="rtt_y" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
@@ -145,43 +183,196 @@
                                         scale : <br />
                                         <input id="s_x" type="text" value="1.0" onkeydown="if(event.keyCode == 13){ path_build(); pathHelper();}" />
                                         <input id="s_y" type="text" value="1.0" onkeydown="if(event.keyCode == 13){ path_build(); pathHelper();}" />
-                                        <input id="s_z" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" /> 
+                                        <input id="s_z" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
                                         <input id="s_a" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { setv('s_x', this.value); setv('s_y', this.value); setv('s_z', this.value); path_build(); pathHelper(); }" />
+                                    </div>
+                                    <div class="w-p30  f f-c ">
+                                        post push : <br />
+                                        <input type="button" value="flip" id="path-flip" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                                        <input type="button" value="fill flip" id="path-fillflip" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                                        <input type="button" value="flip fill" id="path-flipfill" onclick="ctl.check(this); path_build(); pathHelper(); " />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div id="Density">
                             <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-density">[1,1,1,1,1]</textarea>
-                            <div class="pnl">
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" />
-                                <input type="range" orient="vertical" min="0" max="3.0" step="0.05" /> 
+                            <div class="pnl" id="path-density-list" class="f f-r f-at f-ct f-js">
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <div class="w-04">
+                                    <input type="button" value="0" onclick="setDensity(0);" />
+                                    <input type="button" value="0.1" onclick="setDensity(0.1);" />
+                                    <input type="button" value="1" onclick="setDensity(1);" />
+                                    <input type="button" value="1.9" onclick="setDensity(1.9);" />
+                                    <input type="button" value="2.9" onclick="setDensity(2.9);" />
+                                    <input type="button" value="apply" onclick="setDensity();" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="Restriction">Restriction</div>
-            <div id="Cut-Join">Cut-Join</div>
-            <div id="Custom">Custom</div>
+            <div id="Befor" class="c-itrred  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-befor">var isIn = true;</textarea>
+                <div class="pnl">
+                    <input id="path-befor-curr" type="range" class="w-full" min="0" max="80" value="0" onchange="setv('path-befor-end', this.value); setbefor(this.value);" />
+                    <div class="p-0025">
+                        <input id="path-befor-start" type="text" value="0" class="w-03" />
+                        <input id="path-befor-end" type="text" value="0" class="w-03" />
+                        <input type="button" value="apply / point" onclick="setbefor(getv('path-curr') * 1.0); setv('path-befor-start', getv('path-befor-end')); " />
+                        <input type="button" value="Point In" onclick="addCondbefor(true); setbefor(getv('path-befor-curr') * 1.0); setv('path-befor-start', getv('path-befor-end'));" />
+                        <input type="button" value="Point Out" onclick="addCondbefor(false); setbefor(getv('path-befor-curr') * 1.0); setv('path-befor-start', getv('path-befor-end'));" />
+                        <input type="button" value="All Points In" onclick="get('path-befor').textContent = 'var isIn =  true;\r\n'; setbefor(getv('path-befor-curr') * 1.0);  " />
+                        <input type="button" value="All Points Out" onclick="get('path-befor').textContent = 'var isIn =  false;\r\n'; setbefor(getv('path-befor-curr') * 1.0);  " />
+                        <input type="button" value="Invert" onclick="get('path-befor').textContent += '  isIn =  !isIn;\r\n'; setbefor(getv('path-befor-curr') * 1.0);  " />
+                    </div>
+                </div>
+            </div>
+            <div id="Restriction" class="c-itrdark  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-rest">var isIn = true;</textarea>
+                <div class="pnl">
+                    <input id="path-rest-curr" type="range" class="w-full" min="0" max="80" value="0" onchange="setv('path-rest-end', this.value); setrest(this.value);" />
+                    <div class="p-0025">
+                        <input id="path-rest-start" type="text" value="0" class="w-03" />
+                        <input id="path-rest-end" type="text" value="0" class="w-03" />
+                        <input type="button" value="apply / point" onclick="setrest(getv('path-curr') * 1.0); setv('path-rest-start', getv('path-rest-end')); " />
+                        <input type="button" value="Point In" onclick="addCondrest(true); setrest(getv('path-rest-curr') * 1.0); setv('path-rest-start', getv('path-rest-end'));" />
+                        <input type="button" value="Point Out" onclick="addCondrest(false); setrest(getv('path-rest-curr') * 1.0); setv('path-rest-start', getv('path-rest-end'));" />
+                        <input type="button" value="All Points In" onclick="get('path-rest').textContent = 'var isIn =  true;\r\n'; setrest(getv('path-rest-curr') * 1.0);  " />
+                        <input type="button" value="All Points Out" onclick="get('path-rest').textContent = 'var isIn =  false;\r\n'; setrest(getv('path-rest-curr') * 1.0);  " />
+                        <input type="button" value="Invert" onclick="get('path-rest').textContent += '  isIn =  !isIn;\r\n'; setrest(getv('path-rest-curr') * 1.0);  " />
+                    </div>
+                </div>
+            </div>
+            <div id="After" class="c-itrblue  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-after">var isIn = true;</textarea>
+                <div class="pnl">
+                    <input id="path-after-curr" type="range" class="w-full" min="0" max="80" value="0" onchange="setv('path-after-end', this.value); setafter(this.value);" />
+                    <div class="p-0025">
+                        <input id="path-after-start" type="text" value="0" class="w-03" />
+                        <input id="path-after-end" type="text" value="0" class="w-03" />
+                        <input type="button" value="apply / point" onclick="setafter(getv('path-curr') * 1.0); setv('path-after-start', getv('path-after-end')); " />
+                        <input type="button" value="Point In" onclick="addCondafter(true); setafter(getv('path-after-curr') * 1.0); setv('path-after-start', getv('path-after-end'));" />
+                        <input type="button" value="Point Out" onclick="addCondafter(false); setafter(getv('path-after-curr') * 1.0); setv('path-after-start', getv('path-after-end'));" />
+                        <input type="button" value="All Points In" onclick="get('path-after').textContent = 'var isIn =  true;\r\n'; setafter(getv('path-after-curr') * 1.0);  " />
+                        <input type="button" value="All Points Out" onclick="get('path-after').textContent = 'var isIn =  false;\r\n'; setafter(getv('path-after-curr') * 1.0);  " />
+                        <input type="button" value="Invert" onclick="get('path-after').textContent += '  isIn =  !isIn;\r\n'; setafter(getv('path-after-curr') * 1.0);  " />
+                    </div>
+                </div>
+            </div>
+            <div id="Material" class="c-itrblue  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="obj-material">
+                    return sh_multi([{r:sh_frensel(),e:1.0},
+                    {r:'result=vec4(0.0,0.,0.,1.0);',e:1.0},
+                    {r:sh_specular(),e:1.0}]);
+                </textarea>
+                <div class="pnl">
+
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
 
+        function addCondbefor(val) {
+            var s = "if(i >= " + getv('path-befor-start').valueOf() * 1.0 + " && i<= " + getv('path-befor-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("path-befor").textContent += s;
+        }
+        function addCondrest(val) {
+            var s = "if(i >= " + getv('path-rest-start').valueOf() * 1.0 + " && i<= " + getv('path-rest-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("path-rest").textContent += s;
+        }
+        function addCondafter(val) {
+            var s = "if(i >= " + getv('path-after-start').valueOf() * 1.0 + " && i<= " + getv('path-after-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("path-after").textContent += s;
+        }
+
+        function setafter(v) {
+            path_sel = v;
+            path_sel_mode = 1;
+            path_build(); pathHelper();
+        }
+        function loadafter() { }
+        function setrest(v) {
+            path_sel = v;
+            path_sel_mode = 1;
+            path_build(); pathHelper();
+        }
+        function loadrest() { }
+        function setbefor(v) {
+            path_sel = v;
+            path_sel_mode = 0;
+            path_build(); pathHelper();
+        }
+        function loadbefor() { }
+
+        function setDensity(ij) {
+            if (def(ij)) {
+                all('#path-density-list > input[type=range]', function (it, i) {
+                    it.value = ij * 100;
+                });
+            }
+
+            var s = "[";
+
+            all('#path-density-list > input[type=range]', function (it, i) {
+                if (it.value > 1)
+                    s += (it.value / 100.0) + ",";
+            }, function () {
+                get('path-density').textContent = s + "]";
+                path_build(); pathHelper();
+            });
+        }
+        function loadDensity() {
+            try {
+                var val = js(get('path-density').textContent);
+
+                if (val.length > 0) {
+
+                    if (val.length > 30) { }
+                    all('#path-density-list > input[type=range]', function (it, i) {
+                        it.value = 0.0;
+                    }, function () {
+                        all('#path-density-list > input[type=range]', function (it, i) {
+                            if (i < val.length)
+                                it.value = val[i] * 100.0;
+                        });
+                    });
+                }
+
+            }
+            catch (e) { }
+        }
 
         function selTab(th) {
             all('a', function (it, i) { if (def(it.classList)) it.classList.remove('sel'); }, function () { th.classList._add('sel'); }, null, th.parentNode);
@@ -198,7 +389,11 @@
         function path_resetPush(op) {
             get('rtt_x').value = 0; get('rtt_y').value = 0; get('rtt_z').value = 0;
             get('t_x').value = 0; get('t_y').value = 0; get('t_z').value = 0;
-            get('s_x').value = 1; get('s_y').value = 1; get('s_z').value = 1; get('s_a').value = 0;
+            get('s_x').value = 1; get('s_y').value = 1; get('s_z').value = 1; get('s_a').value = 1;
+            unSelect('path-flip');
+            unSelect('path-flipfill');
+            unSelect('path-fillflip');
+
             get('rt_center').value = '{x:0,y:0,z:0}'; path_build(); pathHelper();
         }
 
@@ -219,6 +414,11 @@
             path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
             path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
             path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
+
+            if (isSelect('path-flip')) path_fixedControl += "r = flip(r,e);";
+            if (isSelect('path-flipfill')) path_fixedControl += "r = flipfill(r,e);";
+            if (isSelect('path-fillflip')) path_fixedControl += "r = fillflip(r,e);";
+
         }
     </script>
 </panels>

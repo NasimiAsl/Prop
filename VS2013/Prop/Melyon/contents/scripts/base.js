@@ -132,6 +132,41 @@ function _rd(o, i) {
 }
 
 
+
+var ctl = {
+    check: function (th) {
+        th.classList.toggle('c-iselect');
+    }
+};
+
+
+function fillflip(r, e) {
+    if (e) {
+        var r2 = [];
+        r2 = _for(r, function (at, i) { r2.push(at); }, function () { return r2; });
+        return _for_r(r, function (at, i) { r2.push(at); }, function () { return r2; });
+    }
+    return r;
+}
+
+function flipfill(r, e) {
+    if (e) {
+        var r2 = [];
+        r2 = _for_r(r, function (at, i) { r2.push(at); }, function () { return r2; });
+        return _for(r, function (at, i) { r2.push(at); }, function () { return r2; });
+    }
+    return r;
+}
+
+function flip(r, e) {
+    if (e) {
+        var r2 = [];
+        return _for_r(r, function (at, i) { r2.push(at); }, function () { return r2; });
+    }
+    return r;
+}
+
+
 /// Extention methods
 
 Array.prototype.toString = function (op) {
@@ -194,6 +229,32 @@ DOMTokenList.prototype.removemany = function (classes) {
         this.remove(classes[i]);
     }
 }
+
+DOMTokenList.prototype.has = function (cs) {
+    var fl = false;
+
+    return _each(this, function (a) {
+        if (a == cs) {
+            fl = true;
+        }
+    }, function () { return fl; });
+}
+
+function isSelect(c, p) {
+    return def(get(c, p).classList) && get(c, p).classList.has('c-iselect');
+}
+
+function select(c, p) {
+    def(get(c, p).classList) && get(c, p).classList._add('c-iselect');
+}
+function unSelect(c, p) {
+    def(get(c, p).classList) && get(c, p).classList.remove('c-iselect');
+}
+function toggle(c, p) {
+    def(get(c, p).classList) && get(c, p).classList.toggle('c-iselect');
+    return isSelect(c, p);
+}
+
 var this_helper;
 function doEvent(ctl, ev) {
     if (def(ctl) && def(ev)) {

@@ -1,0 +1,5 @@
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Foundation.Common\obj\Debug\Foundation.Common.csprojResolveAssemblyReference.cache
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Foundation.Common\bin\Debug\Foundation.Common.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Foundation.Common\bin\Debug\Foundation.Common.pdb
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Foundation.Common\obj\Debug\Foundation.Common.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Foundation.Common\obj\Debug\Foundation.Common.pdb

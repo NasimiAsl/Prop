@@ -30,7 +30,19 @@
 @include color('black',#000000); 
 @include color('white',#ffffff);  
 @include color('trans',rgba(255, 255, 255, 0.00)); 
-@include color('trdark',rgba(50, 50, 50, 0.21)); 
-@include color('light',rgba(200, 200, 200, 0.21)); 
+@include color('trdark',rgba(50, 50, 50, 0.21));  
+@include color('trred',rgba(86, 0, 0, 0.46)); 
+@include color('trblue',rgba(0, 56, 144, 0.59));  
+@include color('trorg',rgba(255, 106, 0, 0.54));  
+@include color('trwhite',rgba(255, 255, 255, 0.37));  
+@include color('light',rgba(200, 200, 200, 0.21));   
 
- 
+
+@include color('select',rgb(0, 86, 7));   
+.c-iselect {    
+    background-image: url('/images/shapes/checked.svg');
+    background-position: 2px 2px;
+    background-repeat:no-repeat; 
+    color:#ffffff !important;
+    font-weight: bold;
+}
