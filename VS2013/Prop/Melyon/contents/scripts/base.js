@@ -53,6 +53,7 @@ function create(content, tagname) {
 }
 
 function get(op, pr) {
+    if (def(op.trim)) op  = op.trim();
     if (def(pr)) {
         return first(op, null, pr);
     }

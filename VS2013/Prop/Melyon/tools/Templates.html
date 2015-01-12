@@ -15,7 +15,7 @@
     </div>
     <div id="point-item-tmp">
         <div class="point-item-struct c-i-hblack c-t-i-hwhite pl-005">
-            <span onclick="this.parentNode.classList._add('active'); path_new(this.parentNode.getAttribute('struct'))"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="    try { this.parentNode.parentNode.removeChild(this.parentNode); } catch (e) { } path_build(); pathHelper();">
+            <span onclick="this.parentNode.classList._add('active'); path_new(this.parentNode.getAttribute('struct'), this.parentNode.getAttribute('walloption'))"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="    try { this.parentNode.parentNode.removeChild(this.parentNode); } catch (e) { } path_build(); pathHelper();">
         </div>
     </div>
     <div id="path-tmp">
@@ -58,7 +58,7 @@
                             st += at.getAttribute('struct') + ",";
                         },
                     function () {
-                        buildSurface(st + "]", 'surface-help');
+                        buildSurface(st + "]" );
                     });
 
                 }
@@ -78,12 +78,15 @@
                         get('sr_pt_' + st.name.replaceAll(' ', '-')).setAttribute('struct', p);
                     }
 
-                    st = "[";
-                    first('#Wall #Points > .point-item-struct.active',
+                    st = "["; 
+                    all('#Wall #Points > .point-item-struct',
                         function (at) {
-                            buildWall(at.getAttribute('struct'), 'wall-help'); 
-                        } 
-                    ); 
+                            st += at.getAttribute('struct') + ",";
+                        },
+                    function () {
+                        buildWall(st + "]" );
+                    });
+
                 }
             }
         }
@@ -120,6 +123,7 @@
             <input type="button" value="back" id="back" onclick="ctl.check(this); path_build(); pathHelper(); " />
             <input type="button" value="source" class="" onclick="ctl.check(this); source()" />
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat">Material</a>
+            <a onclick="selTab(this)" class="c-t-iorg ml-005 repeat">Build</a> 
         </div>
         <div id="point-sub" class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
             <div id="Surface">
@@ -128,17 +132,7 @@
             </div>
             <div id="Wall">
                 <div id="Points" class="f f-r f-w f-as f-cs f-js">
-                </div>
-                <input type="button" value="front" id="wall-front" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="back" id="wall-back" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="left" id="wall-left" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="right" id="wall-right" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="top" id="wall-top" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="bottom" id="wall-bottom" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="smooth" id="wall-smooth" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="button" value="closed" id="wall-closed" onclick="ctl.check(this); path_build(); pathHelper(); " />
-                <input type="text" value="2" id="wall-height" class="w-02" />
-                <input type="text" value="2" id="wall-deep" class="w-02" />
+                </div> 
             </div>
             <div id="Stair">Stair</div>
             <div id="Repeat">Repeat</div>
@@ -149,6 +143,7 @@
                     <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite ">
                         <a id="path-tabPush" onclick="selTab(this)" class="sel">Push    </a>
                         <a onclick="selTab(this); loadDensity();">Density</a>
+                        <a onclick="selTab(this); loadWallOption();">Wall Option</a>
                     </div>
                     <div class="ctrdark h-mn-04 sub-f p-0025 show">
                         <div id="Push" class="sel-f ">
@@ -238,6 +233,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="Wall-Option">
+                            <input type="button" value="front" id="wall-front" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="back" id="wall-back" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="auto back front" id="wall-afb" onclick="ctl.check(this); path_build(); pathHelper(); " /> 
+                            <input type="button" value="left" id="wall-left" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="right" id="wall-right" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="top" id="wall-top" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="bottom" id="wall-bottom" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="smooth" id="wall-smooth" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="closed" id="wall-closed" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="text" value="2" id="wall-height" class="w-02" />
+                            <input type="text" value="2" id="wall-deep" class="w-02" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -299,10 +307,60 @@
 
                 </div>
             </div>
+            <div id="Build" class="c-itrblue">
+                <div>
+                    <input type="text" id="build-struct" value="[]" />
+                    <input type="text" id="build-material" value="---" />
+                    <input type="text" id="build-option" value="{}" />
+                    <input type="text" id="build-name" value="default" />
+                </div>  
+                <input type="button" id="build-mesh" class="w-03 h-03 m-i-005 c-iblue" value="0.0" onclick="buildMesh()" />  
+            </div>
         </div>
     </div>
 
     <script>
+
+        function buildMesh() { }
+
+        function loadWallOption(st) {
+
+              st =def(js(st), js(get('paths_list').getAttribute('walloption')));
+
+            if (def(st)) {
+                if (st.front        ) select('wall-front '); else unSelect('wall-front ');
+                if (st.back         ) select('wall-back  '); else unSelect('wall-back  ');
+                if (st.afb          ) select('wall-afb   '); else unSelect('wall-afb   ');
+                if (st.top          ) select('wall-top   '); else unSelect('wall-top   ');
+                if (st.bottom       ) select('wall-bottom'); else unSelect('wall-bottom');
+                if (st.left         ) select('wall-left  '); else unSelect('wall-left  ');
+                if (st.right        ) select('wall-right '); else unSelect('wall-right '); 
+                if (st.smooth        ) select('wall-smooth '); else unSelect('wall-smooth ');
+                setv('wall-deep ',st.d); 
+                setv('wall-height ',st.h); 
+            }
+        }
+
+        function getWallOption() {
+
+            var st = "{";
+
+            if (def(st)) {
+                if (isSelect('wall-front ')) st+="front:true,";
+                if (isSelect('wall-back  ')) st+="back:true,";
+                if (isSelect('wall-afb   ')) st+="afb:true,";
+                if (isSelect('wall-top   ')) st+="top:true,";
+                if (isSelect('wall-bottom')) st+="bottom:true,";
+                if (isSelect('wall-left  ')) st+="left:true,";
+                if (isSelect('wall-right ')) st += "right:true,";
+                if (isSelect('wall-smooth ')) st += "smooth:true,";
+
+                st += "d:" + getv('wall-deep') + ",";
+                st += "h:" + getv('wall-height') ;
+            }
+
+            get('paths_list').setAttribute('walloption', st + "}");
+        }
 
         function addCondbefor(val) {
             var s = "if(i >= " + getv('path-befor-start').valueOf() * 1.0 + " && i<= " + getv('path-befor-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
@@ -403,17 +461,18 @@
         }
 
         function path_fixed() {
-            path_fixedControl = "r_x(r[r.length-1]," + (getv('rtt_x').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
-            path_fixedControl += "r_y(r[r.length-1]," + (getv('rtt_y').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
-            path_fixedControl += "r_z(r[r.length-1]," + (getv('rtt_z').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
 
-            path_fixedControl += "r[r.length-1].x += " + (getv('t_x').valueOf() * 1) + " ;";
-            path_fixedControl += "r[r.length-1].y += " + (getv('t_y').valueOf() * 1) + " ;";
-            path_fixedControl += "r[r.length-1].z += " + (getv('t_z').valueOf() * 1) + " ;";
+            if(getv('rtt_x').valueOf()!=0) path_fixedControl = "r_x(r[r.length-1]," + (getv('rtt_x').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+            if (getv('rtt_y').valueOf() != 0) path_fixedControl += "r_y(r[r.length-1]," + (getv('rtt_y').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+            if (getv('rtt_z').valueOf() != 0) path_fixedControl += "r_z(r[r.length-1]," + (getv('rtt_z').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
 
-            path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
-            path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
-            path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
+            if (getv('t_x').valueOf() != 0) path_fixedControl += "r[r.length-1].x += " + (getv('t_x').valueOf() * 1) + " ;";
+            if (getv('t_y').valueOf() != 0) path_fixedControl += "r[r.length-1].y += " + (getv('t_y').valueOf() * 1) + " ;";
+            if (getv('t_z').valueOf() != 0) path_fixedControl += "r[r.length-1].z += " + (getv('t_z').valueOf() * 1) + " ;";
+
+            if (getv('s_x').valueOf() != 0) path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
+            if (getv('s_y').valueOf() != 0) path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
+            if (getv('s_z').valueOf() != 0) path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
 
             if (isSelect('path-flip')) path_fixedControl += "r = flip(r,e);";
             if (isSelect('path-flipfill')) path_fixedControl += "r = flipfill(r,e);";

@@ -44,7 +44,7 @@ $3d.iCamera.prototype = {
 };
 
 $3d.iEngine = function (op) {
-    op = def(op, {});
+        op = def(op, {});
     op.canvas = def(op.canvas, null);
 
     this.instance = {
