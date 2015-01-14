@@ -10,6 +10,15 @@ function def(a, d) {
 
 var always = function () { return true };
 
+
+function repeat(n, c, e) {
+    for (var i = 0; i < n; i++) {
+        if (def(c)) c(i, (i == n - 1));
+    }
+    if (def(e))
+        return e();
+}
+
 function css_r(th, css) {
 
     if (def(th.length)) {
@@ -53,7 +62,10 @@ function create(content, tagname) {
 }
 
 function get(op, pr) {
-    if (def(op.trim)) op  = op.trim();
+    if (typeof (op) == 'object')
+        return op;
+
+    if (def(op.trim)) op = op.trim();
     if (def(pr)) {
         return first(op, null, pr);
     }
@@ -301,18 +313,18 @@ function _each_r(ar, _do, e, b) {
 }
 
 function state(msg, group) {
-    var old = $('#status').html();
+    var old = first('#status').innerHTML;
 
     if (group != null && group != undefined) {
-        if ($("#status #" + group).length == 0)
-            $("#status").append("<div class='underline' id='" + group + "' title='" + group + "'></div>");
-        $("#status #" + group).html(msg);
+        if (!def(first("#status #" + group)))
+            first("#status").innerHTML += ("<div class='underline' id='" + group + "' title='" + group + "'></div>");
+        if(def(first("#status #" + group))) first("#status #" + group).innerHTML  = msg;
         return;
     }
 }
 
 function clearState(group) {
-    $("#status #" + group).html('');
+    first("#status #" + group).innerHTML = '';
 }
 // part : e|error,i|info,w|warning,q|question,a:alert
 function ops(msg, part, e) {
@@ -343,6 +355,13 @@ var min = Math.min;
 var random = Math.random;
 
 // 
+function r3(x) { return floor(x * 1000) / 1000; }
+function r2(x) { return floor(x * 100) / 100; }
+function r1(x) { return floor(x * 10) / 10; }
+function r_3(x) { return floor(x * 1000000) / 1000  }
+function r_2(x) { return floor(x * 10000) / 100; }
+function r_1(x) { return floor(x * 100) / 10; }
+
 
 function rd(min, max) {
     return (random()) * (max - min) + min;

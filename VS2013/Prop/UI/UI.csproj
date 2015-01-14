@@ -150,9 +150,11 @@
     <Content Include="scripts\3dMaterial.js" />
     <Content Include="scripts\3dTools.js" />
     <Content Include="scripts\Melyon\scene.js" />
+    <Content Include="scripts\MoveControl.js" />
     <Content Include="scripts\prop\3d\engines\babylon.js" />
     <Content Include="scripts\prop\3d\engines\three.js" />
     <Content Include="scripts\prop\base.js" />
+    <Content Include="scripts\prop\Client.js" />
     <Content Include="scripts\prop\loader.js" />
     <Content Include="stylesheets\screen.css" />
     <Content Include="Web.config" />

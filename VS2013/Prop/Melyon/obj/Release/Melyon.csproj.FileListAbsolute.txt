@@ -1,0 +1,13 @@
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Melyon.dll.config
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Melyon.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Melyon.pdb
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Antlr3.Runtime.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Microsoft.Web.Infrastructure.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Newtonsoft.Json.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\System.Web.Optimization.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\WebGrease.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Antlr3.Runtime.pdb
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Newtonsoft.Json.xml
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\System.Web.Optimization.xml
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Release\Melyon.dll
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Release\Melyon.pdb

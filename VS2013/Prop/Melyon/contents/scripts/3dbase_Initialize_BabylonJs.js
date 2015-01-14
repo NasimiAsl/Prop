@@ -7,8 +7,7 @@ function createBabylonJsEngine() {
     babylon.cameras = { main: new $3d.iCamera() };
     babylon.lights = { hemi: new $3d.iLight(), dir: new $3d.iLight() };
     babylon.renderer = new $3d.iRenderer();
-    babylon.postProcess = { /*!!! under construction*/ };
-
+    babylon.postProcess = { /*!!! under construction*/ }; 
 
     // initializer
 
@@ -24,7 +23,7 @@ function createBabylonJsEngine() {
         babylon.instance.cameras.main = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);;
         babylon.instance.scene.activeCamera.attachControl(babylon.instance.canvas);
 
-        babylon.instance.cameras.main.lowerRadiusLimit = 10;
+        babylon.instance.cameras.main.lowerRadiusLimit = 0.01;
         babylon.instance.cameras.main.minZ = babylon.cameras.main.near;
         babylon.instance.cameras.main.maxZ = babylon.cameras.main.far;
         babylon.instance.cameras.main.fov = babylon.cameras.main.fov;

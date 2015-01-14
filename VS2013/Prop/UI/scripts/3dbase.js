@@ -153,7 +153,7 @@ $3d.iController = function (op) {
 }
 
 $3d.iController.prototype = {
-    actions: [],
+    actions: [], 
     onRayCaster: function (op) { },
 }
 

@@ -453,8 +453,8 @@ $3d.tools.wall = function (op) {
         if (op.t) { nxu.y += op.t.y; nxd.y += op.t.y; }
 
 
-        nhu = { x: nxu.x, y: nxu.y + op.h, z: nxu.z };
-        nhd = { x: nxd.x, y: nxd.y + op.h, z: nxd.z };
+        nhu = { x: nxu.x, y: nxu.y + (op.h-def(p.n.hgt,0)), z: nxu.z };
+        nhd = { x: nxd.x, y: nxd.y + (op.h-def(p.n.hgt,0)), z: nxd.z };
 
 
 

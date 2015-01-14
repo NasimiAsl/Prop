@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="a_1.png" />
     <Content Include="contents\css\root.css" />
     <Content Include="contents\css\screen.css" />
     <None Include="contents\sass\root.scss" />
@@ -87,6 +88,7 @@
     <Content Include="contents\scripts\3dMaterial.js" />
     <Content Include="contents\scripts\3dTools.js" />
     <Content Include="contents\scripts\base.js" />
+    <Content Include="contents\scripts\clients.js" />
     <Content Include="contents\scripts\engine\babylon.js" />
     <Content Include="contents\scripts\engine\three.js" />
     <Content Include="contents\scripts\loader.js" />
@@ -129,7 +131,24 @@
     <Content Include="images\skybox\skybox_py.jpg" />
     <Content Include="images\skybox\skybox_pz.jpg" />
     <Content Include="images\textures\lights.png" />
+    <Content Include="img\b_1 %281%29.png" />
+    <Content Include="img\b_1 %2810%29.png" />
+    <Content Include="img\b_1 %2811%29.png" />
+    <Content Include="img\b_1 %2812%29.png" />
+    <Content Include="img\b_1 %2813%29.png" />
+    <Content Include="img\b_1 %2814%29.png" />
+    <Content Include="img\b_1 %2815%29.png" />
+    <Content Include="img\b_1 %2816%29.png" />
+    <Content Include="img\b_1 %282%29.png" />
+    <Content Include="img\b_1 %283%29.png" />
+    <Content Include="img\b_1 %284%29.png" />
+    <Content Include="img\b_1 %285%29.png" />
+    <Content Include="img\b_1 %286%29.png" />
+    <Content Include="img\b_1 %287%29.png" />
+    <Content Include="img\b_1 %288%29.png" />
+    <Content Include="img\b_1 %289%29.png" />
     <Content Include="index.html" />
+    <Content Include="plan-1.jpg" />
     <Content Include="tools\Index.html" />
     <Content Include="tools\surface\Index.html" />
     <Content Include="pages\layouts\3d-base.html" />
@@ -150,6 +169,7 @@
     <Content Include="contents\sass\screen.scss" />
     <Content Include="contents\sass\general\_flexy.scss" />
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\sdfgsdf.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

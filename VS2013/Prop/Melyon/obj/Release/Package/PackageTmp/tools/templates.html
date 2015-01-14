@@ -1,0 +1,587 @@
+﻿<templates>
+    <div id="main-tmp">
+        <img class="w-01 h-01" src="/images/shapes/surface.svg" onclick="menu_cl('surface');" />
+        <img class="w-01 h-01" src="/images/shapes/wall.svg" onclick="menu_cl('wall');" />
+        <img class="w-01 h-01" src="/images/shapes/stair.svg" onclick="menu_cl('stair');" />
+        <img class="w-01 h-01" src="/images/shapes/repeat.svg" onclick="menu_cl('repeat');" />
+        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+        <a>
+            Material
+        </a>
+        <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+        <a onclick="menu_cl('storage');">
+            Storage
+        </a>
+    </div>
+    <div id="point-item-tmp">
+        <div class="point-item-struct c-i-hblack c-t-i-hwhite pl-005">
+            <span onclick="this.parentNode.classList._add('active'); path_new(this.parentNode.getAttribute('struct'), this.parentNode.getAttribute('walloption'))"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="    try { this.parentNode.parentNode.removeChild(this.parentNode); } catch (e) { } path_build(); pathHelper();">
+        </div>
+    </div>
+    <div id="storage-item-tmp">
+        <div class="storage-item-struct c-i-hblack c-t-i-hwhite pl-005">
+            <span> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteMesh('#[name]')"><input type="button" value="show" class="w-005" onclick="    showMesh('#[name]')"><input type="button" value="hide" class="w-005" onclick="    hideMesh('#[name]')">
+        </div>
+    </div>
+    <div id="path-tmp">
+        <div>
+            <input type="button" value="&nbsp;+&nbsp;" class="fs-04 " onclick="path_new();" />
+            <input type="button" value="&nbsp;×&nbsp;" class="fs-04 c-ired" onclick="this.parentNode.parentNode.removeChild(this.parentNode); pathHelper();" />
+            <input id="path-inLine" type="checkbox" onchange="path_build(); pathHelper();" />
+            <input id="path-path" type="text" value="m 513.15749,769.51947 c 0,0 -143.44166,-90.91373 -153.54318,-183.84776 C 349.51278,492.73767 547.50268,464.4534 549.52298,371.51937 551.54329,278.58533 402.04071,181.61069 402.04071,181.61069" />
+            <input id="path-pointLength" type="text" value="80" class="c-t-iblack w-01" />.
+            <input type="button" id="__act" value="&nbsp;active&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_load(); pathHelper();" />
+            <input type="button" value="&nbsp;apply&nbsp;" class="fs-04 " onclick="css_r(this.parentNode.parentNode.childNodes, 'act'); css(this.parentNode, 'act'); path_build(); pathHelper();" />
+        </div>
+    </div>
+    <script>
+        var menu_cl_h;
+        function menu_cl(menu) {
+            menu = "." + menu;
+            if (def(menu_cl_h)) menu_cl_h();
+            get('point-panel').classList.toggle('hdn'); first(menu).classList.toggle('hdn-i');
+            menu_cl_h = function () { get('point-panel').classList.toggle('hdn'); first(menu).classList.toggle('hdn-i'); }
+
+            if (menu == '.surface') {
+                helperBase = function (p) {
+                    var st = js(p);
+                    // if (st.name == "point 2") return;
+                    var tk = create(get('point-item-tmp').innerHTML.replaceAll('#[name]', st.name.replaceAll(' ', '-')).replaceAll('#[size]', kb(p.length)));
+                    tk.setAttribute('struct', p);
+                    var vct = def(get('sr_pt_' + st.name.replaceAll(' ', '-'))) ? get('sr_pt_' + st.name.replaceAll(' ', '-')).innerHTML = tk.innerHTML : tk;
+                    tk.id = 'sr_pt_' + st.name.replaceAll(' ', '-');
+                    if (!def(get('sr_pt_' + st.name.replaceAll(' ', '-')))) {
+                        first('#Surface #Points').appendChild(vct);
+                    }
+                    else {
+                        get('sr_pt_' + st.name.replaceAll(' ', '-')).setAttribute('struct', p);
+                    }
+
+                    st = "[";
+                    all('#Surface #Points > .point-item-struct',
+                        function (at) {
+                            st += at.getAttribute('struct') + ",";
+                        },
+                    function () {
+                        buildSurface(st + "]");
+                    });
+
+                }
+            }
+            else if (menu == '.wall') {
+                helperBase = function (p) {
+                    var st = js(p);
+                    // if (st.name == "point 2") return;
+                    var tk = create(get('point-item-tmp').innerHTML.replaceAll('#[name]', st.name.replaceAll(' ', '-')).replaceAll('#[size]', kb(p.length)));
+                    tk.setAttribute('struct', p);
+                    var vct = def(get('sr_pt_' + st.name.replaceAll(' ', '-'))) ? get('sr_pt_' + st.name.replaceAll(' ', '-')).innerHTML = tk.innerHTML : tk;
+                    tk.id = 'sr_pt_' + st.name.replaceAll(' ', '-');
+                    if (!def(get('sr_pt_' + st.name.replaceAll(' ', '-')))) {
+                        first('#Wall #Points').appendChild(vct);
+                    }
+                    else {
+                        get('sr_pt_' + st.name.replaceAll(' ', '-')).setAttribute('struct', p);
+                    }
+
+                    st = "[";
+                    all('#Wall #Points > .point-item-struct',
+                        function (at) {
+                            st += at.getAttribute('struct') + ",";
+                        },
+                    function () {
+                        buildWall(st + "]");
+                    });
+
+                }
+            }
+        }
+
+        function home() {
+            get('cntr').innerHTML = get('main-tmp').innerHTML;
+        }
+        home();
+        var ijk = 2;
+    </script>
+</templates>
+<panels>
+    <div id="point-panel" class="ab l-00 r-00 t-00 p-005 z10 ns hdn">
+        <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite">
+            <img class="w-01 h-01" src="/images/shapes/close.svg" onclick="get('point-panel').classList._add('hdn'); menu_cl_h = null;" />
+            <img class="w-01 h-01" src="/images/shapes/keep.svg" onclick="ctl.check(this); get('point-sub').classList.toggle('show')" />
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 surface hdn-i">Surface</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 wall hdn-i">Wall</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 stair hdn-i">Stair</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat hdn-i">Repeat</a>
+            <a onclick="selTab(this); loadStorage();" class="c-t-iwhite ml-005 storage hdn-i">Storage</a>
+            <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
+            <a id="path-tabPath" onclick="selTab(this)">paths    </a>
+            <a onclick="selTab(this); loadbefor();">Befor </a>
+            <a onclick="selTab(this); loadrest();">Restriction      </a>
+            <a onclick="selTab(this); loadafter();">After   </a>
+            <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
+            <input id="point-name" type="text" value="point 1" onkeypress="if (event.keyCode == 13) { get('paths_list').innerHTML = ''; this.value = 'point ' + ijk; ijk++; path_build(); pathHelper(); }" />
+            <input type="button" value="new path" onclick=" get('paths_list').innerHTML = '';   path_new();" />
+            <input type="button" value="new Point" onclick=" get('point-name').value = 'point ' + ijk; ijk++; path_build(); pathHelper(); " />
+            <input type="button" value="apply" onclick="path_build(); pathHelper(); " />
+            <input type="button" value="wireframe" id="wire" onclick="ctl.check(this); path_build(); pathHelper(); " />
+            <input type="button" value="alpha" id="alpha" onclick="ctl.check(this); path_build(); pathHelper(); " />
+            <input type="button" value="back" id="back" onclick="ctl.check(this); path_build(); pathHelper(); " />
+            <input type="button" value="source" class="" onclick="ctl.check(this); source()" />
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat">Material</a>
+            <a onclick="selTab(this)" class="c-t-iorg ml-005 repeat">Build</a>
+        </div>
+        <div id="point-sub" class="ctrdark h-mn-04  h-mn-08 sub-f p-0025">
+            <div id="Surface">
+                <div id="Points" class="f f-r f-w f-as f-cs f-js">
+                </div>
+            </div>
+            <div id="Storage">
+                <div id="Items" class="f f-r f-w f-as f-cs f-js">
+                </div>
+            </div>
+            <div id="Wall">
+                <div id="Points" class="f f-r f-w f-as f-cs f-js">
+                </div>
+            </div>
+            <div id="Stair">Stair</div>
+            <div id="Repeat">Repeat</div>
+            <div id="paths" class="f f-r f-w f-jb f-as f-ct f-st w-full">
+                <div class=" f-i01" id="paths_list">
+                </div>
+                <div class="f-i11  c-itrdark ns bl-i-0025 c-b-iorg">
+                    <div class="menu  f f-js f-r f-ct f-ae f-st cgray c-t-iwhite ">
+                        <a id="path-tabPush" onclick="selTab(this)" class="sel">Push    </a>
+                        <a onclick="selTab(this); loadDensity();">Density</a>
+                        <a onclick="selTab(this); loadWallOption();">Wall Option</a>
+                    </div>
+                    <div class="ctrdark h-mn-04 sub-f p-0025 show">
+                        <div id="Push" class="sel-f ">
+                            <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack hdn" id="path-push">r.push({x:-n.x+526.0,y:0.0,z:n.y-526});</textarea>
+                            <div class="pnl w-mx-22">
+                                <input type="button" value="top" onclick="setSource(this,'r[r.length-1] = {x:-n.x+526.0,y:0.0,z:n.y-526};')" />
+                                <input type="button" value="bottom" onclick="setSource(this,'r[r.length-1] = {x: n.x-526.0,y:0.0,z:n.y-526};')" />
+                                <input type="button" value="left" onclick="setSource(this, 'r[r.length-1] = {x:-n.x+526.0,z:0.0,y:n.y-526};')" />
+                                <input type="button" value="right" onclick="setSource(this, 'r[r.length-1] = {x: n.x-526.0,z:0.0,y:n.y-526};')" />
+                                <input type="button" value="front" onclick="setSource(this, 'r[r.length-1] = {y:-n.x+526.0,x:0.0,z:n.y-526};')" />
+                                <input type="button" value="back" onclick="setSource(this, 'r[r.length-1] = {y:n.x-526.0,x:0.0,z:n.y-526};')" />
+                                <br />
+                                <div class="f f-r f-ja f-ct f-at ">
+                                    <div class="w-p30 f f-c ">
+                                        rotate: <br />
+                                        <div>
+                                            <input type="button" value="get center" onclick="getCenter('path-center', 'path');" />
+                                            <input type="button" value="clear"
+                                                   onclick="path_resetPush(); get('path-push').textContent = 'r.push({ x: -n.x + 526.0, y: 0.0, z: n.y - 526 });';" />
+                                        </div> <input id="rt_center" type="text" value="{x:0,y:0,z:0}" onkeydown="  path_build(); pathHelper();" />
+                                        <input id="rtt_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                        <input id="rtt_y" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                        <input id="rtt_z" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                    </div>
+                                    <div class="w-p30  f f-c ">
+                                        move: <br />
+                                        <input id="t_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                        <input id="t_y" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                        <input id="t_z" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                    </div>
+                                    <div class="w-p30  f f-c ">
+                                        scale : <br />
+                                        <input id="s_x" type="text" value="1.0" onkeydown="if(event.keyCode == 13){ path_build(); pathHelper();}" />
+                                        <input id="s_y" type="text" value="1.0" onkeydown="if(event.keyCode == 13){ path_build(); pathHelper();}" />
+                                        <input id="s_z" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { path_build(); pathHelper(); }" />
+                                        <input id="s_a" type="text" value="1.0" onkeydown="if (event.keyCode == 13) { setv('s_x', this.value); setv('s_y', this.value); setv('s_z', this.value); path_build(); pathHelper(); }" />
+                                    </div>
+                                    <div class="w-p30  f f-c ">
+                                        post push : <br />
+                                        <input type="button" value="flip" id="path-flip" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                                        <input type="button" value="fill flip" id="path-fillflip" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                                        <input type="button" value="flip fill" id="path-flipfill" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Density">
+                            <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-density">[1,1,1,1,1]</textarea>
+                            <div class="pnl" id="path-density-list" class="f f-r f-at f-ct f-js">
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <input type="range" orient="vertical" min="0" max="300" step="1" onchange="setDensity()" />
+                                <div class="w-04">
+                                    <input type="button" value="0" onclick="setDensity(0);" />
+                                    <input type="button" value="0.1" onclick="setDensity(0.1);" />
+                                    <input type="button" value="1" onclick="setDensity(1);" />
+                                    <input type="button" value="1.9" onclick="setDensity(1.9);" />
+                                    <input type="button" value="2.9" onclick="setDensity(2.9);" />
+                                    <input type="button" value="apply" onclick="setDensity();" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Wall-Option">
+                            <input type="button" value="front" id="wall-front" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="back" id="wall-back" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="auto back front" id="wall-afb" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="left" id="wall-left" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="right" id="wall-right" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="top" id="wall-top" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="bottom" id="wall-bottom" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="smooth" id="wall-smooth" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="button" value="closed" id="wall-closed" onclick="ctl.check(this); path_build(); pathHelper(); " />
+                            <input type="text" value="2" id="wall-height" class="w-02" />
+                            <input type="text" value="2" id="wall-deep" class="w-02" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="Befor" class="c-itrred  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-befor">var isIn = true;</textarea>
+                <div class="pnl">
+                    <input id="path-befor-curr" type="range" class="w-full" min="0" max="80" value="0" onchange="setv('path-befor-end', this.value); setbefor(this.value);" />
+                    <div class="p-0025">
+                        <input id="path-befor-start" type="text" value="0" class="w-03" />
+                        <input id="path-befor-end" type="text" value="0" class="w-03" />
+                        <input type="button" value="apply / point" onclick="setbefor(getv('path-curr') * 1.0); setv('path-befor-start', getv('path-befor-end')); " />
+                        <input type="button" value="Point In" onclick="addCondbefor(true); setbefor(getv('path-befor-curr') * 1.0); setv('path-befor-start', getv('path-befor-end'));" />
+                        <input type="button" value="Point Out" onclick="addCondbefor(false); setbefor(getv('path-befor-curr') * 1.0); setv('path-befor-start', getv('path-befor-end'));" />
+                        <input type="button" value="All Points In" onclick="get('path-befor').textContent = 'var isIn =  true;\r\n'; setbefor(getv('path-befor-curr') * 1.0);  " />
+                        <input type="button" value="All Points Out" onclick="get('path-befor').textContent = 'var isIn =  false;\r\n'; setbefor(getv('path-befor-curr') * 1.0);  " />
+                        <input type="button" value="Invert" onclick="get('path-befor').textContent += '  isIn =  !isIn;\r\n'; setbefor(getv('path-befor-curr') * 1.0);  " />
+                    </div>
+                </div>
+            </div>
+            <div id="Restriction" class="c-itrdark  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-rest">var isIn = true;</textarea>
+                <div class="pnl">
+                    <input id="path-rest-curr" type="range" class="w-full" min="0" max="80" value="0" onchange="setv('path-rest-end', this.value); setrest(this.value);" />
+                    <div class="p-0025">
+                        <input id="path-rest-start" type="text" value="0" class="w-03" />
+                        <input id="path-rest-end" type="text" value="0" class="w-03" />
+                        <input type="button" value="apply / point" onclick="setrest(getv('path-curr') * 1.0); setv('path-rest-start', getv('path-rest-end')); " />
+                        <input type="button" value="Point In" onclick="addCondrest(true); setrest(getv('path-rest-curr') * 1.0); setv('path-rest-start', getv('path-rest-end'));" />
+                        <input type="button" value="Point Out" onclick="addCondrest(false); setrest(getv('path-rest-curr') * 1.0); setv('path-rest-start', getv('path-rest-end'));" />
+                        <input type="button" value="All Points In" onclick="get('path-rest').textContent = 'var isIn =  true;\r\n'; setrest(getv('path-rest-curr') * 1.0);  " />
+                        <input type="button" value="All Points Out" onclick="get('path-rest').textContent = 'var isIn =  false;\r\n'; setrest(getv('path-rest-curr') * 1.0);  " />
+                        <input type="button" value="Invert" onclick="get('path-rest').textContent += '  isIn =  !isIn;\r\n'; setrest(getv('path-rest-curr') * 1.0);  " />
+                    </div>
+                </div>
+            </div>
+            <div id="After" class="c-itrblue  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="path-after">var isIn = true;</textarea>
+                <div class="pnl">
+                    <input id="path-after-curr" type="range" class="w-full" min="0" max="80" value="0" onchange="setv('path-after-end', this.value); setafter(this.value);" />
+                    <div class="p-0025">
+                        <input id="path-after-start" type="text" value="0" class="w-03" />
+                        <input id="path-after-end" type="text" value="0" class="w-03" />
+                        <input type="button" value="apply / point" onclick="setafter(getv('path-curr') * 1.0); setv('path-after-start', getv('path-after-end')); " />
+                        <input type="button" value="Point In" onclick="addCondafter(true); setafter(getv('path-after-curr') * 1.0); setv('path-after-start', getv('path-after-end'));" />
+                        <input type="button" value="Point Out" onclick="addCondafter(false); setafter(getv('path-after-curr') * 1.0); setv('path-after-start', getv('path-after-end'));" />
+                        <input type="button" value="All Points In" onclick="get('path-after').textContent = 'var isIn =  true;\r\n'; setafter(getv('path-after-curr') * 1.0);  " />
+                        <input type="button" value="All Points Out" onclick="get('path-after').textContent = 'var isIn =  false;\r\n'; setafter(getv('path-after-curr') * 1.0);  " />
+                        <input type="button" value="Invert" onclick="get('path-after').textContent += '  isIn =  !isIn;\r\n'; setafter(getv('path-after-curr') * 1.0);  " />
+                    </div>
+                </div>
+            </div>
+            <div id="Material" class="c-itrblue  w-full">
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="obj-material">
+                    return sh_multi([{r:sh_frensel(),e:1.0},
+                    {r:'result=vec4(0.0,0.,0.,1.0);',e:1.0},
+                    {r:sh_specular(),e:1.0}]);
+                </textarea>
+                <div class="pnl">
+
+                </div>
+            </div>
+            <div id="Build" class="c-itrblue">
+                <div>
+                    <input type="text" id="build-struct" value="[]" />
+                    <input type="text" id="build-material" value="---" />
+                    <input type="text" id="build-option" value="{}" />
+                    <input type="text" id="build-name" value="default" />
+                </div>
+                <input type="button" id="build-mesh" class="w-03 h-03 m-i-005 c-iblue" value="0.0" onclick="buildMesh()" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function loadStorage() {
+            first('#Storage #Items').innerHTML = "";
+            _each(localStorage, function (at, i) {
+                if (i.toString().indexOf("mesh_") == 0) {
+                    try {
+
+                        var tk = create(get('storage-item-tmp').innerHTML.replaceAll('#[name]', i.replaceAll('mesh_', '')).replaceAll('#[size]', kb(at.length)));
+
+                        if (isShowMesh(i.replaceAll('mesh_', ''))) {
+                            select(tk);
+                        }
+
+                        first('#Storage #Items').appendChild(tk);
+                    } catch (e) { }
+                }
+            });
+
+        }
+
+        function buildMesh() { }
+
+        function loadWallOption(st) {
+
+            st = def(js(st), js(get('paths_list').getAttribute('walloption')));
+
+            if (def(st)) {
+                if (st.front) select('wall-front '); else unSelect('wall-front ');
+                if (st.back) select('wall-back  '); else unSelect('wall-back  ');
+                if (st.afb) select('wall-afb   '); else unSelect('wall-afb   ');
+                if (st.top) select('wall-top   '); else unSelect('wall-top   ');
+                if (st.bottom) select('wall-bottom'); else unSelect('wall-bottom');
+                if (st.left) select('wall-left  '); else unSelect('wall-left  ');
+                if (st.right) select('wall-right '); else unSelect('wall-right ');
+                if (st.smooth) select('wall-smooth '); else unSelect('wall-smooth ');
+                setv('wall-deep ', st.d);
+                setv('wall-height ', st.h);
+            }
+        }
+
+        function getWallOption() {
+
+            var st = "{";
+
+            if (def(st)) {
+                if (isSelect('wall-front ')) st += "front:true,";
+                if (isSelect('wall-back  ')) st += "back:true,";
+                if (isSelect('wall-afb   ')) st += "afb:true,";
+                if (isSelect('wall-top   ')) st += "top:true,";
+                if (isSelect('wall-bottom')) st += "bottom:true,";
+                if (isSelect('wall-left  ')) st += "left:true,";
+                if (isSelect('wall-right ')) st += "right:true,";
+                if (isSelect('wall-smooth ')) st += "smooth:true,";
+
+                st += "d:" + getv('wall-deep') + ",";
+                st += "h:" + getv('wall-height');
+            }
+
+            get('paths_list').setAttribute('walloption', st + "}");
+        }
+
+        function addCondbefor(val) {
+            var s = "if(i >= " + getv('path-befor-start').valueOf() * 1.0 + " && i<= " + getv('path-befor-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("path-befor").textContent += s;
+        }
+        function addCondrest(val) {
+            var s = "if(i >= " + getv('path-rest-start').valueOf() * 1.0 + " && i<= " + getv('path-rest-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("path-rest").textContent += s;
+        }
+        function addCondafter(val) {
+            var s = "if(i >= " + getv('path-after-start').valueOf() * 1.0 + " && i<= " + getv('path-after-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
+            get("path-after").textContent += s;
+        }
+
+        function setafter(v) {
+            path_sel = v;
+            path_sel_mode = 1;
+            path_build(); pathHelper();
+        }
+        function loadafter() { }
+        function setrest(v) {
+            path_sel = v;
+            path_sel_mode = 1;
+            path_build(); pathHelper();
+        }
+        function loadrest() { }
+        function setbefor(v) {
+            path_sel = v;
+            path_sel_mode = 0;
+            path_build(); pathHelper();
+        }
+        function loadbefor() { }
+
+        function setDensity(ij) {
+            if (def(ij)) {
+                all('#path-density-list > input[type=range]', function (it, i) {
+                    it.value = ij * 100;
+                });
+            }
+
+            var s = "[";
+
+            all('#path-density-list > input[type=range]', function (it, i) {
+                if (it.value > 1)
+                    s += (it.value / 100.0) + ",";
+            }, function () {
+                get('path-density').textContent = s + "]";
+                path_build(); pathHelper();
+            });
+        }
+        function loadDensity() {
+            try {
+                var val = js(get('path-density').textContent);
+
+                if (val.length > 0) {
+
+                    if (val.length > 30) { }
+                    all('#path-density-list > input[type=range]', function (it, i) {
+                        it.value = 0.0;
+                    }, function () {
+                        all('#path-density-list > input[type=range]', function (it, i) {
+                            if (i < val.length)
+                                it.value = val[i] * 100.0;
+                        });
+                    });
+                }
+
+            }
+            catch (e) { }
+        }
+
+        function selTab(th) {
+            all('a', function (it, i) { if (def(it.classList)) it.classList.remove('sel'); }, function () { th.classList._add('sel'); }, null, th.parentNode);
+            all('.sub-f > div', function (it, i) { if (def(it.classList)) it.classList.remove('sel-f'); }, function () {
+                get(th.innerText.trim().replaceAll(' ', '-')).classList._add('sel-f');
+            }, null, th.parentNode.parentNode);
+        }
+
+        function setSource(th, src, app) {
+            get('textarea', th.parentNode.parentNode).textContent = (def(app, true) ? get('textarea', th.parentNode.parentNode).textContent : "\r\n") + src;
+            path_build(); pathHelper();
+        }
+
+        function path_resetPush(op) {
+            get('rtt_x').value = 0; get('rtt_y').value = 0; get('rtt_z').value = 0;
+            get('t_x').value = 0; get('t_y').value = 0; get('t_z').value = 0;
+            get('s_x').value = 1; get('s_y').value = 1; get('s_z').value = 1; get('s_a').value = 1;
+            unSelect('path-flip');
+            unSelect('path-flipfill');
+            unSelect('path-fillflip');
+
+            get('rt_center').value = '{x:0,y:0,z:0}'; path_build(); pathHelper();
+        }
+
+        function source() {
+            all('textarea', function (at) { at.classList.toggle('hdn'); });
+            all('.pnl', function (at) { at.classList.toggle('hdn'); });
+        }
+
+        function path_fixed() {
+
+            if (getv('rtt_x').valueOf() != 0) path_fixedControl = "r_x(r[r.length-1]," + (getv('rtt_x').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+            if (getv('rtt_y').valueOf() != 0) path_fixedControl += "r_y(r[r.length-1]," + (getv('rtt_y').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+            if (getv('rtt_z').valueOf() != 0) path_fixedControl += "r_z(r[r.length-1]," + (getv('rtt_z').valueOf() * 1) + "*deg," + getv('rt_center') + ");";
+
+            if (getv('t_x').valueOf() != 0) path_fixedControl += "r[r.length-1].x += " + (getv('t_x').valueOf() * 1) + " ;";
+            if (getv('t_y').valueOf() != 0) path_fixedControl += "r[r.length-1].y += " + (getv('t_y').valueOf() * 1) + " ;";
+            if (getv('t_z').valueOf() != 0) path_fixedControl += "r[r.length-1].z += " + (getv('t_z').valueOf() * 1) + " ;";
+
+            if (getv('s_x').valueOf() != 0) path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
+            if (getv('s_y').valueOf() != 0) path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
+            if (getv('s_z').valueOf() != 0) path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
+
+            if (isSelect('path-flip')) path_fixedControl += "r = flip(r,e);";
+            if (isSelect('path-flipfill')) path_fixedControl += "r = flipfill(r,e);";
+            if (isSelect('path-fillflip')) path_fixedControl += "r = fillflip(r,e);";
+
+        }
+    </script>
+</panels>
+<menu>
+    <div class="menu ab l-00 r-00 b-00 p-005 z10 f f-jb f-r f-ct f-ae f-st c-htrdark ">
+        <img class="w-01 h-01" src="/images/shapes/menu.svg" />
+        <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
+        <img class="w-01 h-01" src="/images/shapes/newPoint.svg" onclick="get('point-panel').classList.toggle('hdn');" />
+        <div id="cntr" class=" w-full f f-js f-r f-ct f-as f-st   ">
+        </div>
+    </div>
+</menu>
+<engine>
+    <div class="ab w-full h-full t-i-00 b-i-00 z05">
+        <canvas id="renderCanvas" class=" cwhite w-full h-full"></canvas>
+    </div>
+    <div id="shaders" class="hdn"></div>
+
+    <script src="/contents/scripts/engine/babylon.js"></script>
+    <script src="/contents/scripts/engine/three.js"></script>
+    <script src="/contents/scripts/3dbase.js"></script>
+    <script src="/contents/scripts/3dbase_initialize_babylonJs.js"></script>
+    <script src="/contents/scripts/3dMaterial.js"></script>
+    <script src="/contents/scripts/3dtools.js"></script>
+    <script src="/contents/scripts/tools/dev.js"></script>
+
+
+    <script type="text/javascript">
+        var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
+        var helpers = [];
+        eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
+        eng1.engine.instance.canvas = document.getElementById('renderCanvas');
+        var bx, bx1, phi = 0, theta = 0;
+        var time = 0;
+        eng1.engine.onRequestFrame = function () {
+
+            time += 0.06;
+            _for(b, function (it, i) {
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                }
+
+            });
+
+            _each(helpers, function (it, i) {
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                }
+
+            });
+
+        };
+
+        eng1.engine.onInitScene = function () {
+
+            var w = new $3d.tools.surface({
+                paths: [[{ x: -10000, y: -10, z: -10000 }, { x: 10000, y: -10, z: -10000 }], [{ x: -10000, y: -10, z: 10000 }, { x: 10000, y: -10, z: 10000 }]],
+                //flip:true
+            }).toMesh(eng1);
+            //w2.material = mat();
+
+            //var w = new BABYLON.Mesh.CreateBox('s', 30, eng1.get().scene);
+            w.material = mat(mat_table());
+
+            b.push(w);
+        }
+        eng1.start();
+
+
+
+
+
+    </script>
+
+</engine>

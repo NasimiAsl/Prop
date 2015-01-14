@@ -6,14 +6,16 @@
     <script type="text/javascript" src="/contents/scripts/loader.js"></script>
     <link href="/contents/css/screen.css" rel="stylesheet" />
     <link href="/contents/css/root.css" rel="stylesheet" />
-    <script src="/contents/scripts/Tools/helpers.js"></script>  
-    <script src="/contents/scripts/engine/paper-full.min.js"></script>
+    <script src="/contents/scripts/Tools/helpers.js"></script>
+    <script src="/contents/scripts/clients.js"></script>
 </head>
 <body>
-   #[engine] #[menu] #[panels]
+    #[engine] #[menu] #[panels]
     <div class="hdn">#[templates]</div>
+    <div class="ab r-0025 b-0025 p-0025 ctrblue w-mn-06 z10 hdn" style="zoom:0.7" id="status">
+    </div>
     <script>
-        new prop.loader.get('/tools/templates.html', {exactly: true, term: ['templates','engine','menu','panels'] });
+        new prop.loader.get('/tools/templates.html', { exactly: true, term: ['templates', 'engine', 'menu', 'panels'] });
     </script>
 </body>
 </html>

@@ -23,7 +23,7 @@ var path_sel_mode = 0;
 
 function helperBase() { }
 
-function path_new(at) {
+function path_new(at) { 
     if (!def(at)) {
         css_r(get('paths_list').childNodes, 'act');
         var sc = create(get('path-tmp').innerHTML);
@@ -42,7 +42,7 @@ function path_new(at) {
         get('path-after').textContent = ssc.after;
 
         get('point-name').value = ssc.name;
-
+      
         _for(ssc.paths, function (it, i) {
             var sit = "{path:'@ph',push:'@ps',density:@dn,pointLength:@pl,inLine:@in}";
             sit = sit.replace('@ph', it.base.path)
@@ -55,14 +55,16 @@ function path_new(at) {
             var sc = create(get('path-tmp').innerHTML);
             sc.setAttribute('struct', sit);
             get('paths_list').appendChild(sc);
-            path_resetPush();
 
-            doEvent(first('#paths_list > div #__act'), 'click');
-            doEvent(first('#path-tabPath'), 'click');
-            doEvent(first('#path-tabPush'), 'click');
-        })
+          
 
 
+        });
+
+        doEvent(first('#paths_list > div #__act'), 'click');
+        doEvent(first('#path-tabPath'), 'click');
+        doEvent(first('#path-tabPush'), 'click');
+        path_resetPush();
 
     }
 }
@@ -136,7 +138,7 @@ function doCustomOnPath(points, befor, rest, after, r) {
     var result = [];
     var bef = js('function(r,p,i){ ' + befor + ' if(def(isIn) && isIn ) r.push({x:p.x,y:p.y,z:p.z,j:i});}');
     var res = js('function(p,i,j){ ' + rest + ' return def(isIn,false); }');
-    var aft = js('function(r,p,i){ ' + after + '  r.push({x:p.x,y:p.y,z:p.z,j:p.j});}');
+    var aft = js('function(r,p,i){ ' + after + '  r.push({x:p.x,y:p.y,z:p.z,j:p.j,hgt:p.hgt});}');
 
     var loop = _each;
     if (def(r, false)) loop = _each_r;
@@ -196,6 +198,8 @@ function getCurrentPoints_mainStruct(str) {
 }
 
 function pathHelper() {
+
+    path_fixedControl = "";
     getWallOption();
     if (def(helpers['path']))
         helpers['path'].dispose();
@@ -255,20 +259,72 @@ function pathHelper() {
 }
 
 function clearHelper() {
-    if (  def(helpers['mesh-default']))  helpers['mesh-default'].dispose(); 
-    if ( def(helpers['mesh-defaultq'])) helpers['mesh-defaultq'].dispose();
-    if (def(helpers['path']))helpers['path'].dispose(); 
-    if (def(helpers['path-step']))helpers['path-step'].dispose(); 
-    if (def(helpers['path-sel']))helpers['path-sel'].dispose();
-    if (def(helpers['path-org']))helpers['path-org'].dispose();
+    if (def(helpers['mesh-default'])) helpers['mesh-default'].dispose();
+    if (def(helpers['mesh-defaultq'])) helpers['mesh-defaultq'].dispose();
+    if (def(helpers['path'])) helpers['path'].dispose();
+    if (def(helpers['path-step'])) helpers['path-step'].dispose();
+    if (def(helpers['path-sel'])) helpers['path-sel'].dispose();
+    if (def(helpers['path-org'])) helpers['path-org'].dispose();
 }
 
-function buildSurface(st ) {
-     
+function hideMesh(name) {
 
-    buildMesh = function (_name) { 
+    var helper = "mesh_" + def(name, 'default');
+    if (helpers[helper])
+        helpers[helper].dispose();
+    if (helpers[helper + "q"])
+        helpers[helper + "q"].dispose();
+
+    helpers[helper] = null;
+    helpers[helper + "q"] = null;
+
+    loadStorage();
+
+}
+function showMesh(name) {
+
+    var helper = "mesh_" + def(name, 'default');
+
+    var item = localStorage.getItem(helper);
+    if (!def(item)) {
+        return;
+    }
+
+    item = js(item);
+
+    var st = prop.html.decode(item.st);
+    var m = prop.html.decode(item.m);
+    var op = prop.html.decode(item.op);
+    var mt = prop.html.decode(item.mt);
+
+
+    switch (mt) {
+        case 'surface': buildSurfaceMesh(st, m, op, name); break;
+        case 'wall': buildWallMesh(st, m, op, name); break;
+    }
+
+    loadStorage();
+}
+function isShowMesh(name) {
+    var helper = "mesh_" + def(name, 'default');
+    return def(helpers[helper]);
+}
+function deleteMesh(name) {
+
+    hideMesh(name);
+
+    var helper = "mesh_" + def(name, 'default');
+    localStorage.setItem(helper, "");
+    localStorage.removeItem(helper);
+
+    loadStorage();
+}
+function buildSurface(st) {
+
+
+    buildMesh = function (_name) {
         if (!def(_name)) clearHelper();
-        buildSurfaceMesh(getv('build-struct'), getv('build-material'), js(getv('build-option')), def(_name, getv('build-name')));
+        buildSurfaceMesh(getv('build-struct'), getv('build-material'), getv('build-option'), def(_name, getv('build-name')));
     };
     setv('build-material', get('obj-material').textContent);
     setv('build-struct', st);
@@ -276,8 +332,24 @@ function buildSurface(st ) {
     setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
 
     buildMesh('default');
-}
+} 
 function buildSurfaceMesh(st, m, op, name) {
+    var mt = 'surface';
+    if (!def(m) && !def(op) && !def(name)) {
+        var item = localStorage.getItem(st);
+        if (!def(item)) {
+            return;
+        }
+
+        item = js(item);
+
+        name = st;
+        st = item.st;
+        m = item.m;
+        op = item.op;
+        mt = item.mt;
+    }
+
     var helper = "mesh_" + def(name, 'default');
 
     if (helpers[helper])
@@ -286,7 +358,9 @@ function buildSurfaceMesh(st, m, op, name) {
         helpers[helper + "q"].dispose();
     }
 
-    localStorage.setItem(helper, { mt: 'surface', st: st, m: m, op: op });
+    localStorage.setItem(helper, "{ mt: 'surface', st:'" + prop.html.encode(st) + "', m:'" + prop.html.encode(m) + "', op:'" + prop.html.encode(op) + "' }");
+
+    op = js(op);
     st = js(st);
 
     var paths = [];
@@ -321,12 +395,12 @@ function buildSurfaceMesh(st, m, op, name) {
             helpers[helper].material.setTexture("refc2", ref2);
             helpers[helper].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
 
-            if (def(op.doubleSide, false)) {
+           // if (def(op.doubleSide, false)) {
                 helpers[helper + "q"] = $3d.tools.surface({ paths: paths }).toMesh(fst(), eng1);
                 helpers[helper + "q"].material.setTexture("refc", ref);
                 helpers[helper + "q"].material.setTexture("refc2", ref2);
                 helpers[helper + "q"].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
-            }
+           // }
 
         }
     });
@@ -334,11 +408,12 @@ function buildSurfaceMesh(st, m, op, name) {
     mgop = null;
 }
 
-function buildWall(st ) { 
+function buildWall(st) {
+
 
     buildMesh = function (_name) {
         if (!def(_name)) clearHelper();
-        buildWallMesh(getv('build-struct'), getv('build-material'), js(getv('build-option')), def(_name, getv('build-name')));
+        buildWallMesh(getv('build-struct'), getv('build-material'),  getv('build-option') , def(_name, getv('build-name')));
     };
     setv('build-material', get('obj-material').textContent);
     setv('build-struct', st);
@@ -348,12 +423,29 @@ function buildWall(st ) {
     buildMesh('default');
 }
 function buildWallMesh(st, m, op, name) {
+    var mt = 'wall';
+    if (!def(m) && !def(op) && !def(name)) {
+        var item = localStorage.getItem(st);
+        if (!def(item)) {
+            return;
+        }
+
+        item = js(item);
+
+        name = st;
+        st = item.st;
+        m = item.m;
+        op = item.op;
+        mt = item.mt;
+    }
+
     var helper = "mesh_" + def(name, 'default');
     if (helpers[helper])
         helpers[helper].dispose();
 
-    localStorage.setItem(helper, { mt: 'wall', st: st, m: m, op: op });
+    localStorage.setItem(helper, "{ mt: 'wall', st:'" + prop.html.encode(st) + "', m:'" + prop.html.encode(m) + "', op:'" + prop.html.encode(op) + "' }");
 
+    op = js(op);
     st = js(st);
 
     var paths = [];
@@ -374,8 +466,20 @@ function buildWallMesh(st, m, op, name) {
             right: wop.right ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
             top: wop.top ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
             bottom: wop.bottom ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
-            front: wop.front ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
-            back: wop.back ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
+            front: wop.front ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); }
+                : wop.afb ? function (p) {
+                    if (res.points.length - 2 == p.i  ) {
+                        return  res.rest(p, p.i, p.n.j.valueOf() * 1.0);
+                    } 
+                    return  (res.rest(p, p.i, p.n.j.valueOf() * 1.0) && (p.n1 == null || !res.rest(p, p.i + 1, p.n1.j.valueOf() * 1.0)));
+                } : null,
+            back: wop.back ? function (p) { return res.rest(p, (p.i+1), p.n.j.valueOf() * 1.0); }  
+                : wop.afb ? function (p) {
+                    if (!wop.closed && p.i == 0) {
+                        return res.rest(p, p.i, p.n.j.valueOf() * 1.0);
+                    } 
+                    return (!res.rest(p, p.i, p.n.j.valueOf() * 1.0) && (p.n1 != null && res.rest(p, p.i + 1, p.n1.j.valueOf() * 1.0)));
+                } : null,
             smooth: wop.smooth,
             closed: wop.closed,
             h: wop.h,
@@ -394,7 +498,7 @@ function buildWallMesh(st, m, op, name) {
             mgop = { alpha: def(op.alpha, false), back: def(op.back, false), fix: true };
         }
 
-        helpers[helper] = new $3d.geometryInstance(geo).toMesh(fst(), eng1);
+            helpers[helper] = new $3d.geometryInstance(geo).toMesh(fst(), eng1);
 
         if (def(op.wire, false)) {
             helpers[helper].material.wireframe = true;
@@ -403,7 +507,7 @@ function buildWallMesh(st, m, op, name) {
 
             ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
             ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
-            var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
+            var ref2 = new BABYLON.CubeTexture("/images/skybox/d/a", eng1.get().scene);
             ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
 
             helpers[helper].material.setTexture("refc", ref);

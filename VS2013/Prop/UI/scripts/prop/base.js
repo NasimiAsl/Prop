@@ -173,7 +173,7 @@ face3.prototype = {
 
         var n = new vec3(v1.p, cross(v1.d, v2.d), true).normal();
 
-       
+
         return vec(n.d.x, n.d.y, n.d.z);
     }
 };
@@ -429,20 +429,20 @@ var qt = (function () {
     return qt;
 })();
 lookAt = function (targetPoint, position, yawCor, pitchCor, rollCor) {
-     
+
 
     yawCor = yawCor || 0;
     pitchCor = pitchCor || 0;
     rollCor = rollCor || 0;
 
-    var dv = sub( targetPoint ,position);
+    var dv = sub(targetPoint, position);
     var yaw = -Math.atan2(dv.z, dv.x) - Math.PI / 2;
     var len = Math.sqrt(dv.x * dv.x + dv.z * dv.z);
     var pitch = Math.atan2(dv.y, len);
     return qt.RotationYawPitchRoll(yaw + yawCor, pitch + pitchCor, rollCor);
 };
- 
- 
+
+
 
 
 
@@ -760,5 +760,4 @@ var prop = {
         shaders: {}, // ver 1.0.01.005
     },
 };
-
 
