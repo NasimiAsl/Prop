@@ -7,7 +7,7 @@ function createBabylonJsEngine() {
     babylon.cameras = { main: new $3d.iCamera() };
     babylon.lights = { hemi: new $3d.iLight(), dir: new $3d.iLight() };
     babylon.renderer = new $3d.iRenderer();
-    babylon.postProcess = { /*!!! under construction*/ }; 
+    babylon.postProcess = { /*!!! under construction*/ };
 
     // initializer
 
@@ -54,6 +54,26 @@ function createBabylonJsEngine() {
         var quality = def(babylon.renderer.quality, 1.0);
         babylon.instance.qualityMode = quality;
 
+        if (def(o)) {
+
+            var can = babylon.instance.canvas;
+
+            if (def(o.width) && def(o.height)) {
+                can.style.width = (o.width * 1.0) + "px";
+                can.style.height = (o.width * 1.0) + "px"; 
+            }
+
+
+            if (def(o.percent)) {
+                var w = can.offsetWidth;
+                var h = can.offsetHeight; 
+
+                can.style.width = ( w * o.percent /100.0) + "px";
+                can.style.height = (h * o.percent / 100.0) + "px";
+            }
+
+        }
+
         //if (quality && (quality != 1 && quality < 22)) {
 
         //    var ps = 1.7778;// 16 × 9 
@@ -77,21 +97,21 @@ function createBabylonJsEngine() {
 
         babylon.instance.renderer = new BABYLON.Engine(babylon.instance.canvas, true);
 
-        //canvas.style.width = '100%';
-        //canvas.style.height = '100%'; 
+        if (def(o)) {
+            babylon.instance.canvas.style.width = '100%';
+            babylon.instance.canvas.style.height = '100%';
+        }
     }
     babylon.onCreatePostProcess = function (o) { }
     babylon.render = function () { }
     babylon.onFrame = function () { }
     babylon.onStartAnimation = function () {
         var th = this;
-        this.instance.renderer.runRenderLoop(function () {
-
+        this.instance.renderer.runRenderLoop(function () { 
             babylon.onRequestFrame();
             th.instance.scene.render();
         });
-    }
-
+    } 
     return babylon;
 }
 
@@ -113,8 +133,7 @@ function fromBabylonGeometry(op, ref) {
     ref.uvs = op.uvs;
 
     return ref;
-}
-
+} 
 // {geo,scene}
 function buildBabylonMesh(op) {
 
@@ -179,7 +198,7 @@ function defTexture(op, im) {
 }
 // { vفط:vertex,frg:fragment,helper,u:uniform,map:{path:'sample.jpg',} , alpha , back}
 function defShader(op, im) {
-     // im.alpha = true;
+    // im.alpha = true;
     // Compile
 
 
@@ -307,4 +326,4 @@ function createBabylonJsMaterial() {
 
     return im;
 }
-
+ 

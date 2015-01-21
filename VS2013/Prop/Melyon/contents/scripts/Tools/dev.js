@@ -150,7 +150,7 @@ function mat_table(cl) {
 function mat_block1(cl) {
     cl = def(cl, 0x000000);
     return sh_range({
-        start: 10, end: 1000,
+        start: 10, end: 500,
         mat1: sh_multi([
             { r: sh_specular({ glass: true }), e: 0.20 },
             { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
@@ -160,24 +160,19 @@ function mat_block1(cl) {
             { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.015 },
             { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
             { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
-            { r: 'float pi2 =((pos.x )- floor((pos.x )/2.)*2.)*8.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,1.0);', e: 0.50 },
-            { r: 'float pi3 =((pos.z )- floor((pos.z )/2.)*2.)*8.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,1.0);', e: 0.50 },
+            { r: 'float pi2 =((pos.x )- floor((pos.x )/2.)*2.)*8.  ; if(pi2 > 0.2) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,1.0);', e: 0.20 },
+            { r: 'float pi3 =((pos.z )- floor((pos.z )/2.)*2.)*8.  ; if(pi3 > 0.2) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,1.0);', e: 0.20 },
             // { r: 'float pi4 =((pos.y )- floor((pos.y )/10.)*10.)*8.  ; if(pi4 > 1.0) pi4 = 0.0; else pi4 = -0.1; result = vec4(pi4,pi4,pi4,1.0);', e: 1.0 },
-            { r: 'float pp;pp = abs( noise(vec3(pos.x/2.,pos.y/2.,pos.z/2.)));if(pp < 0.05 || pp > 0.1) pp  = -1.*pp/3.0 ;else pp = -0.2;result = vec4(pp,pp,pp,1.0);', e: 0.15 },
+            { r: 'float pp;pp = abs( noise(vec3(pos.x/2.,pos.y/2.,pos.z/2.)));if(pp < 0.05 || pp > 0.35) pp  = -1.*pp/3.0 ;else pp = -0.2;result = vec4(pp,pp,pp,1.0);', e: 0.15 },
             { r: sh_frensel(), e: 0.3 }]),
         mat2: sh_multi([
-            { r: sh_specular({ glass: true }), e: 0.020 },
+            { r: sh_specular({ glass: true }), e: 0.20 },
             { r: sh_specular({ glass: true, pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
             { r: sh_specular({ glass: true, pos: 'vec3(10.,100.,0.)' }), e: 0.035 },
-             { r: sh_phonge({ color: cl, back: cl }), e: 0.5 }, { r: 'result = vec4(1.,1.,1.,1.0);', e: 1.0 },
+            { r: sh_phonge({ color: cl, back: cl }), e: 1.0 },
             { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,0.)' }), e: 0.05 },
-            { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.15 },
-            { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,0.,100.)' }), e: 0.025 },
-            { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,20.,0.)' }), e: 0.015 },
-          //  { r: 'float pi2 =((pos.x )- floor((pos.x)/10.)*10.)*15.  ; if(pi2 > 1.0) pi2 = 0.0; else pi2 = -0.1; result = vec4(pi2,pi2,pi2,0.30);', e: 0.2 },
-          //  { r: 'float pi3 =((pos.z)- floor((pos.z)/10.)*10.)*15.  ; if(pi3 > 1.0) pi3 = 0.0; else pi3 = -0.1; result = vec4(pi3,pi3,pi3,0.30);', e: 0.2 },
-          //  { r: 'float pi4 =((pos.y)- floor((pos.y)/10.)*10.)*15.  ; if(pi4 > 1.0) pi4 = 0.0; else pi4 = -0.1; result = vec4(pi4,pi4,pi4,0.30);', e: 0.2 },
-            { r: sh_frensel(), e: 0.3 }])
+            { r: sh_specular({ refc: 'refc2', pos: 'vec3(10.,100.,0.)' }), e: 0.015 }, 
+            { r: sh_frensel(), e: 0.3 }]),
     });
 }
 

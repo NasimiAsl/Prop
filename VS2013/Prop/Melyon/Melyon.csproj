@@ -169,6 +169,9 @@
     <Content Include="contents\sass\screen.scss" />
     <Content Include="contents\sass\general\_flexy.scss" />
     <Content Include="packages.config" />
+    <Content Include="objs\Avent.js" />
+    <Content Include="objs\sls.js" />
+    <Content Include="objs\ford.js" />
     <None Include="Properties\PublishProfiles\sdfgsdf.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

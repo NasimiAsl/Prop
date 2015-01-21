@@ -40,9 +40,6 @@
 
 @include color('select',rgb(0, 86, 7));   
 .c-iselect {    
-    background-image: url('/images/shapes/checked.svg');
-    background-position: 2px 2px;
-    background-repeat:no-repeat; 
-    color:#ffffff !important;
+    color:#ffffff !important; 
     font-weight: bold;
 }

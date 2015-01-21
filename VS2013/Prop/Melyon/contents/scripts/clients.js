@@ -194,26 +194,72 @@ var eventInitialize = function (container, mousepad, touchpad) {
 
 };
 
+var v = 30;
+ps = { x: 0, y: 0, z: 0 };
 request = function (istr) {
 
     var cam = eng1.get().cameras.main;
-    var ps = nrm(cam.position);
 
-    if (iStr.checkKey(83)) { cam.target.x += 1; }
-    if (iStr.checkKey(87)) { cam.target.x -= 1; }
-    if (iStr.checkKey(68)) { cam.target.z += 1; }
-    if (iStr.checkKey(65)) { cam.target.z -= 1; }
+
 
     if (iStr.checkKey([107, 187])) { cam.target.y += 1; }
     if (iStr.checkKey([109, 189])) { cam.target.y -= 1; }
 
-    if (iStr.checkKey([16, 67], true)) { cam.target.x = 0; cam.target.y = 6.0; cam.target.z = 0; }
+    if (iStr.checkKey(87)) {
+        ps = nrm(sub(cam.position, cam.target));
+
+        ps.y = 0;
+        v = 30;
+    }
+
+    if (iStr.checkKey(83)) {
+        ps = nrm(sub(cam.position, cam.target));
+
+        ps = not(ps);
+        ps.y = 0;
+        v = 30;
+    }
+
+    if (iStr.checkKey(65)) {
+        ps = nrm(sub(cam.position, cam.target));
+
+        v = 30;
+        ps = r_y(ps, -90*deg);
+
+        ps = not(ps);
+        ps.y = 0;
+    }
+
+    if (iStr.checkKey(68)) {
+        ps = nrm(sub(cam.position, cam.target));
+
+        v = 30;
+        ps = r_y(ps, 90 * deg);
+
+        ps = not(ps);
+        ps.y = 0;
+    }
+
+    v -= 2.1;
+
+    if (v < 0.2) v = 0;
 
 
-    whelper.position.x = cam.target.x;
-    whelper.position.y = cam.target.y-3.0 ;
-    whelper.position.z = cam.target.z; 
-    
+
+
+    cam.position.x += ps.x * v / 60;
+    cam.position.y += ps.y * v / 60;
+    cam.position.z += ps.z * v / 60;
+
+    cam.target.x += ps.x * v / 60;
+    cam.target.y += ps.y * v / 60;
+    cam.target.z += ps.z * v / 60; 
+
+    if (iStr.checkKey([16, 67], true)) { cam.target.x = 0; cam.target.y = 6.0; cam.target.z = 0; } // shift + c
+
+
+    //iStr.keys = "";
+
 }
 
 
