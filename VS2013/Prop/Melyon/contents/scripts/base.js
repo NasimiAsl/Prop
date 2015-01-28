@@ -171,6 +171,9 @@ var ctl = {
         all('> .c-iselect',
             function (at, i) { at.classList.remove('c-iselect'); },
             function () { th.classList._add('c-iselect'); }, null, th.parentNode);
+    },
+    upload: function (th) {
+
     }
 
 };

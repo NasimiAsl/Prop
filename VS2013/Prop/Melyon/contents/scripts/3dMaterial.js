@@ -1,5 +1,6 @@
 ﻿var shdrIndex = 0;
 var mgop;
+var mgref;
 function _cs(i) {
     if (i.toString().indexOf('.') == -1) return i + ".";
     return i.toString();
@@ -22,11 +23,21 @@ var sh_uniform = function () {
         "uniform vec3 p3;    ",
         "uniform vec2 mouse; ",
         "uniform float time; ",
+        "uniform vec3 center; ",
 
         "uniform samplerCube refc; ",
         "uniform samplerCube refc2; ",
         "uniform samplerCube refc3; ",
+        "uniform sampler2D ref1; ",
         "uniform sampler2D ref2; ",
+        "uniform sampler2D ref3; ",
+        "uniform sampler2D ref4; ",
+        "uniform sampler2D ref5; ",
+        "uniform sampler2D ref6; ",
+        "uniform sampler2D ref7; ",
+        "uniform sampler2D ref8; ",
+
+
         "uniform vec3 vrefi; ",
         "uniform mat4 refmat; ",
         "uniform mat4 view;"
@@ -53,6 +64,8 @@ var sh_tools = function () {
         "float simplex3d(vec3 p) {   vec3 s = floor(p + dot(p, vec3(F3)));   vec3 x = p - s + dot(s, vec3(G3));  vec3 e = step(vec3(0.0), x - x.yzx);  vec3 i1 = e*(1.0 - e.zxy);  vec3 i2 = 1.0 - e.zxy*(1.0 - e);   vec3 x1 = x - i1 + G3;   vec3 x2 = x - i2 + 2.0*G3;   vec3 x3 = x - 1.0 + 3.0*G3;   vec4 w, d;    w.x = dot(x, x);   w.y = dot(x1, x1);  w.z = dot(x2, x2);  w.w = dot(x3, x3);   w = max(0.6 - w, 0.0);   d.x = dot(random3(s), x);   d.y = dot(random3(s + i1), x1);   d.z = dot(random3(s + i2), x2);  d.w = dot(random3(s + 1.0), x3);  w *= w;   w *= w;  d *= w;   return dot(d, vec4(52.0));     }  ",
         "float noise(vec3 m) {  return   0.5333333*simplex3d(m)   +0.2666667*simplex3d(2.0*m) +0.1333333*simplex3d(4.0*m) +0.0666667*simplex3d(8.0*m);   } ",
         "float dim(vec3 p1 , vec3 p2){   return sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y)+(p2.z-p1.z)*(p2.z-p1.z)); }",
+        "vec3 bump(sampler2D txt,vec2 uv,float dx,float dy,vec3 dir,float power){float ix = uv.x;if(dx == 1.) ix = 1.0-uv.x;float iy = uv.y;if(dy == 1.) iy = 1.0-uv.y;vec3  col = texture2D( txt, vec2(ix,iy)).xyz*power;float lum = dot(col,vec3(0.111)); vec3  nor = normalize( vec3(1.0 ) );float lig1 =1.0- clamp(   1.5*dot(nor,dir), 0.0, 1.0 );col  =   vec3(lig1+0.5);return col; }",
+        "vec2  rotate_xy(vec2 pr1,vec2  pr2,float alpha) {vec2 pp2 = vec2( pr2.x - pr1.x,   pr2.y - pr1.y );return  vec2( pr1.x + pp2.x * cos(alpha*3.14159265/180.) - pp2.y * sin(alpha*3.14159265/180.),pr1.y + pp2.x * sin(alpha*3.14159265/180.) + pp2.y * cos(alpha*3.14159265/180.));} \n vec3  r_y(vec3 n, float a,vec3 c) {vec3 c1 = vec3( c.x,  c.y,   c.z );c1.x = c1.x;c1.y = c1.z;vec2 p = rotate_xy(vec2(c1.x,c1.y), vec2( n.x,  n.z ), a);n.x = p.x;n.z = p.y;return n; } \n vec3  r_x(vec3 n, float a,vec3 c) {vec3 c1 = vec3( c.x,  c.y,   c.z );c1.x = c1.y;c1.y = c1.z;vec2 p = rotate_xy(vec2(c1.x,c1.y), vec2( n.y,  n.z ), a);n.y = p.x;n.z = p.y;return n; } \n vec3  r_z(vec3 n, float a,vec3 c) {  vec3 c1 = vec3( c.x,  c.y,   c.z );vec2 p = rotate_xy(vec2(c1.x,c1.y), vec2( n.x,  n.y ), a);n.x = p.x;n.y = p.y;return n; }",
     ].join('\n');
 };
 var sh_main_vertex = function (content) {
@@ -60,6 +73,7 @@ var sh_main_vertex = function (content) {
         "attribute vec3 position; ",
         "attribute vec3 normal;   ",
         "attribute vec2 uv;       ",
+
         "void main(void) { ",
         "   vec4 result; result = vec4(position.x,position.y,position.z,1.0) ;",
          "   pos = vec3(position.x,position.y,position.z);",
@@ -71,6 +85,7 @@ var sh_main_vertex = function (content) {
          "    _pos = vec3(world * vec4(position, 1.0));",
          "    _vpos = vec3(world * vec4(vpos, 1.0));",
          "    _nrm = normalize(vec3(world * vec4(nrm, 0.0)));",
+         "    u = uv;",
         "}"
     ].join('\n');
 };
@@ -91,19 +106,23 @@ var sh_multi = function (contents, scaled) {
     var pre = "", ps = ["", "", "", ""], psh = 0.0;
     for (var i = 0; i < contents.length; i++) {
 
+        if (!def(contents[i].r)) contents[i] = { r: contents[i], e: 1.0 };
+
         pre += " vec4 result_" + k + "_" + i + ";result_" + k + "_" + i + " = vec4(0.,0.,0.,0.); float rp_" + k + "_" + i + " = " + _cs(contents[i].e) + "; \n";
         pre += contents[i].r + "\n";
         pre += " result_" + k + "_" + i + " = result; \n";
+
 
         ps[0] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".x*rp_" + k + "_" + i;
         ps[1] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".y*rp_" + k + "_" + i;
         ps[2] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".z*rp_" + k + "_" + i;
         ps[3] += (i == 0 ? "" : " + ") + "result_" + k + "_" + i + ".w*rp_" + k + "_" + i;
 
+
         psh += contents[i].e;
     }
 
-    if (def(scaled, false)) {
+    if (def(scaled, 0) == 1) {
         ps[0] = "(" + ps[0] + ")/" + _cs(psh);
         ps[1] = "(" + ps[1] + ")/" + _cs(psh);
         ps[2] = "(" + ps[2] + ")/" + _cs(psh);
@@ -114,6 +133,34 @@ var sh_multi = function (contents, scaled) {
 
     return pre;
 };
+
+var sh_solid = function (color) {
+    color = def(color, 0x000000);
+
+    var co = recolor(color);
+    return " result = vec4(" + _cs(co.r) + ", " + _cs(co.g) + ", " + _cs(co.b) + ", " + _cs(co.a) + ");";
+}
+
+var sh_compose = function (contents, scaled) {
+    k++;
+    var pre = "vec4 result_main_" + k + "_ = vec4( result.x,result.y,result.z,result.w);";
+    for (var i = 0; i < contents.length; i++) {
+        pre += contents[i] + "\n";
+        pre += " if(result_main_" + k + "_.x <= 0.0 && result_main_" + k + "_.y <= 0.0 && result_main_" + k + "_.z <= 0.0 ) result_main_" + k + "_ = vec4( result.x,result.y,result.z,result.w); \n";
+
+        //pre += " else {" +
+        //    " float rm1_" + k + "_ = (result.x+result.y+result.z+result.w)/4.0;" +
+        //    " float rm2_" + k + "_ = (result_main_" + k + "_.x+result_main_" + k + "_.y+result_main_" + k + "_.z+result_main_" + k + "_.w)/4.0;" +
+
+
+        //    " result_main_" + k + "_ = vec4( result.x*rm1_" + k + "_+result_main_" + k + "_.x*rm2_" + k + "_,result.y*rm1_" + k + "_+result_main_" + k + "_.y*rm2_" + k + "_,result.z*rm1_" + k + "_+result_main_" + k + "_.z*rm2_" + k + "_,result.w*rm1_" + k + "_+result_main_" + k + "_.w*rm2_" + k + "_); }\n";
+    }
+
+    pre += "result = vec4( result_main_" + k + "_.x,result_main_" + k + "_.y,result_main_" + k + "_.z,result_main_" + k + "_.w);";
+
+    return pre;
+};
+
 var sh_range = function (op) {
     k++;
     op = def(op, {});
@@ -209,7 +256,6 @@ var sh_cubmat = function (op) {
         "result = vec4(rc.x,rc.y,rc.z,1.0);                    "
     ].join('\n');
 };
-
 var sh_specular = function (op) {
     op = def(op, {});
     k++;
@@ -218,9 +264,94 @@ var sh_specular = function (op) {
         "vec3 coords_" + k + "_ = reflect(viewDir_" + k + "_" + (def(op.glass, false) ? "*vec3(1.0)" : "*vec3(-1.0)") + ", _nrm )+" + def(op.pos, 'vec3(0.0,0.0,0.0)') + "; ",
         "vec3 vReflectionUVW_" + k + "_ = vec3( refmat *  vec4(coords_" + k + "_, 0)); ",
         "vec3 rc_" + k + "_= textureCube(" + def(op.refc, "refc") + ", vReflectionUVW_" + k + "_*vec3(0.1)).rgb  ;      ",
-        "result = vec4(rc_" + k + "_.x ,rc_" + k + "_.y,rc_" + k + "_.z, "+(def(op.alpha,false)? "1.":"(rc_" + k + "_.x+rc_" + k + "_.y+rc_" + k + "_.z)/3.0 ")+");  "
+        "result = vec4(rc_" + k + "_.x ,rc_" + k + "_.y,rc_" + k + "_.z, " + (def(op.alpha, false) ? "1." : "(rc_" + k + "_.x+rc_" + k + "_.y+rc_" + k + "_.z)/3.0 ") + ");  "
     ].join('\n');
 };
+var sh_map = function (op) {
+    op = def(op, {});
+    k++;
+    op.uv = def(op.uv, 'u');
+
+    op.na = def(op.na, 1.0);
+    op.n1 = def(op.n1, op.na);
+    op.n2 = def(op.n2, op.na);
+    op.t1 = def(op.t1, 1.0);
+    op.t2 = def(op.t2, 1.0);
+    op.rx = def(op.rx, 0.0);
+    op.ry = def(op.ry, 0.0);
+    op.rz = def(op.rz, 0.0);
+    op.n = def(op.n, 0.0);
+    op.p1 = def(op.p1, 'y');
+    op.p2 = def(op.p2, 'z');
+    op.p3 = def(op.p3, 'x');
+    op.ignore = def(op.ignore, 'vec4(0.0,0.,0.,1.0);');
+
+    op.ref = '';
+    mgref = def(mgref, {});
+    if (def(op.ref1)) { mgref.ref1 = op.ref1; op.ref = 'ref1'; }
+    if (def(op.ref2)) { mgref.ref2 = op.ref2; op.ref = 'ref2'; }
+    if (def(op.ref3)) { mgref.ref3 = op.ref3; op.ref = 'ref3'; }
+    if (def(op.ref4)) { mgref.ref4 = op.ref4; op.ref = 'ref4'; }
+    if (def(op.ref5)) { mgref.ref5 = op.ref5; op.ref = 'ref5'; }
+    if (def(op.ref6)) { mgref.ref6 = op.ref6; op.ref = 'ref6'; }
+    if (def(op.ref7)) { mgref.ref7 = op.ref7; op.ref = 'ref7'; }
+    if (def(op.ref8)) { mgref.ref8 = op.ref8; op.ref = 'ref8'; }
+
+
+    var s =
+      op.uv == 'face' ? [
+          "vec3 centeri_" + k + "_ = vec3(0.);",
+          "vec3 ppo_" + k + "_ = r_z( pos," + _cs(op.rz) + ",centeri_" + k + "_);  ",
+          " ppo_" + k + "_ = r_y( ppo_" + k + "_," + _cs(op.ry) + ",centeri_" + k + "_);  ",
+          " ppo_" + k + "_ = r_x( ppo_" + k + "_," + _cs(op.rx) + ",centeri_" + k + "_);  ",
+          "vec3 nrm_" + k + "_ = r_z( nrm," + _cs(op.rz) + ",centeri_" + k + "_);  ",
+          " nrm_" + k + "_ = r_y( nrm_" + k + "_," + _cs(op.ry) + ",centeri_" + k + "_);  ",
+          " nrm_" + k + "_ = r_x( nrm_" + k + "_," + _cs(op.rx) + ",centeri_" + k + "_);  ",
+
+      "vec4 color_" + k + "_ = texture2D(" + op.ref + ", vec2((ppo_" + k + "_." + op.p1 +  "/" + _cs(op.n1) + ")+" + _cs(op.t1) +",(ppo_" + k + "_." + op.p2 + "/" + _cs(op.n2) + ")+" + _cs(op.t2) + "));  ",
+      "                                                                     ",
+      "if(nrm_" + k + "_." + op.p3 + "  <  " + _cs(op.n) + "  )                                                    ",
+      "    color_" + k + "_ = " + op.ignore + ";                                              ",
+      " result = color_" + k + "_; "].join("\n") : "result = texture2D(" + op.ref + ", u);"
+
+    return s;
+}
+
+
+var sh_bump = function (op) {
+    op = def(op, {});
+
+    if (def(op.ref1)) {
+        mgref = { ref1: op.ref1 };
+    }
+
+    return [
+       "vec3 col1 = bump(textureSampler,vUV,1.,1.,vec3(100.,300.,0.),4.0)*0.3 + bump(textureSampler,vUV,1.,1.,vec3(100.,300.,0.),0.30)*0.3;",
+       "vec3 col2 = bump(textureSampler,vUV,0.,1.,vec3(100.,300.,0.),4.0)*0.3 + bump(textureSampler,vUV,0.,1.,vec3(100.,300.,0.),0.30)*0.3;",
+       "                                                                       ",
+       "result = vec4(result.x+col1.x - col2.x ,result.y+col1.x- col2.x,result.z+col1.x- col2.x,result.w);",
+    ].join('\n');
+}
+var sh_light = function (op) {
+    op = def(op, {});
+    op.color = def(op.color, 0xffffff);
+    var c_c = recolor(op.color);
+    var c_2 = recolor(def(op.diffuse), 0x000000);
+    k++;
+    return [
+
+          "vec3 vl_" + k + "_ = " + def(op.dir, 'vec3(0.,200.,300.)') + ";",
+          " vec3 vdw_" + k + "_ = normalize(camera - _pos); ",
+          " vec3 lvw_" + k + "_ = normalize(vl_" + k + "_ - _pos);  ",
+          " vec3 co_" + k + "_ = " + (def(op.diffuse) ? "vec3(" + _cs(c_2.r) + "," + _cs(c_2.g) + "," + _cs(c_2.b) + ");" : "result.xyz;"),
+          " vec3 lco_" + k + "_ = vec3(" + _cs(c_c.r) + "," + _cs(c_c.g) + "," + _cs(c_c.b) + ");",
+          " float ndl_" + k + "_ = max(0., dot(_nrm, lvw_" + k + "_));             ",
+          " ndl_" + k + "_  =    " + (def(op.effect) ? op.effect.replaceAll('pr', "ndl_" + k + "_") : " ndl_" + k + "_") + ";",
+          " ndl_" + k + "_ = max(0.,ndl_" + k + "_);                    ",
+          " result = vec4( co_" + k + "_*(1.-ndl_" + k + "_)+ lco_" + k + "_* ndl_" + k + "_  , 1.);"
+
+    ].join('\n');
+}
 
 
 $3d.mat = {
@@ -264,7 +395,7 @@ $3d.mat = {
             frgElement.innerHTML = $3d.mat.shaderBase.fragment(frg, op.helper, op.frgops);
             document.getElementById('shaders').appendChild(frgElement);
 
-            
+
 
             return { shader: op };
 
@@ -281,7 +412,7 @@ $3d.mat = {
         return $3d.mat.shaderBase.shader({
             vtx: op.vtx,
             frg: op.frg,
-            helper: def(op.hlp,'')
+            helper: def(op.hlp, '')
         });
     },
 

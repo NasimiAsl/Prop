@@ -318,6 +318,25 @@ function showMesh(name) {
     loadStorage();
 }
 
+function showObject(index) {
+    index = index.replaceAll('item-', '').valueOf() * 1.0;
+    var fst = js('function(){' + get('obj-material').textContent + '}');
+    objectsHelpers[index] = new $3d.geometryInstance(objectsHelpersGeos[index]).toMesh(fst(), eng1);
+
+    ref = new BABYLON.CubeTexture("/images/skybox/d3/skybox", eng1.get().scene);
+    ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+    var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
+    ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+
+    objectsHelpers[index].scaling.x *= getv('object-scale') * 1.0;
+    objectsHelpers[index].scaling.y *= getv('object-scale') * 1.0;
+    objectsHelpers[index].scaling.z *= getv('object-scale') * 1.0;
+
+    objectsHelpers[index].material.setTexture("refc", ref);
+    objectsHelpers[index].material.setTexture("refc2", ref2);
+    objectsHelpers[index].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+
+}
 
 function convertToPointedPatternMesh() {
     var name = getv('build-name');
@@ -371,9 +390,10 @@ function repeatMesh(f, st) {
     var st = def(st, getRepeatStruct());
 
     function setStruct(mesh, i) {
-        mesh.rotation.x += st.rot.x * i*deg;
-        mesh.rotation.y += st.rot.y * i*deg;
-        mesh.rotation.z += st.rot.z * i*deg;
+        if (!def(mesh)) return;
+        mesh.rotation.x += st.rot.x * i * deg;
+        mesh.rotation.y += st.rot.y * i * deg;
+        mesh.rotation.z += st.rot.z * i * deg;
 
         mesh.position.x += st.pos.x * i;
         mesh.position.y += st.pos.y * i;
@@ -385,15 +405,26 @@ function repeatMesh(f, st) {
 
     }
 
-    repeat(st.repeatCount, function (i) {
-        var m = f(i);
+
+    if (st.repeatCount == 1) {
+        var m = f(1);
 
         if (def(m.length) && m.length > 0)
-            _each(m, function (at, j) { setStruct(at, i); });
+            _each(m, function (at, j) { setStruct(at, 1); });
         else {
-            setStruct(m, i);
+            setStruct(m, 1);
         }
-    });
+    }
+    else
+        repeat(st.repeatCount, function (i) {
+            var m = f(i);
+
+            if (def(m.length) && m.length > 0)
+                _each(m, function (at, j) { setStruct(at, i); });
+            else {
+                setStruct(m, i);
+            }
+        });
 }
 
 function initRepeatMesh(name) {
@@ -443,6 +474,12 @@ function editMesh(name) {
 
     item = js(item);
 
+    get('obj-material').textContent = prop.html.decode(item.m);
+    setv('build-struct', item.st);
+    setv('build-option', item.op);
+    setv('build-material', item.m);
+
+
     var st = prop.html.decode(item.st);
     var m = prop.html.decode(item.m);
     var op = prop.html.decode(item.op);
@@ -451,8 +488,8 @@ function editMesh(name) {
     st = js(st);
 
     first('#Surface #Points').innerHTML = "";
-
     var points = [];
+
 
     var str = "";
 
@@ -571,12 +608,12 @@ function buildSurfaceMesh(st, m, op, name, rp) {
             helpers[helper].material.setTexture("refc2", ref2);
             helpers[helper].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
 
-            // if (def(op.doubleSide, false)) {
-            helpers[helper + "q"] = $3d.tools.surface({ paths: paths }).toMesh(fst(), eng1);
-            helpers[helper + "q"].material.setTexture("refc", ref);
-            helpers[helper + "q"].material.setTexture("refc2", ref2);
-            helpers[helper + "q"].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
-            // }
+            if (def(op.doubleSide, false)) {
+                helpers[helper + "q"] = $3d.tools.surface({ paths: paths }).toMesh(fst(), eng1);
+                helpers[helper + "q"].material.setTexture("refc", ref);
+                helpers[helper + "q"].material.setTexture("refc2", ref2);
+                helpers[helper + "q"].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+            }
 
         }
     });
@@ -603,7 +640,7 @@ function buildWall(st) {
 
     buildMesh('default');
 }
-function buildWallMesh(st, m, op, name,rp) {
+function buildWallMesh(st, m, op, name, rp) {
     var mt = 'wall';
     if (!def(m) && !def(op) && !def(name)) {
         var item = localStorage.getItem(st);

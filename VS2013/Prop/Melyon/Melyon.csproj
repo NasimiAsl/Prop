@@ -130,6 +130,9 @@
     <Content Include="images\skybox\skybox_px.jpg" />
     <Content Include="images\skybox\skybox_py.jpg" />
     <Content Include="images\skybox\skybox_pz.jpg" />
+    <Content Include="images\textures\m1.jpg" />
+    <Content Include="images\textures\aw.jpg" />
+    <Content Include="images\textures\aw001.jpg" />
     <Content Include="images\textures\lights.png" />
     <Content Include="img\b_1 %281%29.png" />
     <Content Include="img\b_1 %2810%29.png" />
@@ -172,6 +175,10 @@
     <Content Include="objs\Avent.js" />
     <Content Include="objs\sls.js" />
     <Content Include="objs\ford.js" />
+    <Content Include="objs\f2.js" />
+    <Content Include="objs\box_test_01.js" />
+    <Content Include="objs\t1.js" />
+    <Content Include="objs\wwww.js" />
     <None Include="Properties\PublishProfiles\sdfgsdf.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

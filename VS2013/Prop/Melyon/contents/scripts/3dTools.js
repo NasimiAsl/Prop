@@ -28,7 +28,7 @@ $3d.tools = {
         function exch(p) { return (p.x || p.x == 0.0); }
         if (!op.uv) { op.uv = "0123"; }
 
-        if (def(op.noUV, false)) op.uv = ".....";
+        //if (def(op.noUV, false)) op.uv = ".....";
 
         function addUv(i) {
             if (op.uv[i].toString() == "0") geo.uvs.push(0.0, 0.0);
@@ -155,10 +155,10 @@ $3d.tools = {
         if (!op.uv) { op.uv = "0123"; }
 
         function addUv(i) {
-            if (op.uv[i].toString() == "0") geo.uvs.push(0.0, 0.0);
-            if (op.uv[i].toString() == "1") geo.uvs.push(0.0, op.vp);
-            if (op.uv[i].toString() == "2") geo.uvs.push(op.up, 0.0);
-            if (op.uv[i].toString() == "3") geo.uvs.push(op.up, op.vp);
+            //if (op.uv[i].toString() == "0") geo.uvs.push(0.0, 0.0);
+            //if (op.uv[i].toString() == "1") geo.uvs.push(0.0, op.vp);
+            //if (op.uv[i].toString() == "2") geo.uvs.push(op.up, 0.0);
+            //if (op.uv[i].toString() == "3") geo.uvs.push(op.up, op.vp);
         };
 
         if (!op.up) { op.up = 1.0; }
@@ -513,8 +513,6 @@ $3d.tools.wall = function (op) {
         nhd = { x: nxd.x, y: nxd.y + (op.h - def(p.n.hgt, 0)), z: nxd.z };
 
 
-
-
         if (op.front && op.front(p)) $3d.tools.face(geo, nxu, nxd, nhu, nhd, {});
         if (op.back && op.back(p))
             $3d.tools.face(geo, nxu, nxd, nhu, nhd, { flip: 1.0 });
@@ -689,265 +687,16 @@ $3d.tools.obj = function (path, op) {
     op.array = def(op.array, []);
 
 
-    var parse = function (text) {
-
-        var objects = [];
-        var faces = [];
-        var vertices = [];
-        var normals = [];
-        var uvs = [];
-        var geometry = null;
-
-        function vector(x, y, z) {
-            return { x: x, y: y, z: z };
-        }
-
-        function uv(u, v) {
-            return { x: x, y: y };
-        }
-
-        function face3(a, b, c, normals) {
-            return { x: a, y: b, z: c };
-        }
-
-
-        function parseVertexIndex(index) {
-
-            index = parseInt(index);
-
-            return index >= 0 ? index - 1 : index + vertices.length;
-
-        }
-
-        function parseNormalIndex(index) {
-
-            index = parseInt(index);
-
-            return index >= 0 ? index - 1 : index + normals.length;
-
-        }
-
-        function parseUVIndex(index) {
-
-            index = parseInt(index);
-
-            return index >= 0 ? index - 1 : index + uvs.length;
-
-        }
-
-        function add_face(a, b, c, normals_inds) {
-
-            //if (normals_inds === undefined) {
-
-            $3d.tools.face3(n_1(objects),
-                parseVertexIndex(a),
-                parseVertexIndex(b),
-                parseVertexIndex(c)
-           );
-
-            // } else {
-
-            // faces.push(face3(
-            //    vertices[parseVertexIndex(a)] - 1,
-            //    vertices[parseVertexIndex(b)] - 1,
-            //    vertices[parseVertexIndex(c)] - 1
-            //    //,
-            //    //[
-            //    //    normals[parseNormalIndex(normals_inds[0])].clone(),
-            //    //    normals[parseNormalIndex(normals_inds[1])].clone(),
-            //    //    normals[parseNormalIndex(normals_inds[2])].clone()
-            //    //]
-            //));
-            // }
-        }
-
-        function add_uvs(a, b, c) {
-
-        }
-
-        function handle_face_line(faces, uvs, normals_inds) {
-
-            if (faces[3] === undefined) {
-
-                add_face(faces[0], faces[1], faces[2], normals_inds);
-
-                if (uvs !== undefined && uvs.length > 0) {
-
-                    add_uvs(uvs[0], uvs[1], uvs[2]);
-
-                }
-
-            } else {
-
-                if (normals_inds !== undefined && normals_inds.length > 0) {
-
-                    add_face(faces[0], faces[1], faces[3], [normals_inds[0], normals_inds[1], normals_inds[3]]);
-                    add_face(faces[1], faces[2], faces[3], [normals_inds[1], normals_inds[2], normals_inds[3]]);
-
-                } else {
-
-                    add_face(faces[0], faces[1], faces[3]);
-                    add_face(faces[1], faces[2], faces[3]);
-
-                }
-
-                if (uvs !== undefined && uvs.length > 0) {
-
-                    add_uvs(uvs[0], uvs[1], uvs[3]);
-                    add_uvs(uvs[1], uvs[2], uvs[3]);
-
-                }
-
-            }
-
-        }
-
-        // create mesh if no objects in text
-
-        if (/^o /gm.test(text) === false) {
-
-            geometry = $3d.tools.geometryBase();
-            objects.push(geometry);
-        }
-
-
-
-        // v float float float
-
-        var vertex_pattern = /v( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
-
-        // vn float float float
-
-        var normal_pattern = /vn( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
-
-        // vt float float
-
-        var uv_pattern = /vt( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
-
-        // f vertex vertex vertex ...
-
-        var face_pattern1 = /f( +-?\d+)( +-?\d+)( +-?\d+)( +-?\d+)?/;
-
-        // f vertex/uv vertex/uv vertex/uv ...
-
-        var face_pattern2 = /f( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))?/;
-
-        // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
-
-        var face_pattern3 = /f( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))?/;
-
-        // f vertex//normal vertex//normal vertex//normal ... 
-
-        var face_pattern4 = /f( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))?/
-
-        //
-
-        var lines = text.split('\n');
-
-        for (var i = 0; i < lines.length; i++) {
-
-            var line = lines[i];
-            line = line.trim();
-
-            var result;
-
-            if (line.length === 0 || line.charAt(0) === '#') {
-
-                continue;
-
-            } else if ((result = vertex_pattern.exec(line)) !== null) {
-
-                // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-                $3d.tools.push1(n_1(objects), { x: result[1], y: result[2], z: result[3] });
-
-            } else if ((result = normal_pattern.exec(line)) !== null) {
-
-                // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-
-                // normals.push({ x: result[1], y: result[2], z: result[3] });
-
-
-            } else if ((result = uv_pattern.exec(line)) !== null) {
-
-                // ["vt 0.1 0.2", "0.1", "0.2"]
-
-                // uvs.push({ x: result[1], y: result[2] });
-
-
-            } else if ((result = face_pattern1.exec(line)) !== null) {
-
-                // ["f 1 2 3", "1", "2", "3", undefined]
-
-                handle_face_line(
-					[result[1], result[2], result[3], result[4]]
-				);
-
-            } else if ((result = face_pattern2.exec(line)) !== null) {
-
-                // ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
-
-                handle_face_line(
-					[result[2], result[5], result[8], result[11]], //faces
-					[result[3], result[6], result[9], result[12]] //uv
-				);
-
-            } else if ((result = face_pattern3.exec(line)) !== null) {
-
-                // ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
-
-                handle_face_line(
-					[result[2], result[6], result[10], result[14]], //faces
-					[result[3], result[7], result[11], result[15]], //uv
-					[result[4], result[8], result[12], result[16]] //normal
-				);
-
-            } else if ((result = face_pattern4.exec(line)) !== null) {
-
-                // ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
-
-                handle_face_line(
-					[result[2], result[5], result[8], result[11]], //faces
-					[], //uv
-					[result[3], result[6], result[9], result[12]] //normal
-				);
-
-            } else if (/^o /.test(line)) {
-                geometry = $3d.tools.geometryBase();
-                objects.push(geometry);
-
-            } else if (/^g /.test(line)) {
-
-                // group
-
-            } else if (/^usemtl /.test(line)) {
-
-                // material
-
-                // material.name = line.substring( 7 ).trim();
-
-            } else if (/^mtllib /.test(line)) {
-
-                // mtl file
-
-            } else if (/^s /.test(line)) {
-                // smooth shading 
-            } else {
-                // console.log( "THREE.OBJLoader: Unhandled line " + line ); 
-            }
-
-        }
-        return objects;
-    }
-
     prop.loader.xhr({
         path: path, prefix: '/objs/', postfix: '.js', success: function (th) {
-            var ih = parse(th.content);
+            var ih = $3d.tools.objParse(th.content);
 
             if (isSelect('alpha'))
                 mgop = { alpha: true };
             _each(ih, function (at, i) {
-                if (i != 1) return;
+
+                if (def(op.index) && i != op.index) return;
+
                 var fst = js('function(){' + get('obj-material').textContent + '}');
                 op.array.push(new $3d.geometryInstance(at).toMesh(fst(), eng1));
 
@@ -956,10 +705,9 @@ $3d.tools.obj = function (path, op) {
                 var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
                 ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
 
-                n_1(op.array).scaling.x *= 5;
-                n_1(op.array).scaling.y *= 5;
-                n_1(op.array).scaling.z *= 5;
-
+                n_1(op.array).scaling.x *= 15;
+                n_1(op.array).scaling.y *= 15;
+                n_1(op.array).scaling.z *= 15;
 
                 n_1(op.array).material.setTexture("refc", ref);
                 n_1(op.array).material.setTexture("refc2", ref2);
@@ -970,5 +718,323 @@ $3d.tools.obj = function (path, op) {
     });
 
 }
+
+$3d.tools.objParse = function (text) {
+
+    var objects = [];
+
+    var uvsii = [], uvh = [];
+    var geometry = null;
+    var i0 = 0;
+    function vector(x, y, z) {
+        return { x: x, y: y, z: z };
+    }
+
+    function uv(u, v) {
+        return { x: x, y: y };
+    }
+
+    function face3(a, b, c, normals) {
+        return { x: a - oldIndex, y: b - oldIndex, z: c - oldIndex };
+    }
+
+
+    function parseVertexIndex(index) {
+
+        index = parseInt(index);
+
+        return index >= 0 ? index - 1 : index + vertices.length;
+
+    }
+
+    function parseNormalIndex(index) {
+
+        index = parseInt(index);
+
+        return index >= 0 ? index - 1 : index + normals.length;
+
+    }
+
+    function parseUVIndex(index) {
+
+        index = parseInt(index);
+
+        return index >= 0 ? index - 1 : 1.0;
+
+    }
+
+    function add_face(a, b, c, uvs) {
+
+        //if (normals_inds === undefined) {
+        a = parseVertexIndex(a - oldIndex);
+        b = parseVertexIndex(b - oldIndex);
+        c = parseVertexIndex(c - oldIndex);
+
+        $3d.tools.face3(n_1(objects),
+            a,
+            b,
+            c
+        );
+
+        if (!def(n_1(objects).uvs[a * 2])) n_1(objects).uvs[a * 2] = uvsii[parseUVIndex(uvs[0])].x;
+        if (!def(n_1(objects).uvs[a * 2 + 1])) n_1(objects).uvs[a * 2 + 1] = uvsii[parseUVIndex(uvs[0])].y;
+
+        if (!def(n_1(objects).uvs[b * 2])) n_1(objects).uvs[b * 2] = uvsii[parseUVIndex(uvs[1])].x;
+        if (!def(n_1(objects).uvs[b * 2 + 1])) n_1(objects).uvs[b * 2 + 1] = uvsii[parseUVIndex(uvs[1])].y;
+
+        if (!def(n_1(objects).uvs[c * 2])) n_1(objects).uvs[c * 2] = uvsii[parseUVIndex(uvs[2])].x;
+        if (!def(n_1(objects).uvs[c * 2 + 1])) n_1(objects).uvs[c * 2 + 1] = uvsii[parseUVIndex(uvs[2])].y;
+
+
+        n_1(objects).uvh = def(n_1(objects).uvh, []);
+
+        n_1(objects).uvh[a * 2] = { i: uvsii[parseUVIndex(uvs[0])].x };
+        n_1(objects).uvh[a * 2].a = -1;
+        n_1(objects).uvh[a * 2].b = b;
+        n_1(objects).uvh[a * 2].c = c;
+
+
+        n_1(objects).uvh[a * 2 + 1] = { i: uvsii[parseUVIndex(uvs[0])].y };
+
+
+        n_1(objects).uvh[b * 2] = { i: uvsii[parseUVIndex(uvs[1])].x };
+        n_1(objects).uvh[b * 2].a = a;
+        n_1(objects).uvh[b * 2].b = -1;
+        n_1(objects).uvh[b * 2].c = c;
+
+
+        n_1(objects).uvh[b * 2 + 1] = { i: uvsii[parseUVIndex(uvs[1])].y };
+
+        n_1(objects).uvh[c * 2] = { i: uvsii[parseUVIndex(uvs[2])].x };
+        n_1(objects).uvh[b * 2].a = a;
+        n_1(objects).uvh[b * 2].b = b;
+        n_1(objects).uvh[b * 2].c = -1;
+
+
+        n_1(objects).uvh[c * 2 + 1] = { i: uvsii[parseUVIndex(uvs[2])].y };
+
+
+
+        // } else {
+
+        // faces.push(face3(
+        //    vertices[parseVertexIndex(a)] - 1,
+        //    vertices[parseVertexIndex(b)] - 1,
+        //    vertices[parseVertexIndex(c)] - 1
+        //    //,
+        //    //[
+        //    //    normals[parseNormalIndex(normals_inds[0])].clone(),
+        //    //    normals[parseNormalIndex(normals_inds[1])].clone(),
+        //    //    normals[parseNormalIndex(normals_inds[2])].clone()
+        //    //]
+        //));
+        // }
+    }
+
+    function handle_face_line(faces, uvs, normals_inds) {
+
+        uvs = def(uvs, [0, 0, 0, 0]);
+
+        if (faces[3] === undefined) {
+
+            add_face(faces[0], faces[1], faces[2], uvs);
+
+        } else {
+            add_face(faces[0], faces[1], faces[3], [uvs[0], uvs[1], uvs[3]]);
+            add_face(faces[1], faces[2], faces[3], [uvs[1], uvs[2], uvs[3]]);
+        }
+
+    }
+
+    // create mesh if no objects in text
+
+    if (/^o /gm.test(text) === false) {
+
+        geometry = $3d.tools.geometryBase();
+        objects.push(geometry);
+    }
+
+
+
+    // v float float float
+
+    var vertex_pattern = /v( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
+
+    // vn float float float
+
+    var normal_pattern = /vn( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
+
+    // vt float float
+
+    var uv_pattern = /vt( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/;
+
+    // f vertex vertex vertex ...
+
+    var face_pattern1 = /f( +-?\d+)( +-?\d+)( +-?\d+)( +-?\d+)?/;
+
+    // f vertex/uv vertex/uv vertex/uv ...
+
+    var face_pattern2 = /f( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+))?/;
+
+    // f vertex/uv/normal vertex/uv/normal vertex/uv/normal ...
+
+    var face_pattern3 = /f( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))( +(-?\d+)\/(-?\d+)\/(-?\d+))?/;
+
+    // f vertex//normal vertex//normal vertex//normal ... 
+
+    var face_pattern4 = /f( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))( +(-?\d+)\/\/(-?\d+))?/
+
+    //
+
+    var lines = text.split('\n');
+    var oldIndex = 0;
+
+    var lastchar = '';
+    function newGeo() {
+        if (objects.length == 0 || n_1(objects).vertices.length > 0) {
+            oldIndex += objects.length > 0 ? n_1(objects).vertices.length : 0;
+
+
+            geometry = $3d.tools.geometryBase();
+            objects.push(geometry);
+        }
+    }
+    for (var i = 0; i < lines.length; i++) {
+
+        var line = lines[i];
+        line = line.trim();
+
+        var result;
+
+        if (line.length === 0 || line.charAt(0) === '#') {
+
+            continue;
+
+        } else if ((result = vertex_pattern.exec(line)) !== null) {
+
+            // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+
+            if (lastchar == 'g') newGeo();
+
+            $3d.tools.push1(n_1(objects), { x: result[1], y: result[2], z: result[3] }, false);
+            lastchar = 'v';
+        } else if ((result = normal_pattern.exec(line)) !== null) {
+
+            // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+
+            // normals.push({ x: result[1], y: result[2], z: result[3] });
+            lastchar = 'n';
+
+        } else if ((result = uv_pattern.exec(line)) !== null) {
+
+            // ["vt 0.1 0.2", "0.1", "0.2"]
+            uvsii.push({ x: parseFloat(result[1]), y: parseFloat(result[2]) });
+            // uvs.push({ x: result[1], y: result[2] });
+            lastchar = 't';
+
+        } else if ((result = face_pattern1.exec(line)) !== null) {
+
+            // ["f 1 2 3", "1", "2", "3", undefined]
+
+            handle_face_line(
+                [result[1], result[2], result[3], result[4]]
+            );
+            lastchar = 'f';
+
+        } else if ((result = face_pattern2.exec(line)) !== null) {
+
+            // ["f 1/1 2/2 3/3", " 1/1", "1", "1", " 2/2", "2", "2", " 3/3", "3", "3", undefined, undefined, undefined]
+
+            handle_face_line(
+                [result[2], result[5], result[8], result[11]], //faces
+                [result[3], result[6], result[9], result[12]] //uv
+            );
+            lastchar = 'f';
+
+        } else if ((result = face_pattern3.exec(line)) !== null) {
+
+            // ["f 1/1/1 2/2/2 3/3/3", " 1/1/1", "1", "1", "1", " 2/2/2", "2", "2", "2", " 3/3/3", "3", "3", "3", undefined, undefined, undefined, undefined]
+
+            handle_face_line(
+                [result[2], result[6], result[10], result[14]], //faces
+                [result[3], result[7], result[11], result[15]], //uv
+                [result[4], result[8], result[12], result[16]] //normal
+            );
+            lastchar = 'f';
+
+        } else if ((result = face_pattern4.exec(line)) !== null) {
+
+            // ["f 1//1 2//2 3//3", " 1//1", "1", "1", " 2//2", "2", "2", " 3//3", "3", "3", undefined, undefined, undefined]
+
+            handle_face_line(
+                [result[2], result[5], result[8], result[11]], //faces
+                [], //uv
+                [result[3], result[6], result[9], result[12]] //normal
+            );
+            lastchar = 'f';
+
+        } else if (/^o /.test(line)) { // || /^g /.test(line)) {
+
+
+            newGeo();
+            lastchar = 'o';
+
+        }
+        else if (/^g /.test(line)) {
+            lastchar = 'g';
+        }
+        else if (/^usemtl /.test(line)) {
+
+            // material
+
+            // material.name = line.substring( 7 ).trim();
+            lastchar = 'u';
+        } else if (/^mtllib /.test(line)) {
+
+            // mtl file
+            lastchar = 'm';
+        } else if (/^s /.test(line)) {
+            // smooth shading 
+            lastchar = 's';
+        } else {
+            // console.log( "THREE.OBJLoader: Unhandled line " + line ); 
+
+        }
+
+    }
+
+
+    var pis = [];
+    pis = _each(objects[0].uvh, function (at, i) {
+        if (objects[0].uvs[i] != at) {
+            pis.push({ i: i, at: at });
+
+            if (def(at.a) || def(at.b) || def(at.c)) {
+
+                //$3d.tools.push1(objects[0], { x: objects[0].vertices[i].x, y: objects[0].vertices[i].y + 10, z: objects[0].vertices[i].z }, false);
+
+             //   objects[0].vertices[i].y = objects[0].vertices[i].y.valueOf() + 10;
+
+                //l = objects[0].vertices.length - 1;
+
+                //if (at.a == -1) at.a = l;
+                //if (at.b == -1) at.b = l;
+                //if (at.c == -1) at.c = l;
+
+                //$3d.tools.face3(objects[0], at.a, at.b, at.c);
+                //objects[0].uvs.push(objects[0].uvh[i.valueOf() * 1.0].i);
+                //objects[0].uvs.push(objects[0].uvh[i.valueOf() * 1.0 + 1].i);
+
+
+            }
+
+
+        }
+    }, function () { return pis; });
+
+
+    return objects;
+}
+
 
 

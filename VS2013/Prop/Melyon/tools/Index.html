@@ -11,7 +11,7 @@
 
 
     <script src="/contents/scripts/engine/babylon.js"></script>
-    <script src="/contents/scripts/engine/three.js"></script>
+    <!--<script src="/contents/scripts/engine/three.js"></script>-->
     <script src="/contents/scripts/3dbase.js"></script>
     <script src="/contents/scripts/3dbase_initialize_babylonJs.js"></script>
     <script src="/contents/scripts/3dMaterial.js"></script>
@@ -19,12 +19,12 @@
     <script src="/contents/scripts/tools/dev.js"></script>
 </head>
 <body>
-    #[engine] #[menu] #[panels]
+    #[engine] #[menu] #[panels] #[uploader] 
     <div class="hdn">#[templates]</div>
     <div class="ab r-0025 b-0025 p-0025 ctrblue w-mn-06 z10" onclick="deb = !deb;" style="zoom:0.7" id="status">
     </div>
     <script>
-        new prop.loader.get('/tools/templates.html', { exactly: true, term: ['templates', 'engine', 'menu', 'panels'] });
+        new prop.loader.get('/tools/templates.html', { exactly: true, term: ['templates', 'engine', 'menu', 'panels', 'uploader'] });
     </script>
 </body>
 </html>
