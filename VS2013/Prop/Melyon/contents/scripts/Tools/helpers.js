@@ -80,7 +80,7 @@ function path_build(op) {
     var st = def(st, {});
 
     if (def(st) && def(st.push)) get('path-push').textContent = st.push + path_fixedControl;
-    else st.push = gettxt('path-push')  + path_fixedControl;
+    else st.push = gettxt('path-push') + path_fixedControl;
 
     if (def(st) && def(st.inLine)) setv('path-inLine', !st.inLine);
     else st.inLine = !getv('path-inLine');
@@ -406,7 +406,7 @@ function repeatMesh(f, st) {
     }
 
 
-    if (st.repeatCount == 1) {
+    if (isSelect('forSelected')) {
         var m = f(1);
 
         if (def(m.length) && m.length > 0)
@@ -414,6 +414,13 @@ function repeatMesh(f, st) {
         else {
             setStruct(m, 1);
         }
+    }
+    else if (isSelect('forDisplayed')) {
+        _each(helpers, function (at, i) {
+            if (i.indexOf("mesh_") == 0 && isShowMesh(i.replace("mesh_", ""))) {
+                setStruct(at, 1);
+            }
+        });
     }
     else
         repeat(st.repeatCount, function (i) {
@@ -519,6 +526,12 @@ function isShowMesh(name) {
     var helper = "mesh_" + def(name, 'default');
     return def(helpers[helper]);
 }
+
+function getMesh(name) {
+    var helper = "mesh_" + def(name, 'default');
+    return def(helpers[helper]) ? helpers[helper] : null;
+}
+
 function deleteMesh(name) {
 
     hideMesh(name);

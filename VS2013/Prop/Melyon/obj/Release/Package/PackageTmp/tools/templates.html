@@ -210,6 +210,8 @@
                             <input id="r_count" type="text" value="10" onkeydown="if (event.keyCode == 13) { repeat_build(); }" />
 
                             <input type="button" value="apply repeat" onclick="repeat_build();  " />
+                            <input type="button" id="forSelected" value="apply Selected" onclick="ctl.check(this);" />
+                            <input type="button" id="forDisplayed" value="apply Displayed" onclick="ctl.check(this);" />
                         </div>
                     </div>
                 </div>
@@ -377,12 +379,8 @@
             </div>
             <div id="Material" class="c-itrblue  w-full">
                 <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack fs-07" id="obj-material" spellcheck="false">
-                    return sh_multi([
-                    {r:sh_frensel(),e:0.2},
-                    { r: sh_phonge({ color: 0xaaaaaa, colorPower: 1.5, backPower: 0.8, back: 0x888888 }), e: 0.5},
-                    { r: sh_specular({glass:true}), e: 0.26 },
-                    {r:sh_map({ref1:{path:'aw.jpg'}}),e:1.0}
-                    ]) ;
+                    return sh_solid(0x550000)+sh_light();
+                     
                 </textarea>
             </div>
             <div id="Build" class="c-itrblue">
@@ -471,15 +469,15 @@
 
         function addCondbefor(val) {
             var s = "if(i >= " + getv('path-befor-start').valueOf() * 1.0 + " && i<= " + getv('path-befor-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-befor").textContent += s;
+            get("path-befor").textContent  = gettxt("path-befor")+ s;
         }
         function addCondrest(val) {
             var s = "if(i >= " + getv('path-rest-start').valueOf() * 1.0 + " && i<= " + getv('path-rest-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-rest").textContent += s;
+            get("path-rest").textContent  = gettxt("path-rest")+s;
         }
         function addCondafter(val) {
             var s = "if(i >= " + getv('path-after-start').valueOf() * 1.0 + " && i<= " + getv('path-after-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-after").textContent += s;
+            get("path-after").textContent  =   gettxt("path-after")+ s;
         }
 
         function setafter(v) {
@@ -711,7 +709,7 @@
 
 
             //var wh = new $3d.geometryInstance(igo).toMesh(eng1);
-            //wh.material = mat(sh_map({ ref1: { path: 'aw.jpg' } }));
+            // wh.material = mat(sh_map({ ref1: { path: 'aw.jpg' } }));
 
         }
         eng1.start();

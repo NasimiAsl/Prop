@@ -80,13 +80,13 @@ function path_build(op) {
     var st = def(st, {});
 
     if (def(st) && def(st.push)) get('path-push').textContent = st.push + path_fixedControl;
-    else st.push = get('path-push').textContent + path_fixedControl;
+    else st.push = gettxt('path-push') + path_fixedControl;
 
     if (def(st) && def(st.inLine)) setv('path-inLine', !st.inLine);
     else st.inLine = !getv('path-inLine');
 
     if (def(st) && def(st.density)) get('path-density').textContent = st.density;
-    else st.density = get('path-density').textContent;
+    else st.density = gettxt('path-density');
 
     if (def(st) && def(st.pointLength)) get('#path-pointLength', th).value = st.pointLength;
     else st.pointLength = get('#path-pointLength', th).value.valueOf() * 1.0;
@@ -168,11 +168,11 @@ function getCurrentPointsBeforRestrict() {
             point_script += "{base:" + it.getAttribute('struct') + "},";
         }
     }, function () {
-        point_script += "],name:'" + def(get('point-name') && get('point-name').value, 'unknown') + "',after:'" + get('path-after').textContent + "',rest:'" + get('path-rest').textContent + "',befor:'" + get('path-befor').textContent + "',walloption:'" + get('paths_list').getAttribute('walloption') + "'}"; return points;
+        point_script += "],name:'" + def(get('point-name') && get('point-name').value, 'unknown') + "',after:'" + gettxt('path-after') + "',rest:'" + gettxt('path-rest') + "',befor:'" + gettxt('path-befor') + "',walloption:'" + get('paths_list').getAttribute('walloption') + "'}"; return points;
     });
 
 
-    points = doCustomOnPath(pis, get('path-befor').textContent, get('path-rest').textContent, get('path-after').textContent);
+    points = doCustomOnPath(pis, gettxt('path-befor'), gettxt('path-rest'), gettxt('path-after'));
 
     get('path-befor-curr').setAttribute('max', pis.length);
     get('path-rest-curr').setAttribute('max', points.points.length);
@@ -320,7 +320,7 @@ function showMesh(name) {
 
 function showObject(index) {
     index = index.replaceAll('item-', '').valueOf() * 1.0;
-    var fst = js('function(){' + get('obj-material').textContent + '}');
+    var fst = js('function(){' + gettxt('obj-material') + '}');
     objectsHelpers[index] = new $3d.geometryInstance(objectsHelpersGeos[index]).toMesh(fst(), eng1);
 
     ref = new BABYLON.CubeTexture("/images/skybox/d3/skybox", eng1.get().scene);
@@ -406,7 +406,7 @@ function repeatMesh(f, st) {
     }
 
 
-    if (st.repeatCount == 1) {
+    if (isSelect('forSelected')) {
         var m = f(1);
 
         if (def(m.length) && m.length > 0)
@@ -414,6 +414,13 @@ function repeatMesh(f, st) {
         else {
             setStruct(m, 1);
         }
+    }
+    else if (isSelect('forDisplayed')) {
+        _each(helpers, function (at, i) {
+            if (i.indexOf("mesh_") == 0 && isShowMesh(i.replace("mesh_", ""))) {
+                setStruct(at, 1);
+            }
+        });
     }
     else
         repeat(st.repeatCount, function (i) {
@@ -519,6 +526,12 @@ function isShowMesh(name) {
     var helper = "mesh_" + def(name, 'default');
     return def(helpers[helper]);
 }
+
+function getMesh(name) {
+    var helper = "mesh_" + def(name, 'default');
+    return def(helpers[helper]) ? helpers[helper] : null;
+}
+
 function deleteMesh(name) {
 
     hideMesh(name);
@@ -536,7 +549,7 @@ function buildSurface(st) {
         if (!def(_name)) clearHelper();
         return buildSurfaceMesh(getv('build-struct'), getv('build-material'), getv('build-option'), def(_name, getv('build-name')));
     };
-    setv('build-material', get('obj-material').textContent);
+    setv('build-material', gettxt('obj-material'));
     setv('build-struct', st);
     setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') + "}");
     setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
@@ -634,7 +647,7 @@ function buildWall(st) {
         if (!def(_name)) clearHelper();
         buildWallMesh(getv('build-struct'), getv('build-material'), getv('build-option'), def(_name, getv('build-name')));
     };
-    setv('build-material', get('obj-material').textContent);
+    setv('build-material', gettxt('obj-material'));
     setv('build-struct', st);
     setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') + "}");
     setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));

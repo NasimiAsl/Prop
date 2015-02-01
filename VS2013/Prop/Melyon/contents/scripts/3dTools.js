@@ -773,7 +773,7 @@ $3d.tools.objParse = function (text) {
         $3d.tools.face3(n_1(objects),
             a,
             b,
-            c
+            c,{flip:true}
         );
 
         if (!def(n_1(objects).uvs[a * 2])) n_1(objects).uvs[a * 2] = uvsii[parseUVIndex(uvs[0])].x;
@@ -916,7 +916,7 @@ $3d.tools.objParse = function (text) {
 
             if (lastchar == 'g') newGeo();
 
-            $3d.tools.push1(n_1(objects), { x: result[1], y: result[2], z: result[3] }, false);
+            $3d.tools.push1(n_1(objects), { x:  -1* result[1], y: result[2], z:   result[3] }, false);
             lastchar = 'v';
         } else if ((result = normal_pattern.exec(line)) !== null) {
 
