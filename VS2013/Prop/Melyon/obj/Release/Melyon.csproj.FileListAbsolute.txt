@@ -11,3 +11,4 @@ C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\Newtonsoft.Json.xml
 C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\bin\System.Web.Optimization.xml
 C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Release\Melyon.dll
 C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Release\Melyon.pdb
+C:\Melyon\Nasimi-Branch-git\Prop\VS2013\Prop\Melyon\obj\Release\Melyon.csprojResolveAssemblyReference.cache

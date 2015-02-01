@@ -55,14 +55,16 @@ function path_new(at) {
             var sc = create(get('path-tmp').innerHTML);
             sc.setAttribute('struct', sit);
             get('paths_list').appendChild(sc);
-            path_resetPush();
-
-            doEvent(first('#paths_list > div #__act'), 'click');
-            doEvent(first('#path-tabPath'), 'click');
-            doEvent(first('#path-tabPush'), 'click');
-        })
 
 
+
+
+        });
+
+        doEvent(first('#paths_list > div #__act'), 'click');
+        doEvent(first('#path-tabPath'), 'click');
+        doEvent(first('#path-tabPush'), 'click');
+        path_resetPush();
 
     }
 }
@@ -136,7 +138,7 @@ function doCustomOnPath(points, befor, rest, after, r) {
     var result = [];
     var bef = js('function(r,p,i){ ' + befor + ' if(def(isIn) && isIn ) r.push({x:p.x,y:p.y,z:p.z,j:i});}');
     var res = js('function(p,i,j){ ' + rest + ' return def(isIn,false); }');
-    var aft = js('function(r,p,i){ ' + after + '  r.push({x:p.x,y:p.y,z:p.z,j:p.j});}');
+    var aft = js('function(r,p,i){ ' + after + '  r.push({x:p.x,y:p.y,z:p.z,j:p.j,hgt:p.hgt});}');
 
     var loop = _each;
     if (def(r, false)) loop = _each_r;
@@ -178,17 +180,29 @@ function getCurrentPointsBeforRestrict() {
 
     return { points: points.points, orginal: pis, rest: points.rest, script: point_script }
 }
-function getCurrentPoints_mainStruct(str) {
+
+function getCurrentPoints_mainStruct(str, id, pointedScript) {
 
     var points = [];
-    var point_script = "{paths:[";
+    var point_script = "";
 
-    points = _each(str.paths, function (it, i) {
-        points = join([pathToPoint(it.base), points]);
+    if (def(id) && def($3d.tools.cache.getItem('point_' + id))) {
+        points = $3d.tools.cache.getItem('point_' + id);
+    } else {
 
-    }, function () {
-        return points;
-    });
+        points = _each(str.paths, function (it, i) {
+            points = join([pathToPoint(it.base), points]);
+
+        }, function () {
+            return points;
+        });
+        if (def(id))
+            $3d.tools.cache.getItem('point_' + id, points);
+    }
+
+    if (pointedScript) {
+        point_script = JSON.stringify(points);
+    }
 
     points = doCustomOnPath(points, str.befor, str.rest, str.after);
 
@@ -196,6 +210,8 @@ function getCurrentPoints_mainStruct(str) {
 }
 
 function pathHelper() {
+
+    path_fixedControl = "";
     getWallOption();
     if (def(helpers['path']))
         helpers['path'].dispose();
@@ -263,21 +279,6 @@ function clearHelper() {
     if (def(helpers['path-org'])) helpers['path-org'].dispose();
 }
 
-function buildSurface(st) {
-
-
-    buildMesh = function (_name) {
-        if (!def(_name)) clearHelper();
-        buildSurfaceMesh(getv('build-struct'), getv('build-material'), js(getv('build-option')), def(_name, getv('build-name')));
-    };
-    setv('build-material', get('obj-material').textContent);
-    setv('build-struct', st);
-    setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') + "}");
-    setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
-
-    buildMesh('default');
-}
-
 function hideMesh(name) {
 
     var helper = "mesh_" + def(name, 'default');
@@ -316,6 +317,204 @@ function showMesh(name) {
 
     loadStorage();
 }
+
+function showObject(index) {
+    index = index.replaceAll('item-', '').valueOf() * 1.0;
+    var fst = js('function(){' + get('obj-material').textContent + '}');
+    objectsHelpers[index] = new $3d.geometryInstance(objectsHelpersGeos[index]).toMesh(fst(), eng1);
+
+    ref = new BABYLON.CubeTexture("/images/skybox/d3/skybox", eng1.get().scene);
+    ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+    var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
+    ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
+
+    objectsHelpers[index].scaling.x *= getv('object-scale') * 1.0;
+    objectsHelpers[index].scaling.y *= getv('object-scale') * 1.0;
+    objectsHelpers[index].scaling.z *= getv('object-scale') * 1.0;
+
+    objectsHelpers[index].material.setTexture("refc", ref);
+    objectsHelpers[index].material.setTexture("refc2", ref2);
+    objectsHelpers[index].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+
+}
+
+function convertToPointedPatternMesh() {
+    var name = getv('build-name');
+
+    var helper = "mesh_" + def(name, 'default');
+
+    var item = localStorage.getItem(helper);
+    if (!def(item)) {
+        return;
+    }
+
+    item = js(item);
+
+    var st = prop.html.decode(item.st);
+    var m = prop.html.decode(item.m);
+    var op = prop.html.decode(item.op);
+    var mt = prop.html.decode(item.mt);
+
+    st = js(st);
+
+    var newStr = "";
+
+    _each(st, function (at, i) {
+        var p = JSON.stringify(at);
+        var st = at;
+
+        var res = getCurrentPoints_mainStruct(at, null, true);
+        newStr += res.script + "::sep::";
+
+    }, function () {
+        get('build-pointedPattern').value = kb(newStr.length);
+        get('build-pointedPatternScript').textContent = newStr;
+    });
+}
+
+function getRepeatStruct() {
+    return {
+        repeatCount: def(getv('r_count'), 5),
+        pos: { x: getv('r_t_x'), y: getv('r_t_y'), z: getv('r_t_z') },
+        rot: { x: getv('r_r_x'), y: getv('r_r_y'), z: getv('r_r_z') },
+        sca: { x: getv('r_s_x'), y: getv('r_s_y'), z: getv('r_s_z') }
+
+    };
+}
+
+function repeat_build(st) {
+
+}
+
+function repeatMesh(f, st) {
+    var st = def(st, getRepeatStruct());
+
+    function setStruct(mesh, i) {
+        if (!def(mesh)) return;
+        mesh.rotation.x += st.rot.x * i * deg;
+        mesh.rotation.y += st.rot.y * i * deg;
+        mesh.rotation.z += st.rot.z * i * deg;
+
+        mesh.position.x += st.pos.x * i;
+        mesh.position.y += st.pos.y * i;
+        mesh.position.z += st.pos.z * i;
+
+        mesh.scaling.x += st.sca.x * i;
+        mesh.scaling.y += st.sca.y * i;
+        mesh.scaling.z += st.sca.z * i;
+
+    }
+
+
+    if (st.repeatCount == 1) {
+        var m = f(1);
+
+        if (def(m.length) && m.length > 0)
+            _each(m, function (at, j) { setStruct(at, 1); });
+        else {
+            setStruct(m, 1);
+        }
+    }
+    else
+        repeat(st.repeatCount, function (i) {
+            var m = f(i);
+
+            if (def(m.length) && m.length > 0)
+                _each(m, function (at, j) { setStruct(at, i); });
+            else {
+                setStruct(m, i);
+            }
+        });
+}
+
+function initRepeatMesh(name) {
+    var helper = "mesh_" + def(name, 'default');
+
+    var item = localStorage.getItem(helper);
+    if (!def(item)) {
+        return;
+    }
+
+    item = js(item);
+
+    var st = prop.html.decode(item.st);
+    var m = prop.html.decode(item.m);
+    var op = prop.html.decode(item.op);
+    var mt = prop.html.decode(item.mt);
+
+    var f = function () { }
+
+    switch (mt) {
+        case 'surface': f = function (i) { return buildSurfaceMesh(st, m, op, name, i); }; break;
+        case 'wall': f = function (i) { return buildWallMesh(st, m, op, name, i); }; break;
+    }
+
+    repeat_build = function (st) {
+        repeatMesh(f, st);
+    }
+}
+
+function initRepeatPoints(name) {
+
+}
+
+function initRepeatPath(name) {
+
+}
+
+
+function editMesh(name) {
+
+    var helper = "mesh_" + def(name, 'default');
+
+    var item = localStorage.getItem(helper);
+    if (!def(item)) {
+        return;
+    }
+
+    item = js(item);
+
+    get('obj-material').textContent = prop.html.decode(item.m);
+    setv('build-struct', item.st);
+    setv('build-option', item.op);
+    setv('build-material', item.m);
+
+
+    var st = prop.html.decode(item.st);
+    var m = prop.html.decode(item.m);
+    var op = prop.html.decode(item.op);
+    var mt = prop.html.decode(item.mt);
+
+    st = js(st);
+
+    first('#Surface #Points').innerHTML = "";
+    var points = [];
+
+
+    var str = "";
+
+    switch (mt) {
+        case 'surface':
+            str = 'Surface';
+            break;
+        case 'wall':
+            str = 'Wall';
+            break;
+    }
+
+    points = _each(st, function (at, i) {
+        var p = JSON.stringify(at);
+        var st = at;
+        var tk = create(get('point-item-tmp').innerHTML.replaceAll('#[name]', st.name.replaceAll(' ', '-')).replaceAll('#[size]', kb(p.length)));
+        tk.setAttribute('struct', p);
+        tk.id = 'sr_pt_' + st.name.replaceAll(' ', '-');
+        first('#' + str + ' #Points').appendChild(tk);
+    }, function () {
+        return points;
+    });
+
+}
+
 function isShowMesh(name) {
     var helper = "mesh_" + def(name, 'default');
     return def(helpers[helper]);
@@ -330,9 +529,21 @@ function deleteMesh(name) {
 
     loadStorage();
 }
+function buildSurface(st) {
 
 
-function buildSurfaceMesh(st, m, op, name) {
+    buildMesh = function (_name) {
+        if (!def(_name)) clearHelper();
+        return buildSurfaceMesh(getv('build-struct'), getv('build-material'), getv('build-option'), def(_name, getv('build-name')));
+    };
+    setv('build-material', get('obj-material').textContent);
+    setv('build-struct', st);
+    setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') + "}");
+    setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
+
+    return buildMesh('default');
+}
+function buildSurfaceMesh(st, m, op, name, rp) {
     var mt = 'surface';
     if (!def(m) && !def(op) && !def(name)) {
         var item = localStorage.getItem(st);
@@ -349,7 +560,7 @@ function buildSurfaceMesh(st, m, op, name) {
         mt = item.mt;
     }
 
-    var helper = "mesh_" + def(name, 'default');
+    var helper = (def(rp) ? "rp" + rp : "") + "mesh_" + def(name, 'default');
 
     if (helpers[helper])
         helpers[helper].dispose();
@@ -357,18 +568,21 @@ function buildSurfaceMesh(st, m, op, name) {
         helpers[helper + "q"].dispose();
     }
 
-    localStorage.setItem(helper, "{ mt: 'surface', st:'" + prop.html.encode(st) + "', m:'" + prop.html.encode(m) + "', op:'" + prop.html.encode(op) + "' }");
+    if (!def(rp))
+        localStorage.setItem(helper, "{ mt: 'surface', st:'" + prop.html.encode(st) + "', m:'" + prop.html.encode(m) + "', op:'" + prop.html.encode(op) + "' }");
 
     op = js(op);
     st = js(st);
 
     var paths = [];
 
+    var meshs = [];
+
     if (st.length < 2) return;
 
-    _for(st, function (at) {
+    _for(st, function (at, j) {
 
-        var res = getCurrentPoints_mainStruct(at);
+        var res = getCurrentPoints_mainStruct(at, def(rp) ? name + "_" + j : null);
         paths.push(res.points);
 
     }, function () {
@@ -379,6 +593,7 @@ function buildSurfaceMesh(st, m, op, name) {
         }
 
         helpers[helper] = $3d.tools.surface({ paths: paths, flip: true }).toMesh(fst(), eng1);
+
         if (def(op.wire, false)) {
             helpers[helper].material.wireframe = true;
         }
@@ -404,7 +619,12 @@ function buildSurfaceMesh(st, m, op, name) {
         }
     });
 
+    meshs.push(helpers[helper]);
+    meshs.push(helpers[helper + "q"]);
+
     mgop = null;
+
+    return meshs;
 }
 
 function buildWall(st) {
@@ -412,7 +632,7 @@ function buildWall(st) {
 
     buildMesh = function (_name) {
         if (!def(_name)) clearHelper();
-        buildWallMesh(getv('build-struct'), getv('build-material'),  getv('build-option') , def(_name, getv('build-name')));
+        buildWallMesh(getv('build-struct'), getv('build-material'), getv('build-option'), def(_name, getv('build-name')));
     };
     setv('build-material', get('obj-material').textContent);
     setv('build-struct', st);
@@ -421,7 +641,7 @@ function buildWall(st) {
 
     buildMesh('default');
 }
-function buildWallMesh(st, m, op, name) {
+function buildWallMesh(st, m, op, name, rp) {
     var mt = 'wall';
     if (!def(m) && !def(op) && !def(name)) {
         var item = localStorage.getItem(st);
@@ -438,7 +658,7 @@ function buildWallMesh(st, m, op, name) {
         mt = item.mt;
     }
 
-    var helper = "mesh_" + def(name, 'default');
+    var helper = (def(rp) ? "rp" + rp : "") + "mesh_" + def(name, 'default');
     if (helpers[helper])
         helpers[helper].dispose();
 
@@ -450,9 +670,9 @@ function buildWallMesh(st, m, op, name) {
     var paths = [];
     var geo;
 
-    _for(st, function (at) {
+    _for(st, function (at, j) {
         wop = js(at.walloption);
-        var res = getCurrentPoints_mainStruct(at);
+        var res = getCurrentPoints_mainStruct(at, def(rp) ? name + "_" + j : null);
         paths.push(res.points);
 
         geo = $3d.tools.wall({
@@ -465,8 +685,20 @@ function buildWallMesh(st, m, op, name) {
             right: wop.right ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
             top: wop.top ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
             bottom: wop.bottom ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
-            front: wop.front ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
-            back: wop.back ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); } : null,
+            front: wop.front ? function (p) { return res.rest(p, p.i, p.n.j.valueOf() * 1.0); }
+                : wop.afb ? function (p) {
+                    if (res.points.length - 2 == p.i) {
+                        return res.rest(p, p.i, p.n.j.valueOf() * 1.0);
+                    }
+                    return (res.rest(p, p.i, p.n.j.valueOf() * 1.0) && (p.n1 == null || !res.rest(p, p.i + 1, p.n1.j.valueOf() * 1.0)));
+                } : null,
+            back: wop.back ? function (p) { return res.rest(p, (p.i + 1), p.n.j.valueOf() * 1.0); }
+                : wop.afb ? function (p) {
+                    if (!wop.closed && p.i == 0) {
+                        return res.rest(p, p.i, p.n.j.valueOf() * 1.0);
+                    }
+                    return (!res.rest(p, p.i, p.n.j.valueOf() * 1.0) && (p.n1 != null && res.rest(p, p.i + 1, p.n1.j.valueOf() * 1.0)));
+                } : null,
             smooth: wop.smooth,
             closed: wop.closed,
             h: wop.h,
@@ -494,7 +726,7 @@ function buildWallMesh(st, m, op, name) {
 
             ref = new BABYLON.CubeTexture("/images/skybox/d2/skybox", eng1.get().scene);
             ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
-            var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
+            var ref2 = new BABYLON.CubeTexture("/images/skybox/d/a", eng1.get().scene);
             ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
 
             helpers[helper].material.setTexture("refc", ref);
@@ -502,5 +734,45 @@ function buildWallMesh(st, m, op, name) {
             helpers[helper].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
         }
     });
+
+    return helpers[helper];
 }
 
+function buildRepeat() { }
+function buildRepeatMesh() { }
+
+
+
+function __s() {
+    get('storage-helper').textContent = "";
+    _each(localStorage, function (at, i) {
+        if (i.toString().indexOf("mesh_") == 0) {
+            try {
+
+                var tk = create(get('storage-item-tmp').innerHTML.replaceAll('#[name]', i.replaceAll('mesh_', '')).replaceAll('#[size]', kb(at.length)));
+                if (isShowMesh(i.replaceAll('mesh_', ''))) {
+                    get('storage-helper').textContent += i + ":::sep:::" + at + ":::sepn:::";
+                }
+
+            } catch (e) { }
+        }
+    });
+}
+
+
+function __l() {
+    if (!confirm('warrning')) return;
+    if (get('storage-helper').textContent == "") get('storage-helper').textContent = get('storage-helper').value;
+    var s = get('storage-helper').textContent.split(":::sepn:::");
+
+    _each(s, function (at) {
+
+        var s2 = at.split(":::sep:::");
+
+        localStorage.setItem(s2[0], s2[1]);
+
+    });
+
+    loadStorage();
+
+}

@@ -1,0 +1,45 @@
+@import "dev/material"; 
+
+.op0{@include op(0);}     
+.op1{@include op(20);}     
+.op2{@include op(40);}     
+.op3{@include op(60);}     
+.op4{@include op(80);}     
+.op5{@include op(100);}   
+
+.op-h0:hover{@include op(0);}     
+.op-h1:hover{@include op(20);}     
+.op-h2:hover{@include op(40);}     
+.op-h3:hover{@include op(60);}     
+.op-h4:hover{@include op(80);}     
+.op-h5:hover{@include op(100);}   
+ 
+ 
+.owf  { @include owf;}   
+.owf-x { @include owf-x;} 
+.owf-y { @include owf-y;} 
+.hdn { @include hdn;}  
+.hdn-vs { @include hdn-vs;}  
+ 
+@include color('blue',#59b9ff); 
+@include color('sky',#a5e1ff);  
+@include color('red',#ff0000);  
+@include color('org',#ff6a00); 
+@include color('gray',#808080); 
+@include color('dark',#313131); 
+@include color('black',#000000); 
+@include color('white',#ffffff);  
+@include color('trans',rgba(255, 255, 255, 0.00)); 
+@include color('trdark',rgba(50, 50, 50, 0.21));  
+@include color('trred',rgba(86, 0, 0, 0.46)); 
+@include color('trblue',rgba(0, 56, 144, 0.59));  
+@include color('trorg',rgba(255, 106, 0, 0.54));  
+@include color('trwhite',rgba(255, 255, 255, 0.37));  
+@include color('light',rgba(200, 200, 200, 0.21));   
+
+
+@include color('select',rgb(0, 86, 7));   
+.c-iselect {    
+    color:#ffffff !important; 
+    font-weight: bold;
+}

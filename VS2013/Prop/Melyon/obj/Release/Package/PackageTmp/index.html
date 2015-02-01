@@ -7,7 +7,7 @@
     <link href="/contents/css/screen.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="hdn">
+    <div class="hdn" >
         <img id="ii-1" src="/img/b_1%20(1).png" />
         <img id="ii-2" src="/img/b_1%20(2).png" />
         <img id="ii-3" src="/img/b_1%20(3).png" />
@@ -25,7 +25,7 @@
         <img id="ii-15" src="/img/b_1%20(15).png" />
         <img id="ii-16" src="/img/b_1%20(16).png" />
     </div>
-    <div class="rt p-00 m-00 " style="width:2000px;height:2000px;">
+    <div class="rt p-00 m-00 " style="width:2000px;height:2000px;zoom:0.2">
         <img class="ab t-00 b-00 z02" src="/plan-1.jpg" />
         <div class="ab t-00 l-00 z03" style="width:2000px;height:2000px;">
             <img class="ab" src="/a_1.png" style="left:200px;top:200px;" />
@@ -48,12 +48,12 @@
     <script>
         var ik = 0;
         function iichange() {
-            
-            ik++;
+            if (ik == 0) alert(1);
+            ik+=2;
             document.title = get('ii-' + ik).getAttribute('src');
             get("itk").setAttribute('src', get('ii-' + ik).getAttribute('src'));
             if (ik < 16) {
-                setTimeout("iichange()", 10);
+                setTimeout("iichange()", 50);
               
             }
             else {

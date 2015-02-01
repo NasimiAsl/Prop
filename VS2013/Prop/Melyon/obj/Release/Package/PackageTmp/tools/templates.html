@@ -4,7 +4,12 @@
         <img class="w-01 h-01" src="/images/shapes/wall.svg" onclick="menu_cl('wall');" />
         <img class="w-01 h-01" src="/images/shapes/stair.svg" onclick="menu_cl('stair');" />
         <img class="w-01 h-01" src="/images/shapes/repeat.svg" onclick="menu_cl('repeat');" />
+        <img class="w-01 h-01" src="/images/shapes/obj.svg" onclick="menu_cl('object');" />
+
+
+        <input type="range" value="100" min="33" max="100" class="w-03 h-01" src="/images/shapes/repeat.svg" onchange="quality(this);" />
         <img class="w-01 h-01" src="/images/shapes/sep.svg" />
+
         <a>
             Material
         </a>
@@ -20,7 +25,13 @@
     </div>
     <div id="storage-item-tmp">
         <div class="storage-item-struct c-i-hblack c-t-i-hwhite pl-005">
-            <span> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteMesh('#[name]')"><input type="button" value="show" class="w-005" onclick="    showMesh('#[name]')"><input type="button" value="hide" class="w-005" onclick="    hideMesh('#[name]')">
+            <span onclick="editMesh('#[name]')"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteMesh('#[name]')"><input type="button" value="[]" class="w-005" onclick="initRepeatMesh('#[name]');"><input type="button" value="show" class="w-auto" onclick=" showMesh('#[name]')"><input type="button" value="hide" class="w-auto" onclick="hideMesh('#[name]')">
+        </div>
+    </div>
+
+    <div id="object-item-tmp">
+        <div class="object-item-struct c-i-hblack c-t-i-hwhite pl-005">
+            <span> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteObject('#[name]')"><input type="button" value="[]" class="w-005" onclick="initObjMath('#[name]');"><input type="button" value="mat" class="w-auto" onclick="setMatObject('#[name]')"><input type="button" value="show" class="w-auto" onclick=" showObject('#[name]')"><input type="button" value="hide" class="w-auto" onclick="hideObject('#[name]')">
         </div>
     </div>
     <div id="path-tmp">
@@ -36,6 +47,13 @@
     </div>
     <script>
         var menu_cl_h;
+
+        function quality(th) {
+
+            eng_quality = th.value;
+            eng1.engine.onCreateRenderer({ percent: eng_quality });
+        }
+
         function menu_cl(menu) {
             menu = "." + menu;
             if (def(menu_cl_h)) menu_cl_h();
@@ -112,6 +130,7 @@
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 wall hdn-i">Wall</a>
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 stair hdn-i">Stair</a>
             <a onclick="selTab(this)" class="c-t-iwhite ml-005 repeat hdn-i">Repeat</a>
+            <a onclick="selTab(this)" class="c-t-iwhite ml-005 object hdn-i">Object</a>
             <a onclick="selTab(this); loadStorage();" class="c-t-iwhite ml-005 storage hdn-i">Storage</a>
             <img class="w-01 h-01 op2 c-h-itrans" src="/images/shapes/sep.svg" />
             <a id="path-tabPath" onclick="selTab(this)">paths    </a>
@@ -136,6 +155,11 @@
                 </div>
             </div>
             <div id="Storage">
+                <div>
+                    <textarea id="storage-helper"></textarea>
+                    <input type="button" value="save"  onclick="__s()" /> 
+                    <input type="button" value="load" onclick="__l()" />
+                </div>
                 <div id="Items" class="f f-r f-w f-as f-cs f-js">
                 </div>
             </div>
@@ -144,7 +168,52 @@
                 </div>
             </div>
             <div id="Stair">Stair</div>
-            <div id="Repeat">Repeat</div>
+            <div id="Object" class="f f-c f-w f-as f-js f-cs">
+                
+                <div class="w-full w-mx-24 f f-r f-w f-as f-js f-cs">
+                    <div class="rt w-01  h-01 p-0025  owf c-horg">
+                        <img class="w-01 h-01" src="/images/shapes/OBJ.svg" />
+                        <input type="file" id="files" name="file" class="ab l-00 r-00 t-00 b-00 h-02 w-02 op0 fs-30" />
+                    </div>
+                    <input type="text" id="object-scale" value="5.0" />
+                </div>
+                <div id="geometries" class=" w-full w-mx-24 f f-r f-w f-as f-cs f-js">
+                </div>
+            </div>
+
+            <div id="Repeat">
+                <textarea cols="60" rows="10" class="owf-x w-p80  c-t-iblack hdn" id="path-push">r.push({x:-n.x+526.0,y:0.0,z:n.y-526});</textarea>
+                <div class="pnl w-mx-22">
+                    <div class="f f-r f-ja f-ct f-at ">
+                        <div class="w-p30 f f-c ">
+                            rotate: <br />
+                            <input id="r_r_center" type="text" value="{x:0,y:0,z:0}" onkeydown="  path_build(); pathHelper();" />
+                            <input id="r_r_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { repeat_build();   }" />
+                            <input id="r_r_y" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { repeat_build();   }" />
+                            <input id="r_r_z" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { repeat_build();   }" />
+                        </div>
+                        <div class="w-p30  f f-c ">
+                            move: <br />
+                            <input id="r_t_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { repeat_build(); }" />
+                            <input id="r_t_y" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { repeat_build(); }" />
+                            <input id="r_t_z" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { repeat_build(); }" />
+                        </div>
+                        <div class="w-p30  f f-c ">
+                            scale : <br />
+                            <input id="r_s_x" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { repeat_build(); }" />
+                            <input id="r_s_y" type="text" value="0.0" onkeydown="    if (event.keyCode == 13) { repeat_build(); }" />
+                            <input id="r_s_z" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { repeat_build(); }" />
+                            <input id="r_s_a" type="text" value="0.0" onkeydown="if (event.keyCode == 13) { setv('r_s_x', this.value); setv('r_s_y', this.value); setv('r_s_z', this.value); repeat_build(); }" />
+                        </div>
+                        <div class="w-p30  f f-c ">
+                            repeat : <br />
+                            <input id="r_count" type="text" value="10" onkeydown="if (event.keyCode == 13) { repeat_build(); }" />
+
+                            <input type="button" value="apply repeat" onclick="repeat_build();  " />
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="paths" class="f f-r f-w f-jb f-as f-ct f-st w-full">
                 <div class=" f-i01" id="paths_list">
                 </div>
@@ -307,23 +376,31 @@
                 </div>
             </div>
             <div id="Material" class="c-itrblue  w-full">
-                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack" id="obj-material">
-                    return sh_multi([{r:sh_frensel(),e:1.0},
-                    {r:'result=vec4(0.0,0.,0.,1.0);',e:1.0},
-                    {r:sh_specular(),e:1.0}]);
+                <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack fs-07" id="obj-material" spellcheck="false">
+                    return sh_multi([
+                    {r:sh_frensel(),e:0.2},
+                    { r: sh_phonge({ color: 0xaaaaaa, colorPower: 1.5, backPower: 0.8, back: 0x888888 }), e: 0.5},
+                    { r: sh_specular({glass:true}), e: 0.26 },
+                    {r:sh_map({ref1:{path:'aw.jpg'}}),e:1.0}
+                    ]) ;
                 </textarea>
-                <div class="pnl">
-
-                </div>
             </div>
             <div id="Build" class="c-itrblue">
                 <div>
                     <input type="text" id="build-struct" value="[]" />
                     <input type="text" id="build-material" value="---" />
                     <input type="text" id="build-option" value="{}" />
-                    <input type="text" id="build-name" value="default" />
+                    <input type="text" id="build-name" value="default" /><br />
+                    <textarea id="build-pointedPatternScript" rows="6" cols="60"></textarea>
                 </div>
-                <input type="button" id="build-mesh" class="w-03 h-03 m-i-005 c-iblue" value="0.0" onclick="buildMesh()" />
+                <div class="w-08">
+                    <input type="button" id="build-mesh" class="w-03 h-03 ml-i-005 mt-i-005 c-iblue" value="0.0" onclick="buildMesh()" />
+                    <input type="button" id="build-pointedPattern" class="w-03 h-03 mlr-i-005 mt-i-005 c-iblue" value="0.0" onclick="convertToPointedPatternMesh()" />
+                    <br />
+                    <input type="button" class="w-03 h-03 ml-i-005 mtb-i-005 c-igray" value="save" />
+                    <input type="button" class="w-03 h-03 mlr-i-005 mtb-i-005 c-itrorg" value="download" />
+                </div>
+
             </div>
         </div>
     </div>
@@ -364,6 +441,7 @@
                 if (st.left) select('wall-left  '); else unSelect('wall-left  ');
                 if (st.right) select('wall-right '); else unSelect('wall-right ');
                 if (st.smooth) select('wall-smooth '); else unSelect('wall-smooth ');
+                if (st.closed) select('wall-closed '); else unSelect('wall-closed ');
                 setv('wall-deep ', st.d);
                 setv('wall-height ', st.h);
             }
@@ -382,6 +460,7 @@
                 if (isSelect('wall-left  ')) st += "left:true,";
                 if (isSelect('wall-right ')) st += "right:true,";
                 if (isSelect('wall-smooth ')) st += "smooth:true,";
+                if (isSelect('wall-closed ')) st += "closed:true,";
 
                 st += "d:" + getv('wall-deep') + ",";
                 st += "h:" + getv('wall-height');
@@ -483,6 +562,16 @@
             get('rt_center').value = '{x:0,y:0,z:0}'; path_build(); pathHelper();
         }
 
+        function path_reset(op) {
+            get('rtt_x').value = 0; get('rtt_y').value = 0; get('rtt_z').value = 0;
+            get('t_x').value = 0; get('t_y').value = 0; get('t_z').value = 0;
+            get('s_x').value = 1; get('s_y').value = 1; get('s_z').value = 1; get('s_a').value = 1;
+            unSelect('path-flip');
+            unSelect('path-flipfill');
+            unSelect('path-fillflip');
+            get('rt_center').value = '{x:0,y:0,z:0}';
+        }
+
         function source() {
             all('textarea', function (at) { at.classList.toggle('hdn'); });
             all('.pnl', function (at) { at.classList.toggle('hdn'); });
@@ -498,9 +587,9 @@
             if (getv('t_y').valueOf() != 0) path_fixedControl += "r[r.length-1].y += " + (getv('t_y').valueOf() * 1) + " ;";
             if (getv('t_z').valueOf() != 0) path_fixedControl += "r[r.length-1].z += " + (getv('t_z').valueOf() * 1) + " ;";
 
-            if (getv('s_x').valueOf() != 0) path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
-            if (getv('s_y').valueOf() != 0) path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
-            if (getv('s_z').valueOf() != 0) path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
+            if (getv('s_x').valueOf() != 1) path_fixedControl += "r[r.length-1].x *= " + (getv('s_x').valueOf() * 1) + " ;";
+            if (getv('s_y').valueOf() != 1) path_fixedControl += "r[r.length-1].y *= " + (getv('s_y').valueOf() * 1) + " ;";
+            if (getv('s_z').valueOf() != 1) path_fixedControl += "r[r.length-1].z *= " + (getv('s_z').valueOf() * 1) + " ;";
 
             if (isSelect('path-flip')) path_fixedControl += "r = flip(r,e);";
             if (isSelect('path-flipfill')) path_fixedControl += "r = flipfill(r,e);";
@@ -524,30 +613,32 @@
     </div>
     <div id="shaders" class="hdn"></div>
 
-    <script src="/contents/scripts/engine/babylon.js"></script>
-    <script src="/contents/scripts/engine/three.js"></script>
-    <script src="/contents/scripts/3dbase.js"></script>
-    <script src="/contents/scripts/3dbase_initialize_babylonJs.js"></script>
-    <script src="/contents/scripts/3dMaterial.js"></script>
-    <script src="/contents/scripts/3dtools.js"></script>
-    <script src="/contents/scripts/tools/dev.js"></script>
-
-
     <script type="text/javascript">
         var eng1, eng2, b = [], b2, ix = 0, iy = 0, iz = 0;
         var helpers = [];
+        var whelper;
         eng1 = new $3d({ engine: createBabylonJsEngine(), geometry: createBabylonJsGeometry(), material: createBabylonJsMaterial() });
         eng1.engine.instance.canvas = document.getElementById('renderCanvas');
         var bx, bx1, phi = 0, theta = 0;
         var time = 0;
         eng1.engine.onRequestFrame = function () {
-
+            if (time == 0) {
+                eventInitialize(document, get('renderCanvas'), get('renderCanvas'));
+            }
             time += 0.06;
+
+            whelper.position.x = eng1.get().cameras.main.target.x;
+            whelper.position.y = eng1.get().cameras.main.target.y - 3.0;
+            whelper.position.z = eng1.get().cameras.main.target.z;
+
+
+            eng1.controller.requestNextAction();
             _for(b, function (it, i) {
 
                 if (def(it)) {
                     it.material.setVector3("camera", eng1.get().cameras.main.position);
                     it.material.setFloat("time", time);
+                    //it.material.setVector3("center", def( it.center, {x:0,y:0,z:0}));
                 }
 
             });
@@ -557,31 +648,112 @@
                 if (def(it)) {
                     it.material.setVector3("camera", eng1.get().cameras.main.position);
                     it.material.setFloat("time", time);
+                   // it.material.setVector3("center", def(it.center, { x: 0, y: 0, z: 0 }));
+
                 }
 
             });
+
+            _each(objectsHelpers, function (it, i) {
+
+                if (def(it)) {
+                    it.material.setVector3("camera", eng1.get().cameras.main.position);
+                    it.material.setFloat("time", time);
+                   // it.material.setVector3("center", def(it.center, { x: 0, y: 0, z: 0 }));
+
+                }
+
+            });
+
+            request();
 
         };
 
         eng1.engine.onInitScene = function () {
 
             var w = new $3d.tools.surface({
-                paths: [[{ x: -10000, y: -10, z: -10000 }, { x: 10000, y: -10, z: -10000 }], [{ x: -10000, y: -10, z: 10000 }, { x: 10000, y: -10, z: 10000 }]],
+                paths: [[{ x: -10000, y: 0, z: -10000 }, { x: 10000, y: 0, z: -10000 }], [{ x: -10000, y: 0, z: 10000 }, { x: 10000, y: 0, z: 10000 }]],
                 //flip:true
             }).toMesh(eng1);
             //w2.material = mat();
 
-            //var w = new BABYLON.Mesh.CreateBox('s', 30, eng1.get().scene);
             w.material = mat(mat_table());
 
             b.push(w);
+
+            whelper = new BABYLON.Mesh.CreateBox('s', 10, eng1.get().scene);
+            whelper.scaling.y *= 0.6;
+            whelper.scaling.x *= 0.5 / 3.0;
+            whelper.scaling.z *= 0.05;
+
+
+            mgop = { alpha: true };
+            whelper.material = mat('result=vec4(abs(nrm.x),abs(nrm.y),abs(nrm.z),0.2);');
+            whelper.material.wireframe = true;
+            b.push(whelper);
+
+            var igo = $3d.tools.geometryBase();
+
+            $3d.tools.face(igo, { x: -10, y: 10, z: 10 }, { x: 10, y: 10, z: 10 }, { x: -10, y: 10, z: -10 }, { x: 10, y: 10, z: -10 });
+            $3d.tools.face(igo, 2, 3, { x: -10, y: 8, z: 10 }, { x: 10, y: 8, z: 10 });
+            $3d.tools.face(igo, 4, 5, 0,1);
+
+
+            igo.uvs = [0,0, 0,1, 0.5,0, 0.5,1, 0.8,0, 0.8,1, 1,0 , 1,1 ];
+
+            
+
+            //    faces: [],
+            //vertices: [],
+            //normals: [],
+            //positions: [],
+            //uvs: []
+
+
+            //var wh = new $3d.geometryInstance(igo).toMesh(eng1);
+            //wh.material = mat(sh_map({ ref1: { path: 'aw.jpg' } }));
+
         }
         eng1.start();
-
-
-
 
 
     </script>
 
 </engine>
+<uploader>
+
+
+    <script>
+        var objectsHelpers = [], objectsHelpersGeos = [];
+
+        function handleFileSelect(evt) {
+
+            var rd = new FileReader();
+
+            rd.onload = function (ev) {
+
+                objectsHelpersGeos = $3d.tools.objParse(ev.target.result);
+
+                _each(objectsHelpers, function (at) { if (def(at) && def(at.dispose)) at.dispose(); });
+
+                if (objectsHelpersGeos.length > 0) {
+                    get('geometries').innerHTML = "";
+
+
+                    _each(objectsHelpersGeos, function (at, i) {
+
+                        var el = create(get('object-item-tmp').innerHTML.replaceAll('#[name]', 'item-' + i).replaceAll('#[size]', kb(at.vertices.length)));
+                        get('geometries').appendChild(el);
+                    }, function () {
+                    });
+                }
+
+            }
+
+            rd.readAsText(evt.currentTarget.files[0]);
+
+        }
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </script>
+</uploader>

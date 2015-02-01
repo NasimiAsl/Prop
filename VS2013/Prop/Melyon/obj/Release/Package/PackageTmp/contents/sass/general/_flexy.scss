@@ -1,0 +1,72 @@
+ @import "dev/flexy";
+.f{ @include f;} 
+.fl{ @include fl;} 
+.f-r{ @include f-r} 
+.f-rr{ @include f-rr} 
+.f-c{ @include f-c} 
+.f-cr{ @include f-cr} 
+.f-w{ @include f-w} 
+.f-nw{ @include f-nw} 
+.f-wr{ @include f-wr} 
+.f-js{ @include f-js} 
+.f-je{ @include f-je} 
+.f-jc{ @include f-jc} 
+.f-jb{ @include f-jb} 
+.f-ja{ @include f-ja} 
+.f-as{ @include f-as} 
+.f-ae{ @include f-ae} 
+.f-ac{ @include f-ac} 
+.f-al{ @include f-al} 
+.f-at{ @include f-at} 
+.f-cs{ @include f-cs} 
+.f-ce{ @include f-ce} 
+.f-cc{ @include f-cc} 
+.f-cb{ @include f-cb}  
+.f-ca{ @include f-ca} 
+.f-ct{ @include f-ct}  
+.f-sa{ @include f-sa} 
+.f-ss{ @include f-ss} 
+.f-se{ @include f-se} 
+.f-sc{ @include f-sc} 
+.f-sl{ @include f-sl} 
+.f-st{ @include f-st}  
+.flex-rc{
+	@include f;
+	@include f-r;
+	@include f-jc;
+	@include f-ac;
+	@include f-w; 
+	
+	> div { 
+		@include f-sc;
+		-webkit-box-flex: 0;
+		-moz-box-flex: 0;
+		-webkit-flex: 0 1 auto;
+		-ms-flex: 0 1 auto;
+		flex: 0 1 auto; 
+	} 
+}
+.flex-cc{
+	@include f;
+	@include f-c;
+	@include f-jc;
+	@include f-ac;
+	@include f-w; 
+	
+	> div 	{ 
+		@include f-sc;
+		-webkit-box-flex: 0;
+		-moz-box-flex: 0;
+		-webkit-flex: 0 1 auto;
+		-ms-flex: 0 1 auto;
+		flex: 0 1 auto; 
+	} 
+}  
+.f-center{@include f-center;} 
+.f-fit{@include f-fit;} 
+.f-i01{ @include f-i01;} 
+.f-i11{ @include f-i11;} 
+.f-i00{ @include f-i00;} 
+.f-i10{ @include f-i10;}
+ 
+ 

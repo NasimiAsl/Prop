@@ -697,7 +697,7 @@ $3d.tools.obj = function (path, op) {
 
                 if (def(op.index) && i != op.index) return;
 
-                var fst = js('function(){' + get('obj-material').textContent + '}');
+                var fst = js('function(){' + gettxt('obj-material') + '}');
                 op.array.push(new $3d.geometryInstance(at).toMesh(fst(), eng1));
 
                 ref = new BABYLON.CubeTexture("/images/skybox/d3/skybox", eng1.get().scene);

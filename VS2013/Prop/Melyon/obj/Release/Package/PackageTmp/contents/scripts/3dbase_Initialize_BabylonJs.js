@@ -9,7 +9,6 @@ function createBabylonJsEngine() {
     babylon.renderer = new $3d.iRenderer();
     babylon.postProcess = { /*!!! under construction*/ };
 
-
     // initializer
 
     babylon.onCreateScene = function (o) {
@@ -24,7 +23,7 @@ function createBabylonJsEngine() {
         babylon.instance.cameras.main = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(pos.x, pos.y, pos.z), babylon.instance.scene);;
         babylon.instance.scene.activeCamera.attachControl(babylon.instance.canvas);
 
-        babylon.instance.cameras.main.lowerRadiusLimit = 10;
+        babylon.instance.cameras.main.lowerRadiusLimit = 0.01;
         babylon.instance.cameras.main.minZ = babylon.cameras.main.near;
         babylon.instance.cameras.main.maxZ = babylon.cameras.main.far;
         babylon.instance.cameras.main.fov = babylon.cameras.main.fov;
@@ -55,6 +54,26 @@ function createBabylonJsEngine() {
         var quality = def(babylon.renderer.quality, 1.0);
         babylon.instance.qualityMode = quality;
 
+        if (def(o)) {
+
+            var can = babylon.instance.canvas;
+
+            if (def(o.width) && def(o.height)) {
+                can.style.width = (o.width * 1.0) + "px";
+                can.style.height = (o.width * 1.0) + "px";
+            }
+
+
+            if (def(o.percent)) {
+                var w = can.offsetWidth;
+                var h = can.offsetHeight;
+
+                can.style.width = (w * o.percent / 100.0) + "px";
+                can.style.height = (h * o.percent / 100.0) + "px";
+            }
+
+        }
+
         //if (quality && (quality != 1 && quality < 22)) {
 
         //    var ps = 1.7778;// 16 × 9 
@@ -78,8 +97,10 @@ function createBabylonJsEngine() {
 
         babylon.instance.renderer = new BABYLON.Engine(babylon.instance.canvas, true);
 
-        //canvas.style.width = '100%';
-        //canvas.style.height = '100%'; 
+        if (def(o)) {
+            babylon.instance.canvas.style.width = '100%';
+            babylon.instance.canvas.style.height = '100%';
+        }
     }
     babylon.onCreatePostProcess = function (o) { }
     babylon.render = function () { }
@@ -87,12 +108,10 @@ function createBabylonJsEngine() {
     babylon.onStartAnimation = function () {
         var th = this;
         this.instance.renderer.runRenderLoop(function () {
-
             babylon.onRequestFrame();
             th.instance.scene.render();
         });
     }
-
     return babylon;
 }
 
@@ -115,7 +134,6 @@ function fromBabylonGeometry(op, ref) {
 
     return ref;
 }
-
 // {geo,scene}
 function buildBabylonMesh(op) {
 
@@ -151,6 +169,16 @@ function buildBabylonMesh(op) {
 
     geo.applyToMesh(mesh, false);
 
+    var center = { x: 0, y: 0, z: 0 };
+
+    for (i = 0; i < geo.positions.length; i += 3.0) {
+        center.x += geo.positions[i];
+        center.y += geo.positions[i + 1];
+        center.z += geo.positions[i + 2];
+    }
+
+    center = { x: center.x * 3.0 / geo.positions.length, y: center.y * 3.0 / geo.positions.length, z: center.z * 3.0 / geo.positions.length };
+    mesh.center = center;
     return mesh;
 }
 
@@ -180,7 +208,7 @@ function defTexture(op, im) {
 }
 // { vفط:vertex,frg:fragment,helper,u:uniform,map:{path:'sample.jpg',} , alpha , back}
 function defShader(op, im) {
-     // im.alpha = true;
+    // im.alpha = true;
     // Compile
 
 
@@ -207,13 +235,19 @@ function defShader(op, im) {
         var tx;
 
         if (txop.path)
-            tx = new BABYLON.Texture(defTextureDefaultPath + txop.path, op.engine.scene);
+            tx = new BABYLON.Texture(defTextureDefaultPath + txop.path, op.scene);
         if (txop.w) {
             tx.wrapU = txop.w;
-            tx.wrapV = txop.w;
+            tx.wrapW = txop.w;
         }
 
-        txop.hasAlpha = true;
+        tx.wrapU = def(tx.wrapU, 1.0);
+        tx.wrapW = def(tx.wrapW, 1.0);
+
+
+        
+
+        //  txop.hasAlpha = true;
 
         shaderMaterial.setTexture(txop.name, tx);
 
@@ -221,13 +255,22 @@ function defShader(op, im) {
             if (txop.r) {
                 txop.rx = txop.r;
                 txop.ry = txop.r;
-            }
-
-            shaderMaterial.setVector2(txop.name + "_r", new BABYLON.Vector2(txop.rx, txop.ry));
+            } 
         }
 
     }
 
+
+    if (def(mgref)) {
+        if (def(mgref.ref1)) defTexture(mgref.ref1, "ref1");
+        if (def(mgref.ref2)) defTexture(mgref.ref2, "ref2");
+        if (def(mgref.ref3)) defTexture(mgref.ref3, "ref3");
+        if (def(mgref.ref4)) defTexture(mgref.ref4, "ref4");
+        if (def(mgref.ref5)) defTexture(mgref.ref5, "ref5");
+        if (def(mgref.ref6)) defTexture(mgref.ref6, "ref6");
+        if (def(mgref.ref7)) defTexture(mgref.ref7, "ref7");
+        if (def(mgref.ref8)) defTexture(mgref.ref8, "ref8");
+    }
     //defTexture(im.map, "tx1");
     //defTexture(im.reflect, "tx2");
     //defTexture(im.opacity, "tx3");
@@ -308,4 +351,3 @@ function createBabylonJsMaterial() {
 
     return im;
 }
-

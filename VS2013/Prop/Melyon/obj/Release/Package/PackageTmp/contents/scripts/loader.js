@@ -3,6 +3,7 @@
     postfixPage: '.html',
     // {path,success  | [ prefix+path+postfix ] | exactly [ path ]  }
     xhr: function (op, th) {
+        th = def(th, {});
         op = def(op, {});
         op.type = def(op.type, 'GET');
         op.prefix = def(op.prefix, prop.loader.prefixPath);
@@ -18,6 +19,7 @@
         function processData(data) {
             // taking care of data
             if (def(op.success)) {
+                
                 th.content = data;
                 th.options = op;
                 op.success(th);

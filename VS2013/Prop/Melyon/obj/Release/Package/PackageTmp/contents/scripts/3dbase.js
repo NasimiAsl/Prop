@@ -34,7 +34,7 @@ $3d.iCamera = function (op) {
 }
 
 $3d.iCamera.prototype = {
-    position: { x: 0, y: 0, z: 0 },
+    position: { x: 0, y: 18, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     up: { x: 0, y: 1, z: 0 },
     near: 0.0,
@@ -44,7 +44,7 @@ $3d.iCamera.prototype = {
 };
 
 $3d.iEngine = function (op) {
-        op = def(op, {});
+    op = def(op, {});
     op.canvas = def(op.canvas, null);
 
     this.instance = {
@@ -83,16 +83,15 @@ $3d.iEngine.prototype = {
         this.onRequestFrame(o);
         this.render();
     },
-    onRequestFrame: function (o) { },
+    onRequestFrame: function (o) {
+
+    },
     start: function (o) {
         this.onCreateRenderer(o);
         this.onCreateScene(o);
         this.onCreateCamera(o);
         this.onCreateLights(o);
-
         this.onInitScene(this);
-
-
 
         this.onCreatePostProcess(o);
         this.onStartAnimation(o);
@@ -106,10 +105,11 @@ $3d.iGeometry.prototype = {
 }
 
 $3d.geometryInstance = function (op) {
-    this.faces = op.faces;
-    this.positions = op.positions;
-    this.normals = op.normals;
-    this.uvs = op.uvs;
+    op = def(op, {});
+    this.faces = def( op.faces , []);
+    this.positions = def(op.positions,[]);
+    this.normals = def(op.normals,[]);
+    this.uvs = def(op.uvs,[]);
 }
 
 $3d.geometryInstance.prototype = {
@@ -154,13 +154,197 @@ $3d.iRotate.prototype = {
     onChanges: function () { }
 };
 
+// {objs:[], v_m : move , v_r :rotate,v_r_t: rt target , a_m : accse.. ,... }
+$3d.iAction = function (op) {
+    if (!def(op) && !def(op.bojs)) return null;
+
+    this.v_m = def(op.v_m, { x: 0, y: 0, z: 0 });
+    this.a_m = def(op.a_m, { x: 0.1, y: 0.1, z: 0.1 });
+    this.v_r = def(op.v_r, { x: 0, y: 0, z: 0 });
+    this.a_r = def(op.a_r, { x: 0.1, y: 0.1, z: 0.1 });
+    this.v_r_t = def(op.v_r_t, { x: 0, y: 0, z: 0 });
+    this.a_r_t = def(op.a_r_t, { x: 5, y: 5, z: 5 });
+    this.r_c = def(op.r_c, { x: 0, y: 0, z: 0 });
+
+    this.objs = def(op.objs, []);
+}
+$3d.iAction.prototype = {
+    v_m: { x: 0, y: 0, z: 0 },
+    a_m: { x: 0, y: 0, z: 0 },
+    v_r_t: { x: 0, y: 0, z: 0 },
+    a_r_t: { x: 0, y: 0, z: 0 },
+    v_r: { x: 0, y: 0, z: 0 },
+    a_r: { x: 0, y: 0, z: 0 },
+    r_c: { x: 0, y: 0, z: 0 },
+    objs: [],
+    getNewPosition: function () {
+
+        var pos = { x: 0, y: 0, z: 0 };
+
+        function cp(c) { return c.x != 0 || c.y != 0 || c.z != 0; }
+
+        if (cp(this.v_m)) {
+            pos = add(pos, this.v_m);
+        }
+
+        return pos;
+    },
+    getNewRotation: function () {
+
+        var rot = { x: 0, y: 0, z: 0 };
+
+        function cp(c) { return c.x != 0 || c.y != 0 || c.z != 0; }
+
+        if (cp(this.v_r)) {
+            rot = add(rot, this.v_r);
+        }
+        return rot;
+    },
+    acceleration: function () {
+
+        function cp(c) { return c.x != 0 || c.y != 0 || c.z != 0; }
+
+        function a1(v, a) {
+            var nv = { x: v.x, y: v.y, z: v.z };
+            if (v.x != 0) { nv.x = v.x - (v.x / abs(v.x)) * a.x; if (nv.x * v.x < 0) nv.x = 0.0; }
+            if (v.y != 0) { nv.y = v.y - (v.y / abs(v.y)) * a.y; if (nv.y * v.y < 0) nv.y = 0.0; }
+            if (v.z != 0) { nv.z = v.z - (v.z / abs(v.z)) * a.z; if (nv.z * v.z < 0) nv.z = 0.0; }
+
+            return nv;
+        }
+
+        function lt(p) {
+            if (abs(p.x) < 0.05) p.x = 0.0;
+            if (abs(p.y) < 0.05) p.y = 0.0;
+            if (abs(p.z) < 0.05) p.z = 0.0;
+
+            return p;
+        }
+
+        if (cp(this.v_m) && cp(this.a_m))
+            this.v_m = a1(this.v_m, this.a_m);
+
+        if (cp(this.v_r) && cp(this.a_r))
+            this.v_r = a1(this.v_r, this.a_r);
+
+        if (cp(this.v_r_t) && cp(this.a_r_t))
+            this.v_r_t = a1(this.v_r_t, this.a_r_t);
+
+        this.v_m = lt(this.v_m);
+        this.v_r = lt(this.v_r);
+        this.v_r_t = lt(this.v_r_t);
+
+        if (!cp(this.v_m) && !cp(this.v_r) && !cp(this.v_r_t))
+        { this.deactive = true; this.end(); }
+
+        return !this.deactive;
+    },
+    end: function () { },
+    deactive: false,
+    doNext: function (raycast, collision) {
+        if (this.deactive) return;
+        function cp(c) { return c.x != 0 || c.y != 0 || c.z != 0; }
+
+        var th = this;
+        var pos = th.getNewPosition();
+        var rot = th.getNewRotation();
+
+        if (!cp(pos) && !cp(rot)) return;
+
+        //function posrt(th, pos) {
+        //    var ps = { x: pos.x, y: pos.y, z: pos.z };
+        //    if (cp(th.v_r) && cp(th.r_c)) {
+
+        //        if (th.v_r.x != 0) ps = r_x(ps, th.v_r.x, th.r_c);
+        //        if (th.v_r.y != 0) ps = r_y(ps, th.v_r.y, th.r_c);
+        //        if (th.v_r.z != 0) ps = r_z(ps, th.v_r.z, th.r_c);
+        //    } else return null;
+
+        //    return ps;
+        //}
+
+        return _each(this.objs, function (obj, i) {
+
+
+            if (cp(pos) && raycast(obj, pos)) {
+                obj.position.x += pos.x;
+                obj.position.y += pos.y;
+                obj.position.z += pos.z;
+
+                if (def(obj.target)) {
+                    obj.target.x += pos.x;
+                    obj.target.y += pos.y;
+                    obj.target.z += pos.z;
+                }
+
+            }
+            else { collision(obj, pos); }
+
+            //if (def(psr) && raycast(obj, psr)) {
+
+            //    obj.position.x += psr.x;
+            //    obj.position.y += psr.y;
+            //    obj.position.z += psr.z;
+            //    if (def(obj.target)) {
+            //        obj.target.position.x += pos.x;
+            //        obj.target.position.y += pos.y;
+            //        obj.target.position.z += pos.z;
+            //    }
+
+            //} else { collision(obj, psr); }
+
+
+            if (cp(rot) && def(obj.rotation)) {
+                obj.rotation.x += rot.x * deg;
+                obj.rotation.y += rot.y * deg;
+                obj.rotation.z += rot.z * deg;
+            }
+
+            if (def(obj.target) && cp(th.v_r_t)) {
+                var ps = add({ x: 0, y: 0, z: 0 }, obj.target );
+                if (th.v_r_t.x != 0) ps = r_x(ps, obj.position, this.v_r_t.x);
+                if (th.v_r_t.y != 0) ps = r_y(ps, obj.position, this.v_r_t.y);
+                if (th.v_r_t.z != 0) ps = r_z(ps, obj.position, this.v_r_t.z);
+
+                if (cp(ps)) {
+                    obj.target.x += ps.x;
+                    obj.target.y += ps.y;
+                    obj.target.z += ps.z;
+                }
+            }
+
+        }, function () {
+            return th.acceleration();
+        });
+    }
+};
+
+
 $3d.iController = function (op) {
 
 }
 
 $3d.iController.prototype = {
     actions: [],
-    onRayCaster: function (op) { },
+    addAction: function (ac) {
+        this.actions.push(ac);
+    },
+    requestNextAction: function (eng) {
+        var th = this;
+        _each(this.actions, function (ac, i) {
+            if (def(ac)) {
+                var rs = ac.doNext(th.onRayCaster, th.onCollision);
+                if (!rs) ac == null;
+            }
+        }, function () {
+            var acts = [];
+            th.actions = _each(th.actions, function (ac, i) {
+                if (def(ac)) acts.push(ac);
+            }, function () { return acts; });
+        });
+    },
+    onRayCaster: function (obj, dir) { return true; },
+    onCollision: function (obj, dir) { }
 }
 
 $3d.iShaderUniformData = function (op, dlg) {
@@ -223,18 +407,16 @@ $3d.iMaterial.prototype = {
     }
 };
 
-
 $3d.prototype = {
     material: new $3d.iMaterial(),
     geometry: new $3d.iGeometry(),
     engine: new $3d.iEngine(),
-    controller: {},
+    controller: new $3d.iController(),
     get: function () {
         return this.engine.instance;
     },
-    start: function () {
-        this.engine.start();
-
+    start: function (o) {
+        this.engine.start(o);
         this.material.parent = this.get();
     }
 };

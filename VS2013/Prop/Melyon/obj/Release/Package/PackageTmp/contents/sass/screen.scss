@@ -1,0 +1,25 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+$pm:0.0px;
+$u: 32;
+$r: 1.0px;  
+$mp:1.0px;
+$p : ''; 
+   
+
+@import "general/positions";   
+@import "general/material"; 
+
+@import "general/flexy"; 
+@import "general/animations";
+@import "general/nasted";
+   
+body, html, *, input, select, img {
+    margin: 0; 
+    padding: 0;
+    font-family:'Segoe UI Light'; 
+} 
+
+hr { opacity:0.3}

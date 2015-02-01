@@ -10,6 +10,11 @@ function def(a, d) {
 
 var always = function () { return true };
 
+function n_1(ar) {
+    ar = def(ar, []);
+    if (!def(ar.length)) return null;
+    return ar[ar.length - 1];
+}
 
 function repeat(n, c, e) {
     for (var i = 0; i < n; i++) {
@@ -25,8 +30,14 @@ function css_r(th, css) {
         _each(th, function (it, i) { try { if (def(it) && def(it.classList)) it.classList.remove(css); } catch (e) { } }, function () { }, function () { });
     }
     else
-        try { if (def(th) && def(th.classList)) th.classlist.remove(css); } catch (e) { }
+        try { if (def(th) && def(th.classList)) th.classList.remove(css); } catch (e) { }
 
+}
+
+
+function css_t(th, css) {
+
+    if (def(th) && def(th.classList)) th.classList.toggle(css);
 }
 
 
@@ -98,7 +109,13 @@ function getj(op, pr) {
 }
 
 function js(op) {
-    try { var r = window.eval(" r = " + op.replaceAll('\n', ' ')); return r; } catch (e) { }
+
+    if (!def(op)) return null;
+    try {
+        var r = window.eval(" r = " + op.replaceAll('\n', ' ').replaceAll('\r', ' ')); return r;
+    } catch (e) {
+        state(op + " \n\r\n\r " + e.message, 'msg');
+    }
 }
 
 function first(s, f, p) {
@@ -149,7 +166,16 @@ function _rd(o, i) {
 var ctl = {
     check: function (th) {
         th.classList.toggle('c-iselect');
+    },
+    singleSelect: function (th) {
+        all('> .c-iselect',
+            function (at, i) { at.classList.remove('c-iselect'); },
+            function () { th.classList._add('c-iselect'); }, null, th.parentNode);
+    },
+    upload: function (th) {
+
     }
+
 };
 
 
@@ -313,18 +339,18 @@ function _each_r(ar, _do, e, b) {
 }
 
 function state(msg, group) {
-    var old = $('#status').html();
+    var old = first('#status').innerHTML;
 
     if (group != null && group != undefined) {
-        if ($("#status #" + group).length == 0)
-            $("#status").append("<div class='underline' id='" + group + "' title='" + group + "'></div>");
-        $("#status #" + group).html(msg);
+        if (!def(first("#status #" + group)))
+            first("#status").innerHTML += ("<div class='underline' id='" + group + "' title='" + group + "'></div>");
+        if (def(first("#status #" + group))) first("#status #" + group).innerHTML = msg;
         return;
     }
 }
 
 function clearState(group) {
-    $("#status #" + group).html('');
+    first("#status #" + group).innerHTML = '';
 }
 // part : e|error,i|info,w|warning,q|question,a:alert
 function ops(msg, part, e) {
@@ -355,6 +381,13 @@ var min = Math.min;
 var random = Math.random;
 
 // 
+function r3(x) { return floor(x * 1000) / 1000; }
+function r2(x) { return floor(x * 100) / 100; }
+function r1(x) { return floor(x * 10) / 10; }
+function r_3(x) { return floor(x * 1000000) / 1000 }
+function r_2(x) { return floor(x * 10000) / 100; }
+function r_1(x) { return floor(x * 100) / 10; }
+
 
 function rd(min, max) {
     return (random()) * (max - min) + min;
@@ -372,7 +405,7 @@ var rad = 180. / PI;
 
 //  ver 1.0.01.003
 function dim(v, u) {
-    return sqrt(pow(u.x - v.x) + pow(u.y - v.y) + pow(u.z - v.z));
+    return sqrt(pow(u.x - v.x) + pow(u.y - v.y) + (def(u.z) ? pow(u.z - v.z) : 0));
 }
 function nrm(v) {
     var x = v.x, y = v.y, z = v.z;
@@ -421,10 +454,11 @@ function rotate_xy(pr1, pr2, alpha) {
 function r_y(n, a, c) {
 
     c = def(c, { x: 0, y: 0, z: 0 });
-    c.x = c.x;
-    c.y = c.z;
+    var c1 = { x: c.x, y: c.y, z: c.z };
+    c1.x = c1.x;
+    c1.y = c1.z;
 
-    var p = rotate_xy(c, { x: n.x, y: n.z }, a);
+    var p = rotate_xy(c1, { x: n.x, y: n.z }, a);
 
     n.x = p.x;
     n.z = p.y;
@@ -436,10 +470,11 @@ function r_y(n, a, c) {
 function r_x(n, a, c) {
 
     c = def(c, { x: 0, y: 0, z: 0 });
-    c.x = c.y;
-    c.y = c.z;
+    var c1 = { x: c.x, y: c.y, z: c.z };
+    c1.x = c1.y;
+    c1.y = c1.z;
 
-    var p = rotate_xy(c, { x: n.y, y: n.z }, a);
+    var p = rotate_xy(c1, { x: n.y, y: n.z }, a);
 
     n.y = p.x;
     n.z = p.y;
@@ -451,8 +486,8 @@ function r_x(n, a, c) {
 function r_z(n, a, c) {
 
     c = def(c, { x: 0, y: 0, z: 0 });
-
-    var p = rotate_xy(c, { x: n.x, y: n.y }, a);
+    var c1 = { x: c.x, y: c.y, z: c.z };
+    var p = rotate_xy(c1, { x: n.x, y: n.y }, a);
 
     n.x = p.x;
     n.y = p.y;

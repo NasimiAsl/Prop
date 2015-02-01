@@ -155,6 +155,11 @@
                 </div>
             </div>
             <div id="Storage">
+                <div>
+                    <textarea id="storage-helper"></textarea>
+                    <input type="button" value="save"  onclick="__s()" /> 
+                    <input type="button" value="load" onclick="__l()" />
+                </div>
                 <div id="Items" class="f f-r f-w f-as f-cs f-js">
                 </div>
             </div>
@@ -164,6 +169,7 @@
             </div>
             <div id="Stair">Stair</div>
             <div id="Object" class="f f-c f-w f-as f-js f-cs">
+                
                 <div class="w-full w-mx-24 f f-r f-w f-as f-js f-cs">
                     <div class="rt w-01  h-01 p-0025  owf c-horg">
                         <img class="w-01 h-01" src="/images/shapes/OBJ.svg" />
@@ -465,15 +471,15 @@
 
         function addCondbefor(val) {
             var s = "if(i >= " + getv('path-befor-start').valueOf() * 1.0 + " && i<= " + getv('path-befor-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-befor").textContent += s;
+            get("path-befor").textContent  = gettxt("path-befor")+ s;
         }
         function addCondrest(val) {
             var s = "if(i >= " + getv('path-rest-start').valueOf() * 1.0 + " && i<= " + getv('path-rest-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-rest").textContent += s;
+            get("path-rest").textContent  = gettxt("path-rest")+s;
         }
         function addCondafter(val) {
             var s = "if(i >= " + getv('path-after-start').valueOf() * 1.0 + " && i<= " + getv('path-after-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-after").textContent += s;
+            get("path-after").textContent  =   gettxt("path-after")+ s;
         }
 
         function setafter(v) {
@@ -704,8 +710,8 @@
             //uvs: []
 
 
-            //var wh = new $3d.geometryInstance(igo).toMesh(eng1);
-            //wh.material = mat(sh_map({ ref1: { path: 'aw.jpg' } }));
+             var wh = new $3d.geometryInstance(igo).toMesh(eng1);
+             wh.material = mat(sh_map({ ref1: { path: 'aw.jpg' } }));
 
         }
         eng1.start();
