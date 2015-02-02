@@ -61,7 +61,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2015 17:13:47</publishTime>
     </File>
     <File Include="contents/scripts/3dTools.js">
-      <publishTime>02/01/2015 15:37:06</publishTime>
+      <publishTime>02/02/2015 13:27:54</publishTime>
     </File>
     <File Include="contents/scripts/base.js">
       <publishTime>02/01/2015 10:06:17</publishTime>
@@ -91,7 +91,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/18/2015 11:17:14</publishTime>
     </File>
     <File Include="contents/scripts/Tools/helpers.js">
-      <publishTime>02/01/2015 10:52:56</publishTime>
+      <publishTime>02/02/2015 13:53:45</publishTime>
     </File>
     <File Include="images/shapes/checked.svg">
       <publishTime>01/10/2015 11:46:36</publishTime>
@@ -481,13 +481,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/13/2015 11:21:29</publishTime>
     </File>
     <File Include="tools/Index.html">
-      <publishTime>01/27/2015 10:25:07</publishTime>
+      <publishTime>02/01/2015 16:47:55</publishTime>
     </File>
     <File Include="tools/surface/Index.html">
       <publishTime>01/07/2015 14:01:41</publishTime>
     </File>
     <File Include="tools/templates.html">
-      <publishTime>02/01/2015 15:28:52</publishTime>
+      <publishTime>02/02/2015 14:22:30</publishTime>
     </File>
     <File Include="Web.config">
       <publishTime>01/13/2015 11:59:26</publishTime>

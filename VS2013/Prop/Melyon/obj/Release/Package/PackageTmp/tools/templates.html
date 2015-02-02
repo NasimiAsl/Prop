@@ -25,13 +25,15 @@
     </div>
     <div id="storage-item-tmp">
         <div class="storage-item-struct c-i-hblack c-t-i-hwhite pl-005">
-            <span onclick="editMesh('#[name]')"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteMesh('#[name]')"><input type="button" value="[]" class="w-005" onclick="initRepeatMesh('#[name]');"><input type="button" value="show" class="w-auto" onclick=" showMesh('#[name]')"><input type="button" value="hide" class="w-auto" onclick="hideMesh('#[name]')">
+            <span onclick="editMesh('#[name]')"> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteMesh('#[name]')"><input type="button" value="[]" class="w-005" onclick="initRepeatMesh('#[name]');"><input type="button" value="show" class="w-auto" onclick="showMesh('#[name]')"><input type="button" value="hide" class="w-auto" onclick="hideMesh('#[name]')">
         </div>
     </div>
 
     <div id="object-item-tmp">
         <div class="object-item-struct c-i-hblack c-t-i-hwhite pl-005">
-            <span> #[name] <span class="c-t-iblue">[#[size]]</span> </span> <input type="button" value="×" class="w-005" onclick="deleteObject('#[name]')"><input type="button" value="[]" class="w-005" onclick="initObjMath('#[name]');"><input type="button" value="mat" class="w-auto" onclick="setMatObject('#[name]')"><input type="button" value="show" class="w-auto" onclick=" showObject('#[name]')"><input type="button" value="hide" class="w-auto" onclick="hideObject('#[name]')">
+            <span> #[name] <span class="c-t-iblue">[#[size]]</span> </span>
+            <input type="button" value="show" class="w-auto" onclick="showObject('#[name]')">
+            <input type="button" value="back" class="w-auto" onclick="showObject('#[name]',true)">
         </div>
     </div>
     <div id="path-tmp">
@@ -157,7 +159,7 @@
             <div id="Storage">
                 <div>
                     <textarea id="storage-helper"></textarea>
-                    <input type="button" value="save"  onclick="__s()" /> 
+                    <input type="button" value="save" onclick="__s()" />
                     <input type="button" value="load" onclick="__l()" />
                 </div>
                 <div id="Items" class="f f-r f-w f-as f-cs f-js">
@@ -169,7 +171,15 @@
             </div>
             <div id="Stair">Stair</div>
             <div id="Object" class="f f-c f-w f-as f-js f-cs">
-                
+                <div class="f f-nw f-r f-ct f-at f-ja">
+                    <textarea cols="30" rows="5" class="owf-x  w-p40 hdn c-t-iblack fs-05 "   id="obj-material2" spellcheck="false">
+                        return sh_map({ref2:{path:'sand02.jpg'}})+sh_light({dir:'camera',color:0xffffff,effect:'pow(pr,10.)/3.0'})+sh_light({dir:'camera',color:0xffffff,effect:'pow(pr,40.)/2.0'})+sh_light({dir:'camera',color:0xffffff,effect:'pow(pr,140.)'});
+                    </textarea>
+                    <textarea cols="30" rows="5" class="owf-x  w-p40 hdn c-t-iblack fs-05 show"   id="obj-material3" spellcheck="false">
+                        return sh_map({ref1:{path:'sand02.jpg'}})+sh_light({dir:'camera',color:0x000055,effect:'pow(pr,1.)/2.0'});
+
+                    </textarea>
+                </div> 
                 <div class="w-full w-mx-24 f f-r f-w f-as f-js f-cs">
                     <div class="rt w-01  h-01 p-0025  owf c-horg">
                         <img class="w-01 h-01" src="/images/shapes/OBJ.svg" />
@@ -380,10 +390,30 @@
             <div id="Material" class="c-itrblue  w-full">
                 <textarea cols="60" rows="10" class="owf-x  w-p80 hdn c-t-iblack fs-07" id="obj-material" spellcheck="false">
                     return sh_solid(0x550000)+sh_light();
-                     
+
                 </textarea>
             </div>
             <div id="Build" class="c-itrblue">
+                <div class="w-p30 f f-c ">
+                    rotate: <br />
+                    <input id="br_r_center" type="text" value="{x:0,y:0,z:0}" />
+                    <input id="br_r_x" type="text" value="0.0" />
+                    <input id="br_r_y" type="text" value="0.0" />
+                    <input id="br_r_z" type="text" value="0.0" />
+                </div>
+                <div class="w-p30  f f-c ">
+                    move: <br />
+                    <input id="br_t_x" type="text" value="0.0" />
+                    <input id="br_t_y" type="text" value="0.0" />
+                    <input id="br_t_z" type="text" value="0.0" />
+                </div>
+                <div class="w-p30  f f-c ">
+                    scale : <br />
+                    <input id="br_s_x" type="text" value="1.0" />
+                    <input id="br_s_y" type="text" value="1.0" />
+                    <input id="br_s_z" type="text" value="1.0" />
+                    <input id="br_s_a" type="text" value="1.0" />
+                </div>
                 <div>
                     <input type="text" id="build-struct" value="[]" />
                     <input type="text" id="build-material" value="---" />
@@ -469,15 +499,15 @@
 
         function addCondbefor(val) {
             var s = "if(i >= " + getv('path-befor-start').valueOf() * 1.0 + " && i<= " + getv('path-befor-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-befor").textContent  = gettxt("path-befor")+ s;
+            get("path-befor").textContent = gettxt("path-befor") + s;
         }
         function addCondrest(val) {
             var s = "if(i >= " + getv('path-rest-start').valueOf() * 1.0 + " && i<= " + getv('path-rest-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-rest").textContent  = gettxt("path-rest")+s;
+            get("path-rest").textContent = gettxt("path-rest") + s;
         }
         function addCondafter(val) {
             var s = "if(i >= " + getv('path-after-start').valueOf() * 1.0 + " && i<= " + getv('path-after-end').valueOf() * 1.0 + "){isIn= " + val + ";} \r\n";
-            get("path-after").textContent  =   gettxt("path-after")+ s;
+            get("path-after").textContent = gettxt("path-after") + s;
         }
 
         function setafter(v) {
@@ -646,7 +676,7 @@
                 if (def(it)) {
                     it.material.setVector3("camera", eng1.get().cameras.main.position);
                     it.material.setFloat("time", time);
-                   // it.material.setVector3("center", def(it.center, { x: 0, y: 0, z: 0 }));
+                    // it.material.setVector3("center", def(it.center, { x: 0, y: 0, z: 0 }));
 
                 }
 
@@ -657,7 +687,7 @@
                 if (def(it)) {
                     it.material.setVector3("camera", eng1.get().cameras.main.position);
                     it.material.setFloat("time", time);
-                   // it.material.setVector3("center", def(it.center, { x: 0, y: 0, z: 0 }));
+                    // it.material.setVector3("center", def(it.center, { x: 0, y: 0, z: 0 }));
 
                 }
 
@@ -669,15 +699,15 @@
 
         eng1.engine.onInitScene = function () {
 
-            var w = new $3d.tools.surface({
-                paths: [[{ x: -10000, y: 0, z: -10000 }, { x: 10000, y: 0, z: -10000 }], [{ x: -10000, y: 0, z: 10000 }, { x: 10000, y: 0, z: 10000 }]],
-                //flip:true
-            }).toMesh(eng1);
-            //w2.material = mat();
+            //var w = new $3d.tools.surface({
+            //    paths: [[{ x: -10000, y: 0, z: -10000 }, { x: 10000, y: 0, z: -10000 }], [{ x: -10000, y: 0, z: 10000 }, { x: 10000, y: 0, z: 10000 }]],
+            //    //flip:true
+            //}).toMesh(eng1);
+            ////w2.material = mat();
 
-            w.material = mat(mat_table());
+            //w.material = mat(mat_table());
 
-            b.push(w);
+            //b.push(w);
 
             whelper = new BABYLON.Mesh.CreateBox('s', 10, eng1.get().scene);
             whelper.scaling.y *= 0.6;
@@ -694,12 +724,12 @@
 
             $3d.tools.face(igo, { x: -10, y: 10, z: 10 }, { x: 10, y: 10, z: 10 }, { x: -10, y: 10, z: -10 }, { x: 10, y: 10, z: -10 });
             $3d.tools.face(igo, 2, 3, { x: -10, y: 8, z: 10 }, { x: 10, y: 8, z: 10 });
-            $3d.tools.face(igo, 4, 5, 0,1);
+            $3d.tools.face(igo, 4, 5, 0, 1);
 
 
-            igo.uvs = [0,0, 0,1, 0.5,0, 0.5,1, 0.8,0, 0.8,1, 1,0 , 1,1 ];
+            igo.uvs = [0, 0, 0, 1, 0.5, 0, 0.5, 1, 0.8, 0, 0.8, 1, 1, 0, 1, 1];
 
-            
+
 
             //    faces: [],
             //vertices: [],
@@ -722,7 +752,7 @@
 
 
     <script>
-        var objectsHelpers = [], objectsHelpersGeos = [];
+        var objectsHelpers = [], objectsHelpersGeos = [], objectsHelpersGeos2 = [];
 
         function handleFileSelect(evt) {
 
@@ -730,19 +760,24 @@
 
             rd.onload = function (ev) {
 
+
                 objectsHelpersGeos = $3d.tools.objParse(ev.target.result);
+                objectsHelpersGeos2 = $3d.tools.objParse(ev.target.result, { back: true });
 
                 _each(objectsHelpers, function (at) { if (def(at) && def(at.dispose)) at.dispose(); });
+                objectsHelpers = [];
 
                 if (objectsHelpersGeos.length > 0) {
                     get('geometries').innerHTML = "";
-
+                    k = 0;
 
                     _each(objectsHelpersGeos, function (at, i) {
 
                         var el = create(get('object-item-tmp').innerHTML.replaceAll('#[name]', 'item-' + i).replaceAll('#[size]', kb(at.vertices.length)));
                         get('geometries').appendChild(el);
                     }, function () {
+
+
                     });
                 }
 

@@ -719,8 +719,8 @@ $3d.tools.obj = function (path, op) {
 
 }
 
-$3d.tools.objParse = function (text) {
-
+$3d.tools.objParse = function (text,op) {
+    op = def(op, {});
     var objects = [];
 
     var uvsii = [], uvh = [];
@@ -773,46 +773,47 @@ $3d.tools.objParse = function (text) {
         $3d.tools.face3(n_1(objects),
             a,
             b,
-            c,{flip:true}
+            c,{flip:!def(op.back,false)}
         );
+        try{
+            if (!def(n_1(objects).uvs[a * 2])) n_1(objects).uvs[a * 2] = uvsii[parseUVIndex(uvs[0])].x;
+            if (!def(n_1(objects).uvs[a * 2 + 1])) n_1(objects).uvs[a * 2 + 1] = uvsii[parseUVIndex(uvs[0])].y;
 
-        if (!def(n_1(objects).uvs[a * 2])) n_1(objects).uvs[a * 2] = uvsii[parseUVIndex(uvs[0])].x;
-        if (!def(n_1(objects).uvs[a * 2 + 1])) n_1(objects).uvs[a * 2 + 1] = uvsii[parseUVIndex(uvs[0])].y;
+            if (!def(n_1(objects).uvs[b * 2])) n_1(objects).uvs[b * 2] = uvsii[parseUVIndex(uvs[1])].x;
+            if (!def(n_1(objects).uvs[b * 2 + 1])) n_1(objects).uvs[b * 2 + 1] = uvsii[parseUVIndex(uvs[1])].y;
 
-        if (!def(n_1(objects).uvs[b * 2])) n_1(objects).uvs[b * 2] = uvsii[parseUVIndex(uvs[1])].x;
-        if (!def(n_1(objects).uvs[b * 2 + 1])) n_1(objects).uvs[b * 2 + 1] = uvsii[parseUVIndex(uvs[1])].y;
-
-        if (!def(n_1(objects).uvs[c * 2])) n_1(objects).uvs[c * 2] = uvsii[parseUVIndex(uvs[2])].x;
-        if (!def(n_1(objects).uvs[c * 2 + 1])) n_1(objects).uvs[c * 2 + 1] = uvsii[parseUVIndex(uvs[2])].y;
-
-
-        n_1(objects).uvh = def(n_1(objects).uvh, []);
-
-        n_1(objects).uvh[a * 2] = { i: uvsii[parseUVIndex(uvs[0])].x };
-        n_1(objects).uvh[a * 2].a = -1;
-        n_1(objects).uvh[a * 2].b = b;
-        n_1(objects).uvh[a * 2].c = c;
+            if (!def(n_1(objects).uvs[c * 2])) n_1(objects).uvs[c * 2] = uvsii[parseUVIndex(uvs[2])].x;
+            if (!def(n_1(objects).uvs[c * 2 + 1])) n_1(objects).uvs[c * 2 + 1] = uvsii[parseUVIndex(uvs[2])].y;
 
 
-        n_1(objects).uvh[a * 2 + 1] = { i: uvsii[parseUVIndex(uvs[0])].y };
+            n_1(objects).uvh = def(n_1(objects).uvh, []);
+
+            n_1(objects).uvh[a * 2] = { i: uvsii[parseUVIndex(uvs[0])].x };
+            n_1(objects).uvh[a * 2].a = -1;
+            n_1(objects).uvh[a * 2].b = b;
+            n_1(objects).uvh[a * 2].c = c;
 
 
-        n_1(objects).uvh[b * 2] = { i: uvsii[parseUVIndex(uvs[1])].x };
-        n_1(objects).uvh[b * 2].a = a;
-        n_1(objects).uvh[b * 2].b = -1;
-        n_1(objects).uvh[b * 2].c = c;
+            n_1(objects).uvh[a * 2 + 1] = { i: uvsii[parseUVIndex(uvs[0])].y };
 
 
-        n_1(objects).uvh[b * 2 + 1] = { i: uvsii[parseUVIndex(uvs[1])].y };
-
-        n_1(objects).uvh[c * 2] = { i: uvsii[parseUVIndex(uvs[2])].x };
-        n_1(objects).uvh[b * 2].a = a;
-        n_1(objects).uvh[b * 2].b = b;
-        n_1(objects).uvh[b * 2].c = -1;
+            n_1(objects).uvh[b * 2] = { i: uvsii[parseUVIndex(uvs[1])].x };
+            n_1(objects).uvh[b * 2].a = a;
+            n_1(objects).uvh[b * 2].b = -1;
+            n_1(objects).uvh[b * 2].c = c;
 
 
-        n_1(objects).uvh[c * 2 + 1] = { i: uvsii[parseUVIndex(uvs[2])].y };
+            n_1(objects).uvh[b * 2 + 1] = { i: uvsii[parseUVIndex(uvs[1])].y };
 
+            n_1(objects).uvh[c * 2] = { i: uvsii[parseUVIndex(uvs[2])].x };
+            n_1(objects).uvh[b * 2].a = a;
+            n_1(objects).uvh[b * 2].b = b;
+            n_1(objects).uvh[b * 2].c = -1;
+
+
+            n_1(objects).uvh[c * 2 + 1] = { i: uvsii[parseUVIndex(uvs[2])].y };
+
+        }catch(e){}
 
 
         // } else {

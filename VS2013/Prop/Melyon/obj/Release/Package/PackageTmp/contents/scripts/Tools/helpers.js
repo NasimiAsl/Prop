@@ -318,25 +318,51 @@ function showMesh(name) {
     loadStorage();
 }
 
-function showObject(index) {
-    index = index.replaceAll('item-', '').valueOf() * 1.0;
-    var fst = js('function(){' + gettxt('obj-material') + '}');
-    objectsHelpers[index] = new $3d.geometryInstance(objectsHelpersGeos[index]).toMesh(fst(), eng1);
+function backMesh(name) {
+
+    var helper = "mesh_" + def(name, 'default');
+
+    var item = localStorage.getItem(helper);
+    if (!def(item)) {
+        return;
+    }
+
+    item = js(item);
+
+    var st = prop.html.decode(item.st);
+    var m = prop.html.decode(item.m);
+    var op = prop.html.decode(item.op);
+    var mt = prop.html.decode(item.mt);
+
+
+    switch (mt) {
+        case 'surface': buildSurfaceMesh(st, m, op, name); break;
+        case 'wall': buildWallMesh(st, m, op, name); break;
+    }
+
+    loadStorage();
+}
+
+function showObject(index, b) {
+    index = index.replaceAll('item-', '').replaceAll('item-', '').valueOf() * 1.0;
+    var fst = js('function(){' + gettxt(def(b) ? 'obj-material3' : 'obj-material2') + '}');
+    objectsHelpers.push(new $3d.geometryInstance(def(b) ? objectsHelpersGeos2[index] : objectsHelpersGeos[index]).toMesh(fst(), eng1));
 
     ref = new BABYLON.CubeTexture("/images/skybox/d3/skybox", eng1.get().scene);
     ref.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
     var ref2 = new BABYLON.CubeTexture("/images/skybox/d/skybox", eng1.get().scene);
     ref2.coordinatesMode = BABYLON.Texture.CUBIC_MODE;
 
-    objectsHelpers[index].scaling.x *= getv('object-scale') * 1.0;
-    objectsHelpers[index].scaling.y *= getv('object-scale') * 1.0;
-    objectsHelpers[index].scaling.z *= getv('object-scale') * 1.0;
+    n_1(objectsHelpers).scaling.x *= getv('object-scale') * 1.0;
+    n_1(objectsHelpers).scaling.y *= getv('object-scale') * 1.0;
+    n_1(objectsHelpers).scaling.z *= getv('object-scale') * 1.0;
 
-    objectsHelpers[index].material.setTexture("refc", ref);
-    objectsHelpers[index].material.setTexture("refc2", ref2);
-    objectsHelpers[index].material.setMatrix("refmat", ref.getReflectionTextureMatrix());
+    n_1(objectsHelpers).material.setTexture("refc", ref);
+    n_1(objectsHelpers).material.setTexture("refc2", ref2);
+    n_1(objectsHelpers).material.setMatrix("refmat", ref.getReflectionTextureMatrix());
 
 }
+
 
 function convertToPointedPatternMesh() {
     var name = getv('build-name');
@@ -386,6 +412,23 @@ function repeat_build(st) {
 
 }
 
+function setTranslate(mesh, st) {
+    if (!def(mesh)) return;
+
+    if (def(st.rot) && def(st.rot.x)) mesh.rotation.x += st.rot.x * deg;
+    if (def(st.rot) && def(st.rot.y)) mesh.rotation.y += st.rot.y * deg;
+    if (def(st.rot) && def(st.rot.z)) mesh.rotation.z += st.rot.z * deg;
+
+    if (def(st.pos) && def(st.pos.x)) mesh.position.x += st.pos.x;
+    if (def(st.pos) && def(st.pos.y)) mesh.position.y += st.pos.y;
+    if (def(st.pos) && def(st.pos.z)) mesh.position.z += st.pos.z;
+
+    if (def(st.sca) && def(st.sca.a)) st.sca = { x: st.sca.a, y: st.sca.a, z: st.sca.a };
+    if (def(st.sca) && def(st.sca.x)) mesh.scaling.x *= st.sca.x;
+    if (def(st.sca) && def(st.sca.y)) mesh.scaling.y *= st.sca.y;
+    if (def(st.sca) && def(st.sca.z)) mesh.scaling.z *= st.sca.z;
+}
+
 function repeatMesh(f, st) {
     var st = def(st, getRepeatStruct());
 
@@ -402,7 +445,6 @@ function repeatMesh(f, st) {
         mesh.scaling.x += st.sca.x * i;
         mesh.scaling.y += st.sca.y * i;
         mesh.scaling.z += st.sca.z * i;
-
     }
 
 
@@ -551,7 +593,9 @@ function buildSurface(st) {
     };
     setv('build-material', gettxt('obj-material'));
     setv('build-struct', st);
-    setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') + "}");
+    setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') +
+        ",ts:{rot:{x:" + getv('br_r_x') + ",y:" + getv('br_r_y') + ",z:" + getv('br_r_z') + "},sca:{x:" + getv('br_s_x') + ",y:" + getv('br_s_y') + ",z:" + getv('br_s_z') + ",a:" + getv('br_s_a') + "},pos:{x:" + getv('br_t_x') + ",y:" + getv('br_t_y') + ",z:" + getv('br_t_z') + "}}" +
+        "}");
     setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
 
     return buildMesh('default');
@@ -637,6 +681,11 @@ function buildSurfaceMesh(st, m, op, name, rp) {
 
     mgop = null;
 
+    if (def(op.ts)) {
+        return _each(meshs, function (ms) { setTranslate(ms, op.ts); }, function () { return meshs; });
+
+    }
+
     return meshs;
 }
 
@@ -649,8 +698,9 @@ function buildWall(st) {
     };
     setv('build-material', gettxt('obj-material'));
     setv('build-struct', st);
-    setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') + "}");
-    setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
+    setv('build-option', "{alpha:" + isSelect('alpha') + ",back:" + isSelect('back') + ",wire:" + isSelect('wire') +
+        ",ts:{rot:{x:" + getv('br_r_x') + ",y:" + getv('br_r_y') + ",z:" + getv('br_r_z') + "},sca:{x:" + getv('br_s_x') + ",y:" + getv('br_s_y') + ",z:" + getv('br_s_z') + ",a:" + getv('br_s_a') + "},pos:{x:" + getv('br_t_x') + ",y:" + getv('br_t_y') + ",z:" + getv('br_t_z') + "}}" +
+        "}"); setv('build-mesh', kb(getv('build-material').length + getv('build-struct').length + getv('build-option').length));
 
     buildMesh('default');
 }
@@ -748,13 +798,15 @@ function buildWallMesh(st, m, op, name, rp) {
         }
     });
 
+    if (def(op.ts)) {
+        setTranslate(helpers[helper], op.ts);
+    }
+
     return helpers[helper];
 }
 
 function buildRepeat() { }
 function buildRepeatMesh() { }
-
-
 
 function __s() {
     get('storage-helper').textContent = "";
